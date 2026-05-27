@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="hi" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#FF6F00">
+  <meta name="description" content="KumbhSathi — Your Trusted Companion for Kumbh Mela Nashik 2027. Find ghats, schedule, stay, transport, emergency contacts and more.">
+  <meta property="og:title" content="KumbhSathi — Kumbh Nashik 2027">
+  <meta property="og:description" content="Your Trusted Companion for Kumbh Mela Nashik 2027">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="/assets/icons/icon-512.svg">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="KumbhSathi">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="robots" content="index, follow">
+
+  <title>KumbhSathi — कुंभ नाशिक 2027</title>
+
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.svg">
+  <link rel="icon" type="image/svg+xml" href="/assets/icons/icon-192.svg">
+
+  <!-- Google Fonts (free) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome Free (CDN) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Leaflet.js CSS (free CDN — no API key needed) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+  <!-- App Stylesheets -->
+  <link rel="stylesheet" href="/styles/main.css">
+  <link rel="stylesheet" href="/styles/components.css">
+  <link rel="stylesheet" href="/styles/animations.css">
+</head>
+<body class="lang-hi">
+
+<!-- APP WRAPPER -->
+<div id="app">
+
+  <!-- ===== HEADER ===== -->
+  <header id="app-header">
+    <div class="header-logo" id="header-logo-btn" style="cursor:pointer;">
+      <div class="logo-icon">🕉️</div>
+      <div>
+        <div class="logo-text">KumbhSathi</div>
+        <div class="logo-year" data-t="year">नाशिक 2027</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div id="lang-switcher" aria-label="Language Switcher">
+        <button class="lang-btn active" data-lang="hi">हि</button>
+        <button class="lang-btn" data-lang="mr">म</button>
+        <button class="lang-btn" data-lang="en">EN</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main id="main-content">
+
+    <!-- ================================================
+         PAGE: HOME
+         ================================================ -->
+    <section class="page active" id="page-home">
+
+      <!-- Top Ad Slot -->
+      <div class="ad-slot" id="sponsor-banner-home" style="margin:8px 16px 0;">
+        <span class="ad-label">Advertisement</span>
+        <div class="ad-placeholder">
+          <i class="fa-solid fa-bullhorn"></i>
+          <p data-t="ad_here">Your Ad Here</p>
+          <a class="nav-link" data-nav="sponsor" data-t="ad_contact">Contact Us to Sponsor</a>
+        </div>
+      </div>
+
+      <!-- Breaking News Ticker -->
+      <div class="news-ticker" style="margin-top:8px;">
+        <div class="ticker-label" data-t="breaking_news">Breaking</div>
+        <div class="ticker-track">
+          <span class="ticker-text" id="ticker-content">Loading...</span>
+        </div>
+      </div>
+
+      <!-- Hero: Logo + Countdown -->
+      <div class="home-hero">
+        <div class="home-logo-circle spin-in">🕉️</div>
+        <div class="home-app-name" data-t="app_name">KumbhSathi</div>
+        <div class="home-tagline" data-t="tagline">कुंभ नाशिक 2027 का आपका विश्वसनीय साथी</div>
+
+        <div style="font-size:11px;color:rgba(255,255,255,0.75);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.8px;" data-t="countdown_label">
+          प्रथम शाही स्नान की उलटी गिनती
+        </div>
+        <div class="countdown-container">
+          <div class="countdown-unit">
+            <span class="countdown-value" id="cd-days">---</span>
+            <span class="countdown-label" data-t="countdown_days">दिन</span>
+          </div>
+          <div class="countdown-sep">:</div>
+          <div class="countdown-unit">
+            <span class="countdown-value" id="cd-hours">--</span>
+            <span class="countdown-label" data-t="countdown_hours">घंटे</span>
+          </div>
+          <div class="countdown-sep">:</div>
+          <div class="countdown-unit">
+            <span class="countdown-value" id="cd-mins">--</span>
+            <span class="countdown-label" data-t="countdown_mins">मिनट</span>
+          </div>
+          <div class="countdown-sep">:</div>
+          <div class="countdown-unit">
+            <span class="countdown-value" id="cd-secs">--</span>
+            <span class="countdown-label" data-t="countdown_secs">सेकंड</span>
+          </div>
+        </div>
+        <div style="font-size:11px;color:rgba(255,215,0,0.85);margin-top:10px;position:relative;z-index:1;">
+          🗓️ प्रथम शाही स्नान: 29 अगस्त 2027 — रामकुंड, नाशिक
+        </div>
+      </div>
+
+      <!-- Quick Access Grid -->
+      <div class="section-title" data-t="quick_access">त्वरित पहुँच</div>
+      <div class="quick-grid stagger-children">
+        <div class="quick-card tap-bounce nav-link" data-nav="schedule">
+          <div class="card-icon bg-saffron"><i class="fa-solid fa-calendar-days"></i></div>
+          <div class="card-label" data-t="card_schedule">अनुसूची</div>
+        </div>
+        <div class="quick-card tap-bounce nav-link" data-nav="map">
+          <div class="card-icon bg-indigo"><i class="fa-solid fa-map-location-dot"></i></div>
+          <div class="card-label" data-t="card_map">नक्शा</div>
+        </div>
+        <div class="quick-card tap-bounce nav-link" data-nav="stay">
+          <div class="card-icon bg-teal"><i class="fa-solid fa-bed"></i></div>
+          <div class="card-label" data-t="card_stay">ठहरें</div>
+        </div>
+        <div class="quick-card tap-bounce nav-link" data-nav="transport">
+          <div class="card-icon bg-green"><i class="fa-solid fa-bus"></i></div>
+          <div class="card-label" data-t="card_transport">परिवहन</div>
+        </div>
+        <div class="quick-card tap-bounce nav-link" data-nav="emergency">
+          <div class="card-icon bg-red"><i class="fa-solid fa-phone-volume"></i></div>
+          <div class="card-label" data-t="card_emergency">आपातकाल</div>
+        </div>
+        <div class="quick-card tap-bounce nav-link" data-nav="lostfound">
+          <div class="card-icon bg-gold"><i class="fa-solid fa-magnifying-glass"></i></div>
+          <div class="card-label" data-t="card_lost_found">खोया-पाया</div>
+        </div>
+        <div class="quick-card tap-bounce nav-link" data-nav="news">
+          <div class="card-icon bg-purple"><i class="fa-solid fa-newspaper"></i></div>
+          <div class="card-label" data-t="card_news">समाचार</div>
+        </div>
+        <div class="quick-card tap-bounce nav-link" data-nav="akharas">
+          <div class="card-icon bg-brown"><i class="fa-solid fa-om"></i></div>
+          <div class="card-label" data-t="card_akharas">अखाड़े</div>
+        </div>
+      </div>
+
+      <!-- Shahi Snan Summary -->
+      <div class="section-title" data-t="filter_shahi">शाही स्नान</div>
+      <div style="padding:0 16px 16px;display:flex;flex-direction:column;gap:10px;">
+        <div class="card nav-link" style="padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer;" data-nav="schedule">
+          <div style="width:50px;height:50px;background:linear-gradient(135deg,var(--gold),#ff8f00);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">⭐</div>
+          <div>
+            <div style="font-weight:700;color:var(--dark-brown);font-size:14px;">प्रथम शाही स्नान</div>
+            <div style="font-size:12px;color:var(--saffron);font-weight:600;">29 अगस्त 2027 — श्रावण पूर्णिमा</div>
+            <div style="font-size:11px;color:var(--light-brown);">रामकुंड घाट, नाशिक</div>
+          </div>
+          <i class="fa-solid fa-chevron-right" style="margin-left:auto;color:var(--light-brown);"></i>
+        </div>
+        <div class="card nav-link" style="padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer;" data-nav="schedule">
+          <div style="width:50px;height:50px;background:linear-gradient(135deg,var(--saffron),var(--deep-orange));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">⭐</div>
+          <div>
+            <div style="font-weight:700;color:var(--dark-brown);font-size:14px;">द्वितीय शाही स्नान</div>
+            <div style="font-size:12px;color:var(--saffron);font-weight:600;">12 सितंबर 2027 — भाद्रपद अमावस्या</div>
+            <div style="font-size:11px;color:var(--light-brown);">रामकुंड घाट, नाशिक</div>
+          </div>
+          <i class="fa-solid fa-chevron-right" style="margin-left:auto;color:var(--light-brown);"></i>
+        </div>
+        <div class="card nav-link" style="padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer;" data-nav="schedule">
+          <div style="width:50px;height:50px;background:linear-gradient(135deg,var(--dark-brown),var(--light-brown));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">⭐</div>
+          <div>
+            <div style="font-weight:700;color:var(--dark-brown);font-size:14px;">तृतीय शाही स्नान</div>
+            <div style="font-size:12px;color:var(--saffron);font-weight:600;">27 सितंबर 2027 — महालया अमावस्या</div>
+            <div style="font-size:11px;color:var(--light-brown);">रामकुंड + त्र्यंबकेश्वर</div>
+          </div>
+          <i class="fa-solid fa-chevron-right" style="margin-left:auto;color:var(--light-brown);"></i>
+        </div>
+      </div>
+      <div style="height:16px;"></div>
+    </section>
+
+    <!-- ================================================
+         PAGE: SCHEDULE / EVENTS
+         ================================================ -->
+    <section class="page" id="page-schedule">
+      <div class="page-hero">
+        <h1 data-t="schedule_title">कार्यक्रम और अनुसूची</h1>
+        <p data-t="schedule_subtitle">शाही स्नान, सांस्कृतिक एवं धार्मिक आयोजन</p>
+        <i class="fa-solid fa-calendar-days hero-icon"></i>
+      </div>
+      <div class="schedule-filter">
+        <button class="filter-chip active" data-filter="all" data-t="filter_all">सभी कार्यक्रम</button>
+        <button class="filter-chip" data-filter="shahi" data-t="filter_shahi">शाही स्नान</button>
+        <button class="filter-chip" data-filter="cultural" data-t="filter_cultural">सांस्कृतिक</button>
+        <button class="filter-chip" data-filter="religious" data-t="filter_religious">धार्मिक</button>
+      </div>
+      <div id="events-container" class="stagger-children"></div>
+      <div style="height:16px;"></div>
+    </section>
+
+    <!-- ================================================
+         PAGE: MAP
+         ================================================ -->
+    <section class="page" id="page-map">
+      <div class="page-hero">
+        <h1 data-t="map_title">इंटरैक्टिव नक्शा</h1>
+        <p data-t="map_subtitle">नाशिक और त्र्यंबकेश्वर — प्रमुख स्थान</p>
+        <i class="fa-solid fa-map-location-dot hero-icon"></i>
+      </div>
+      <div class="map-filters">
+        <button class="map-filter-btn active" data-category="all" data-t="show_all">सभी दिखाएं</button>
+        <button class="map-filter-btn active" data-category="ghats">💧 <span data-t="filter_ghats">घाट</span></button>
+        <button class="map-filter-btn active" data-category="temples">🕉️ <span data-t="filter_temples">मंदिर</span></button>
+        <button class="map-filter-btn active" data-category="camps">🏕️ <span data-t="filter_camps">शिविर</span></button>
+        <button class="map-filter-btn active" data-category="hospitals">🏥 <span data-t="filter_hospitals">अस्पताल</span></button>
+        <button class="map-filter-btn active" data-category="police">👮 <span data-t="filter_police">पुलिस</span></button>
+        <button class="map-filter-btn active" data-category="parking">🅿️ <span data-t="filter_parking">पार्किंग</span></button>
+        <button class="map-filter-btn active" data-category="transport">🚌 <span data-t="filter_transport">परिवहन</span></button>
+        <button class="map-filter-btn active" data-category="toilets">🚻 <span data-t="filter_toilets">शौचालय</span></button>
+      </div>
+      <div id="leaflet-map"></div>
+      <div class="ad-slot" style="margin:10px 16px;">
+        <span class="ad-label">Advertisement</span>
+        <div class="ad-placeholder">
+          <i class="fa-solid fa-rectangle-ad"></i>
+          <p>Map Page Ad Slot</p>
+          <a class="nav-link" data-nav="sponsor">Advertise Here</a>
+        </div>
+      </div>
+      <div class="section-title" data-t="map_legend">नक्शा संकेत</div>
+      <div class="map-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#1565c0;"></div> <span data-t="filter_ghats">घाट</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:#FF6F00;"></div> <span data-t="filter_temples">मंदिर</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:#6a1b9a;"></div> <span data-t="filter_camps">शिविर</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:#b71c1c;"></div> <span data-t="filter_hospitals">अस्पताल</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:#1b5e20;"></div> <span data-t="filter_police">पुलिस</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:#e65100;"></div> <span data-t="filter_parking">पार्किंग</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:#004d40;"></div> <span data-t="filter_transport">परिवहन</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:#4e342e;"></div> <span data-t="filter_toilets">शौचालय</span></div>
+      </div>
+      <div style="padding:0 16px 16px;">
+        <a href="https://maps.google.com/?q=Ramkund+Nashik+Maharashtra" target="_blank" rel="noopener" class="btn btn-primary btn-full">
+          <i class="fa-solid fa-diamond-turn-right"></i>
+          <span data-t="get_directions">रास्ता देखें — Ramkund Nashik</span>
+        </a>
+      </div>
+      <div style="height:16px;"></div>
+    </section>
+
+    <!-- ================================================
+         PAGE: STAY & ACCOMMODATION
+         ================================================ -->
+    <section class="page" id="page-stay">
+      <div class="page-hero">
+        <h1 data-t="stay_title">आवास एवं ठहरने की व्यवस्था</h1>
+        <p data-t="stay_subtitle">होटल, धर्मशाला और कैंप स्टे</p>
+        <i class="fa-solid fa-bed hero-icon"></i>
+      </div>
+      <div class="schedule-filter">
+        <button class="stay-filter-chip filter-chip active" data-filter="all" data-t="filter_all">सभी</button>
+        <button class="stay-filter-chip filter-chip" data-filter="budget" data-t="filter_budget">बजट</button>
+        <button class="stay-filter-chip filter-chip" data-filter="mid" data-t="filter_mid">मध्यम</button>
+        <button class="stay-filter-chip filter-chip" data-filter="premium" data-t="filter_premium">प्रीमियम</button>
+        <button class="stay-filter-chip filter-chip" data-filter="dharam" data-t="filter_dharam">धर्मशाला</button>
+      </div>
+      <div style="padding:4px 16px 8px;font-size:12px;color:var(--light-brown);">
+        <i class="fa-solid fa-circle-info"></i> ⭐ Sponsored listings appear first. Call directly to book.
+      </div>
+      <div id="stay-container" style="padding:0 16px;"></div>
+      <div class="ad-slot" style="margin:4px 16px 16px;">
+        <span class="ad-label">Advertisement</span>
+        <div class="ad-placeholder">
+          <i class="fa-solid fa-rectangle-ad"></i>
+          <p>Mid-page Ad Slot — Stay Section</p>
+          <a class="nav-link" data-nav="sponsor">Advertise Here</a>
+        </div>
+      </div>
+      <div style="height:16px;"></div>
+    </section>
+
+    <!-- ================================================
+         PAGE: TRANSPORT
+         ================================================ -->
+    <section class="page" id="page-transport">
+      <div class="page-hero">
+        <h1 data-t="transport_title">परिवहन मार्गदर्शिका</h1>
+        <p data-t="transport_subtitle">नाशिक कैसे पहुँचें और स्थानीय परिवहन</p>
+        <i class="fa-solid fa-bus hero-icon"></i>
+      </div>
+      <div class="section-title">नाशिक कैसे पहुँचें</div>
+      <div class="transport-section">
+        <div class="transport-mode">
+          <div class="transport-mode-header">
+            <i class="fa-solid fa-train"></i>
+            <h3 data-t="by_train">ट्रेन से</h3>
+            <i class="fa-solid fa-chevron-down chevron"></i>
+          </div>
+          <div class="transport-mode-body"><div id="train-routes-container"></div></div>
+        </div>
+      </div>
+      <div class="transport-section">
+        <div class="transport-mode">
+          <div class="transport-mode-header open">
+            <i class="fa-solid fa-bus"></i>
+            <h3 data-t="by_bus">बस से</h3>
+            <i class="fa-solid fa-chevron-down chevron"></i>
+          </div>
+          <div class="transport-mode-body open"><div id="bus-routes-container"></div></div>
+        </div>
+      </div>
+      <div class="transport-section">
+        <div class="transport-mode">
+          <div class="transport-mode-header">
+            <i class="fa-solid fa-plane"></i>
+            <h3 data-t="by_air">हवाई जहाज़ से</h3>
+            <i class="fa-solid fa-chevron-down chevron"></i>
+          </div>
+          <div class="transport-mode-body"><div id="air-routes-container"></div></div>
+        </div>
+      </div>
+      <div class="transport-section">
+        <div class="transport-mode">
+          <div class="transport-mode-header">
+            <i class="fa-solid fa-car"></i>
+            <h3 data-t="by_road">सड़क मार्ग से</h3>
+            <i class="fa-solid fa-chevron-down chevron"></i>
+          </div>
+          <div class="transport-mode-body"><div id="road-routes-container"></div></div>
+        </div>
+      </div>
+      <div class="section-title">स्थानीय परिवहन</div>
+      <div class="transport-section">
+        <div class="transport-mode">
+          <div class="transport-mode-header open">
+            <i class="fa-solid fa-van-shuttle"></i>
+            <h3>नाशिक के अंदर परिवहन</h3>
+            <i class="fa-solid fa-chevron-down chevron"></i>
+          </div>
+          <div class="transport-mode-body open"><div id="local-transport-container"></div></div>
+        </div>
+      </div>
+      <div style="margin:0 16px 16px;">
+        <div style="background:rgba(255,111,0,0.08);border:1.5px solid rgba(255,111,0,0.2);border-radius:var(--radius-md);padding:14px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <i class="fa-solid fa-circle-exclamation" style="color:var(--saffron);"></i>
+            <strong style="font-size:13px;color:var(--dark-brown);">Important — Shahi Snan Days</strong>
+          </div>
+          <p style="font-size:12px;color:var(--light-brown);line-height:1.6;">
+            On Shahi Snan days (Aug 29, Sep 12, Sep 27), private vehicles are restricted within 5km of Ramkund. Use free government shuttle buses. Arrive 3-4 hours early.
+          </p>
+        </div>
+      </div>
+      <div style="height:16px;"></div>
+    </section>
+
+    <!-- ================================================
+         PAGE: LOST & FOUND
+         ================================================ -->
+    <section class="page" id="page-lostfound">
+      <div class="page-hero" style="background:linear-gradient(135deg,#e65100,#FF6F00);">
+        <h1 data-t="lf_title">खोया-पाया</h1>
+        <p data-t="lf_subtitle">खोए हुए व्यक्ति की रिपोर्ट करें</p>
+        <i class="fa-solid fa-magnifying-glass hero-icon"></i>
+      </div>
+      <div style="background:rgba(183,28,28,0.08);border-bottom:1.5px solid rgba(183,28,28,0.15);padding:12px 16px;display:flex;align-items:center;gap:12px;">
+        <i class="fa-solid fa-phone-volume" style="color:#b71c1c;font-size:20px;flex-shrink:0;"></i>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#b71c1c;" data-t="emergency_numbers">आपातकालीन हेल्पलाइन</div>
+          <div style="font-size:12px;color:var(--dark-brown);">
+            <a href="tel:100" style="font-weight:700;color:#b71c1c;">100</a> (Police) &nbsp;|&nbsp;
+            <a href="tel:108" style="font-weight:700;color:#b71c1c;">108</a> (Ambulance) &nbsp;|&nbsp;
+            <a href="tel:1098" style="font-weight:700;color:#b71c1c;">1098</a> (Child Helpline)
+          </div>
+        </div>
+      </div>
+      <div class="section-title">नई रिपोर्ट दर्ज करें</div>
+      <div class="report-form">
+        <div class="form-tabs">
+          <button class="form-tab active" data-type="lost" data-t="report_lost">🔍 खोया रिपोर्ट करें</button>
+          <button class="form-tab" data-type="found" data-t="report_found">✅ मिला रिपोर्ट करें</button>
+        </div>
+        <form id="lf-form" autocomplete="off">
+          <div class="form-row">
+            <div class="form-group">
+              <label data-t="field_name">नाम / विवरण</label>
+              <input type="text" name="name" required placeholder="Full Name">
+            </div>
+            <div class="form-group">
+              <label data-t="field_age">आयु</label>
+              <input type="number" name="age" min="1" max="120" placeholder="Age" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label data-t="field_gender">लिंग</label>
+            <select name="gender" required>
+              <option value="" disabled selected>Select Gender</option>
+              <option value="Male">Male / पुरुष</option>
+              <option value="Female">Female / महिला</option>
+              <option value="Other">Other / अन्य</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label data-t="field_location">अंतिम देखा गया स्थान</label>
+            <input type="text" name="location" required placeholder="E.g. Ramkund Ghat, Gate 3">
+          </div>
+          <div class="form-group">
+            <label data-t="field_desc">अतिरिक्त विवरण</label>
+            <textarea name="desc" placeholder="Clothing, appearance, any identifying details..."></textarea>
+          </div>
+          <div class="form-group">
+            <label data-t="field_contact">आपका संपर्क नंबर</label>
+            <input type="tel" name="contact" required placeholder="+91 XXXXX XXXXX">
+          </div>
+          <button type="submit" class="btn btn-primary btn-full">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span data-t="submit_report">रिपोर्ट सबमिट करें</span>
+          </button>
+        </form>
+      </div>
+      <div class="section-title" data-t="recent_reports">हाल की रिपोर्ट</div>
+      <div id="reports-container" class="report-list"></div>
+      <div style="height:16px;"></div>
+    </section>
+
+    <!-- ================================================
+         PAGE: EMERGENCY
+         ================================================ -->
+    <section class="page" id="page-emergency">
+      <div class="emergency-hero">
+        <h1 data-t="emergency_title">🚨 आपातकालीन और हेल्पलाइन</h1>
+        <p data-t="emergency_subtitle">कॉल करने के लिए टैप करें — 24/7 उपलब्ध</p>
+      </div>
+      <div class="call-grid">
+        <a href="tel:100" class="call-card call-police">
+          <div class="call-icon bg-indigo pulse-red"><i class="fa-solid fa-shield-halved"></i></div>
+          <div class="call-name" data-t="police">पुलिस</div>
+          <div class="call-num">100</div>
+        </a>
+        <a href="tel:108" class="call-card call-amb">
+          <div class="call-icon bg-red pulse-red"><i class="fa-solid fa-truck-medical"></i></div>
+          <div class="call-name" data-t="ambulance">एम्बुलेंस</div>
+          <div class="call-num">108</div>
+        </a>
+        <a href="tel:18001802626" class="call-card call-kumbh">
+          <div class="call-icon bg-saffron"><i class="fa-solid fa-walkie-talkie"></i></div>
+          <div class="call-name" data-t="kumbh_control">कुंभ नियंत्रण</div>
+          <div class="call-num" style="font-size:12px;">1800-180-2626</div>
+        </a>
+        <a href="tel:1098" class="call-card call-child">
+          <div class="call-icon bg-purple"><i class="fa-solid fa-child-reaching"></i></div>
+          <div class="call-name" data-t="child_helpline">बाल हेल्पलाइन</div>
+          <div class="call-num">1098</div>
+        </a>
+        <a href="tel:1363" class="call-card call-tourist">
+          <div class="call-icon bg-teal"><i class="fa-solid fa-person-walking-with-cane"></i></div>
+          <div class="call-name" data-t="tourist_help">पर्यटक हेल्पलाइन</div>
+          <div class="call-num">1363</div>
+        </a>
+        <a href="tel:1091" class="call-card call-women">
+          <div class="call-icon" style="background:linear-gradient(135deg,#ad1457,#e91e63);color:#fff;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;">
+            <i class="fa-solid fa-venus"></i>
+          </div>
+          <div class="call-name" data-t="women_help">महिला हेल्पलाइन</div>
+          <div class="call-num">1091</div>
+        </a>
+      </div>
+      <div class="location-btn" id="share-location-btn">
+        <i class="fa-solid fa-location-crosshairs"></i>
+        <div class="location-btn-text">
+          <h4 data-t="share_location">मेरी लोकेशन साझा करें</h4>
+          <p data-t="share_location_sub">Google Maps पर आपके निर्देशांक खुलेंगे</p>
+        </div>
+        <i class="fa-solid fa-arrow-right" style="margin-left:auto;"></i>
+      </div>
+      <div class="section-title" data-t="hospitals">निकटतम अस्पताल</div>
+      <div id="hospitals-container"></div>
+      <div class="section-title" data-t="first_aid">प्राथमिक उपचार</div>
+      <div id="first-aid-container"></div>
+      <div style="height:16px;"></div>
+    </section>
+
+    <!-- ================================================
+         PAGE: NEWS
+         ================================================ -->
+    <section class="page" id="page-news">
+      <div class="page-hero">
+        <h1 data-t="news_title">समाचार एवं अपडेट</h1>
+        <p data-t="news_subtitle">कुंभ नाशिक 2027 की ताज़ा जानकारी</p>
+        <i class="fa-solid fa-newspaper hero-icon"></i>
+      </div>
+      <div class="news-ticker">
+        <div class="ticker-label" data-t="breaking_news">Breaking</div>
+        <div class="ticker-track">
+          <span class="ticker-text" id="ticker-content-2">Loading...</span>
+        </div>
+      </div>
+      <div class="category-filter" style="padding-top:12px;">
+        <button class="news-filter-chip filter-chip active" data-cat="all" data-t="cat_all">सभी</button>
+        <button class="news-filter-chip filter-chip" data-cat="announce" data-t="cat_announce">📢 घोषणाएं</button>
+        <button class="news-filter-chip filter-chip" data-cat="vip" data-t="cat_vip">⭐ VIP</button>
+        <button class="news-filter-chip filter-chip" data-cat="weather" data-t="cat_weather">🌧 मौसम</button>
+        <button class="news-filter-chip filter-chip" data-cat="traffic" data-t="cat_traffic">🚗 यातायात</button>
+      </div>
+      <div id="news-container" class="news-grid"></div>
+      <div style="height:16px;"></div>
+    </section>
+
+    <!-- ================================================
+         PAGE: AKHARAS
+         ================================================ -->
+    <section class="page" id="page-akharas">
+      <div class="page-hero">
+        <h1 data-t="akharas_title">प्रमुख अखाड़े</h1>
+        <p data-t="akharas_subtitle">नाशिक कुंभ 2027 में भाग लेने वाले अखाड़े</p>
+        <i class="fa-solid fa-om hero-icon"></i>
+      </div>
+      <div style="background:rgba(255,111,0,0.08);border-bottom:1.5px solid rgba(255,111,0,0.15);padding:12px 16px;">
+        <p style="font-size:12px;color:var(--dark-brown);line-height:1.6;">
+          🕉️ Akharas are ancient monastic orders that participate in Kumbh Mela. The Shahi Snan order follows strict historical precedence established centuries ago.
+        </p>
+      </div>
+      <div id="akharas-container" class="stagger-children" style="padding-top:4px;"></div>
+      <div style="height:16px;"></div>
+    </section>
+
+    <!-- ================================================
+         PAGE: ABOUT
+         ================================================ -->
+    <section class="page" id="page-about">
+      <div class="page-hero">
+        <h1 data-t="about_title">कुंभ मेले के बारे में</h1>
+        <p data-t="about_subtitle">इतिहास, महत्व और नाशिक</p>
+        <i class="fa-solid fa-book-open hero-icon"></i>
+      </div>
+      <div class="info-block">
+        <h3><i class="fa-solid fa-circle-question"></i> <span data-t="what_is_kumbh">कुंभ मेला क्या है?</span></h3>
+        <p id="about-content-1" style="white-space:pre-line;"></p>
+      </div>
+      <div class="info-block">
+        <h3><i class="fa-solid fa-location-dot"></i> <span data-t="nashik_special">नाशिक/त्र्यंबकेश्वर क्यों विशेष है?</span></h3>
+        <p id="about-content-2" style="white-space:pre-line;"></p>
+      </div>
+      <div class="info-block">
+        <h3><i class="fa-solid fa-water"></i> <span data-t="shahi_significance">शाही स्नान का महत्व</span></h3>
+        <p id="about-content-3" style="white-space:pre-line;"></p>
+      </div>
+      <div class="section-title" data-t="photo_gallery">फोटो गैलरी</div>
+      <div class="gallery-grid" id="gallery-container"></div>
+      <div style="padding:16px;text-align:center;">
+        <p style="font-size:11px;color:var(--light-brown);line-height:1.7;">
+          Built with ❤️ for pilgrims of Kumbh Mela Nashik 2027<br>
+          Map data © <a href="https://www.openstreetmap.org/copyright" style="color:var(--saffron);" target="_blank">OpenStreetMap</a> contributors<br>
+          <span style="color:var(--saffron);">🕉️ Jai Jai Gange — जय जय गंगे 🕉️</span>
+        </p>
+      </div>
+      <div style="height:16px;"></div>
+    </section>
+
+    <!-- ================================================
+         PAGE: SPONSOR
+         ================================================ -->
+    <section class="page" id="page-sponsor">
+      <div class="page-hero" style="background:linear-gradient(135deg,var(--dark-brown),#5d3a1a);">
+        <h1 data-t="sponsor_title">हमारे साथ विज्ञापन करें</h1>
+        <p data-t="sponsor_subtitle">कुंभ नाशिक 2027 में करोड़ों श्रद्धालुओं तक पहुँचें</p>
+        <i class="fa-solid fa-handshake hero-icon" style="color:var(--gold);"></i>
+      </div>
+      <div style="background:linear-gradient(135deg,var(--saffron),var(--deep-orange));padding:20px 16px;text-align:center;">
+        <div style="color:#fff;font-size:13px;margin-bottom:12px;font-weight:500;">Expected Audience</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+          <div style="background:rgba(255,255,255,0.15);border-radius:10px;padding:10px;">
+            <div style="font-size:22px;font-weight:800;color:#fff;">5 Cr+</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.85);">Total Pilgrims</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.15);border-radius:10px;padding:10px;">
+            <div style="font-size:22px;font-weight:800;color:var(--gold);">3M+</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.85);">App Users</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.15);border-radius:10px;padding:10px;">
+            <div style="font-size:22px;font-weight:800;color:#fff;">3 Mos</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.85);">Duration</div>
+          </div>
+        </div>
+      </div>
+      <div class="section-title">Available Ad Slots</div>
+      <div style="padding:0 16px 8px;">
+        <div style="background:#fff;border-radius:var(--radius-md);padding:14px;box-shadow:var(--shadow-sm);margin-bottom:12px;">
+          <div style="font-size:13px;font-weight:700;color:var(--dark-brown);margin-bottom:8px;">📱 Ad Slot Locations</div>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--light-brown);">
+            <div style="display:flex;align-items:center;gap:8px;"><i class="fa-solid fa-check" style="color:#2e7d32;"></i> Home Screen — Full-width banner</div>
+            <div style="display:flex;align-items:center;gap:8px;"><i class="fa-solid fa-check" style="color:#2e7d32;"></i> Map Page — Leaderboard below map</div>
+            <div style="display:flex;align-items:center;gap:8px;"><i class="fa-solid fa-check" style="color:#2e7d32;"></i> Stay Page — Mid-page between listings</div>
+            <div style="display:flex;align-items:center;gap:8px;"><i class="fa-solid fa-check" style="color:#2e7d32;"></i> Featured Listing — Sponsored badge + top position</div>
+          </div>
+        </div>
+      </div>
+      <div class="sponsor-tier tier-bronze">
+        <div class="tier-header">
+          <div class="tier-icon">🥉</div>
+          <div><div class="tier-name" data-t="bronze_pkg">ब्रॉन्ज पैकेज</div><div class="tier-price" data-t="contact_pricing">Contact for Pricing</div></div>
+        </div>
+        <div class="tier-features">
+          <div class="tier-feature"><i class="fa-solid fa-check"></i> App banner on 1 page (1 month)</div>
+          <div class="tier-feature"><i class="fa-solid fa-check"></i> 300×100px banner slot</div>
+          <div class="tier-feature"><i class="fa-solid fa-check"></i> Link to your website/contact</div>
+          <div class="tier-feature"><i class="fa-solid fa-check"></i> Monthly analytics report</div>
+        </div>
+        <div style="padding:0 16px 14px;">
+          <a href="https://wa.me/919999999999?text=Bronze+Sponsor+Package+Inquiry+KumbhSathi" target="_blank" rel="noopener" class="btn btn-full" style="background:#795548;color:#fff;">
+            <i class="fa-brands fa-whatsapp"></i> <span data-t="contact_whatsapp">WhatsApp करें</span>
+          </a>
+        </div>
+      </div>
+      <div class="sponsor-tier tier-silver" style="margin-top:12px;">
+        <div class="tier-header">
+          <div class="tier-icon">🥈</div>
+          <div><div class="tier-name" data-t="silver_pkg">सिल्वर पैकेज</div><div class="tier-price" data-t="contact_pricing">Contact for Pricing</div></div>
+        </div>
+        <div class="tier-features">
+          <div class="tier-feature"><i class="fa-solid fa-check"></i> Featured listing in Stay/Transport</div>
+          <div class="tier-feature"><i class="fa-solid fa-check"></i> Banner on 2 pages (2 months)</div>
+          <div class="tier-feature"><i class="fa-solid fa-check"></i> "Sponsored" gold badge on listing</div>
+          <div class="tier-feature"><i class="fa-solid fa-check"></i> Priority placement in search</div>
+          <div class="tier-feature"><i class="fa-solid fa-check"></i> Monthly analytics report</div>
+        </div>
+        <div style="padding:0 16px 14px;">
+          <a href="https://wa.me/919999999999?text=Silver+Sponsor+Package+Inquiry+KumbhSathi" target="_blank" rel="noopener" class="btn btn-full" style="background:#607d8b;color:#fff;">
+            <i class="fa-brands fa-whatsapp"></i> <span data-t="contact_whatsapp">WhatsApp करें</span>
+          </a>
+        </div>
+      </div>
+      <div class="sponsor-tier tier-gold" style="margin-top:12px;">
+        <div class="tier-header">
+          <div class="tier-icon">🥇</div>
+          <div><div class="tier-name" data-t="gold_pkg">गोल्ड पैकेज</div><div class="tier-price" data-t="contact_pricing">Contact for Pricing</div></div>
+        </div>
+        <div class="tier-features">
+          <div class="tier-feature"><i class="fa-solid fa-check"></i> Homepage Spotlight — Full-width hero banner</div>
+          <div class="tier-feature"><i class="fa-solid fa-check"></i> All banners across ALL pages</div>
+          <div class="tier-feature"><i class="fa-solid fa-check"></i> Featured listing in ALL sections</div>
+          <div class="tier-feature"><i class="fa-solid fa-check"></i> "Sponsor of the Day" home screen slot</div>
+          <div class="tier-feature"><i class="fa-solid fa-check"></i> Push notification broadcast to all users</div>
+          <div class="tier-feature"><i class="fa-solid fa-check"></i> Weekly analytics + account manager</div>
+        </div>
+        <div style="padding:0 16px 14px;display:flex;gap:8px;">
+          <a href="https://wa.me/919999999999?text=Gold+Sponsor+Package+Inquiry+KumbhSathi" target="_blank" rel="noopener" class="btn btn-gold" style="flex:1;">
+            <i class="fa-brands fa-whatsapp"></i> WhatsApp
+          </a>
+          <a href="mailto:sponsor@kumbhsathi.in?subject=Gold+Sponsor+Package" class="btn btn-outline" style="flex:1;">
+            <i class="fa-solid fa-envelope"></i> Email
+          </a>
+        </div>
+      </div>
+      <div style="margin:16px 16px 0;background:var(--dark-brown);border-radius:var(--radius-md);padding:20px;text-align:center;">
+        <div style="font-size:18px;font-weight:800;color:var(--gold);margin-bottom:6px;" data-t="become_sponsor">प्रायोजक बनें</div>
+        <p style="font-size:12px;color:rgba(255,255,255,0.8);margin-bottom:14px;line-height:1.6;">
+          Reach millions of pilgrims at one of the world's largest gatherings.<br>Custom packages available. Contact us today.
+        </p>
+        <div style="display:flex;gap:10px;">
+          <a href="https://wa.me/919999999999" target="_blank" rel="noopener" class="btn btn-whatsapp heartbeat" style="flex:1;">
+            <i class="fa-brands fa-whatsapp"></i> WhatsApp
+          </a>
+          <a href="mailto:sponsor@kumbhsathi.in" class="btn btn-gold" style="flex:1;">
+            <i class="fa-solid fa-envelope"></i> Email
+          </a>
+        </div>
+      </div>
+      <div style="height:24px;"></div>
+    </section>
+
+  </main>
+
+  <!-- ===== BOTTOM NAVIGATION ===== -->
+  <nav id="bottom-nav">
+    <div class="nav-item active" id="nav-home" data-route="home">
+      <i class="fa-solid fa-house"></i>
+      <span data-t="nav_home">होम</span>
+    </div>
+    <div class="nav-item" id="nav-map" data-route="map">
+      <i class="fa-solid fa-map-location-dot"></i>
+      <span data-t="nav_map">नक्शा</span>
+    </div>
+    <div class="nav-item" id="nav-events" data-route="schedule">
+      <i class="fa-solid fa-calendar-days"></i>
+      <span data-t="nav_events">कार्यक्रम</span>
+    </div>
+    <div class="nav-item" id="nav-stay" data-route="stay">
+      <i class="fa-solid fa-bed"></i>
+      <span data-t="nav_stay">ठहरें</span>
+    </div>
+    <div class="nav-item" data-route="more">
+      <i class="fa-solid fa-ellipsis"></i>
+      <span data-t="nav_more">और</span>
+    </div>
+  </nav>
+
+</div><!-- end #app -->
+
+<!-- ===== MORE DRAWER ===== -->
+<div id="more-drawer">
+  <div class="drawer-handle"></div>
+  <div class="drawer-title" data-t="more_menu">अधिक विकल्प</div>
+  <div class="drawer-items">
+    <div class="drawer-item" data-route="transport"><i class="fa-solid fa-bus"></i><span data-t="more_transport">परिवहन</span></div>
+    <div class="drawer-item" data-route="lostfound"><i class="fa-solid fa-magnifying-glass"></i><span data-t="more_lost_found">खोया-पाया</span></div>
+    <div class="drawer-item" data-route="emergency"><i class="fa-solid fa-phone-volume"></i><span data-t="more_emergency">आपातकाल</span></div>
+    <div class="drawer-item" data-route="news"><i class="fa-solid fa-newspaper"></i><span data-t="more_news">समाचार</span></div>
+    <div class="drawer-item" data-route="akharas"><i class="fa-solid fa-om"></i><span data-t="more_akharas">अखाड़े</span></div>
+    <div class="drawer-item" data-route="about"><i class="fa-solid fa-book-open"></i><span data-t="more_about">परिचय</span></div>
+    <div class="drawer-item" data-route="sponsor"><i class="fa-solid fa-bullhorn"></i><span data-t="more_sponsor">विज्ञापन</span></div>
+  </div>
+</div>
+<div id="drawer-overlay"></div>
+
+<!-- Toast Notification -->
+<div id="toast"></div>
+
+<!-- ===================================================
+     SCRIPTS — order matters
+     =================================================== -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="/scripts/data.js"></script>
+<script src="/scripts/translations.js"></script>
+<script src="/scripts/router.js"></script>
+<script src="/scripts/map.js"></script>
+<script src="/scripts/app.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  /* Header logo navigates home */
+  document.getElementById('header-logo-btn').addEventListener('click', function() {
+    navigateTo('home');
+  });
+
+  /* nav-link class elements navigate via data-nav */
+  document.querySelectorAll('.nav-link[data-nav]').forEach(function(el) {
+    el.addEventListener('click', function(e) {
+      e.preventDefault();
+      navigateTo(el.dataset.nav);
+    });
+  });
+
+  /* Share location button */
+  var locBtn = document.getElementById('share-location-btn');
+  if (locBtn) locBtn.addEventListener('click', shareLocation);
+
+  /* Sync second ticker on news page */
+  var t2 = document.getElementById('ticker-content-2');
+  if (t2) {
+    var items = TICKER_ITEMS[currentLang] || TICKER_ITEMS['hi'];
+    t2.textContent = items.join('   •••   ');
+  }
+});
+</script>
+
+</body>
+</html>

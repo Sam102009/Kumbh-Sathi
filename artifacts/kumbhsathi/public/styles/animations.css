@@ -1,0 +1,233 @@
+/* ===================================================
+   KumbhSathi — Animations & Micro-interactions
+   =================================================== */
+
+/* --- Page transitions --- */
+@keyframes slideInRight {
+  from { transform: translateX(30px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-30px); opacity: 0; }
+  to   { transform: translateX(0);     opacity: 1; }
+}
+
+@keyframes slideInUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes zoomIn {
+  from { transform: scale(0.92); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+/* --- Staggered children animation --- */
+.stagger-children > * {
+  animation: slideInUp 0.35s ease both;
+}
+.stagger-children > *:nth-child(1) { animation-delay: 0.0s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.06s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.12s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.18s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.24s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.30s; }
+.stagger-children > *:nth-child(7) { animation-delay: 0.36s; }
+.stagger-children > *:nth-child(8) { animation-delay: 0.42s; }
+
+/* --- Lotus Spin (decorative) --- */
+@keyframes lotusSpin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spin-slow { animation: lotusSpin 12s linear infinite; }
+.spin-med  { animation: lotusSpin 6s linear infinite; }
+
+/* --- Pulse glow (for emergency button) --- */
+@keyframes pulseGlow {
+  0%   { box-shadow: 0 0 0 0 rgba(183,28,28,0.4); }
+  70%  { box-shadow: 0 0 0 10px rgba(183,28,28,0); }
+  100% { box-shadow: 0 0 0 0 rgba(183,28,28,0); }
+}
+
+.pulse-red { animation: pulseGlow 1.8s ease-in-out infinite; }
+
+@keyframes pulseGold {
+  0%   { box-shadow: 0 0 0 0 rgba(255,215,0,0.5); }
+  70%  { box-shadow: 0 0 0 12px rgba(255,215,0,0); }
+  100% { box-shadow: 0 0 0 0 rgba(255,215,0,0); }
+}
+
+.pulse-gold { animation: pulseGold 2s ease-in-out infinite; }
+
+/* --- Countdown digit flip --- */
+@keyframes digitFlip {
+  0%   { transform: rotateX(0deg);   }
+  50%  { transform: rotateX(-90deg); opacity: 0; }
+  51%  { transform: rotateX(90deg);  opacity: 0; }
+  100% { transform: rotateX(0deg);   opacity: 1; }
+}
+
+.digit-flip {
+  display: inline-block;
+  animation: digitFlip 0.4s ease;
+}
+
+/* --- Float animation (hero circles) --- */
+@keyframes floatUp {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+
+.float { animation: floatUp 3.5s ease-in-out infinite; }
+.float-delay { animation: floatUp 3.5s ease-in-out 1.2s infinite; }
+
+/* --- Shimmer loading skeleton --- */
+@keyframes shimmer {
+  0%   { background-position: -300px 0; }
+  100% { background-position: 300px 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg,
+    rgba(62,39,35,0.06) 25%,
+    rgba(62,39,35,0.12) 50%,
+    rgba(62,39,35,0.06) 75%
+  );
+  background-size: 600px 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+  border-radius: 6px;
+}
+
+/* --- Bounce tap feedback --- */
+.tap-bounce:active {
+  animation: tapBounce 0.25s ease;
+}
+
+@keyframes tapBounce {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(0.93); }
+  80%  { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
+
+/* --- Slide up reveal for cards --- */
+.reveal {
+  animation: slideInUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* --- Heartbeat (for sponsor CTA) --- */
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  14%       { transform: scale(1.08); }
+  28%       { transform: scale(1); }
+  42%       { transform: scale(1.05); }
+  70%       { transform: scale(1); }
+}
+
+.heartbeat { animation: heartbeat 2s ease-in-out infinite; }
+
+/* --- Decorative mandala rotation --- */
+.mandala-bg {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  opacity: 0.06;
+  pointer-events: none;
+  animation: lotusSpin 30s linear infinite;
+}
+
+/* --- News ticker --- */
+@keyframes tickerScroll {
+  0%   { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+/* --- Card hover lift --- */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(62,39,35,0.18);
+}
+
+/* --- Ripple effect on tap --- */
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
+.ripple::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  transform: scale(0);
+  animation: rippleEffect 0.5s linear;
+  pointer-events: none;
+}
+@keyframes rippleEffect {
+  to { transform: scale(4); opacity: 0; }
+}
+
+/* --- Spin on load --- */
+@keyframes spinIn {
+  from { transform: rotate(-180deg) scale(0.5); opacity: 0; }
+  to   { transform: rotate(0deg) scale(1);       opacity: 1; }
+}
+
+.spin-in {
+  animation: spinIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* --- Slide-up drawer animation --- */
+@keyframes drawerIn {
+  from { transform: translateX(-50%) translateY(100%); }
+  to   { transform: translateX(-50%) translateY(0); }
+}
+
+/* --- Progress bar animation --- */
+@keyframes progressFill {
+  from { width: 0; }
+  to   { width: var(--target-width, 100%); }
+}
+
+.progress-bar {
+  height: 4px;
+  background: rgba(62,39,35,0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--saffron), var(--gold));
+  border-radius: 2px;
+  animation: progressFill 1s ease both;
+}
+
+/* --- Gold shimmer on sponsored badges --- */
+@keyframes goldShimmer {
+  0%   { background-position: -200px 0; }
+  100% { background-position: 200px 0; }
+}
+
+.gold-shimmer {
+  background: linear-gradient(90deg,
+    #FFD700 0%,
+    #FFF8DC 40%,
+    #FFD700 60%,
+    #FFC107 100%
+  );
+  background-size: 400px 100%;
+  animation: goldShimmer 2.5s linear infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
