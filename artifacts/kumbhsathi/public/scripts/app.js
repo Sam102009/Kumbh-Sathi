@@ -383,7 +383,7 @@ function initLostFound() {
   }
 }
 
-function submitReport(e) {
+async function submitReport(e) {
   e.preventDefault();
   const fd = new FormData(e.target);
   const report = {
@@ -397,19 +397,16 @@ function submitReport(e) {
     contact: fd.get('contact'),
     timestamp: new Date().toLocaleString('en-IN'),
   };
-  // Save to localStorage
-  const reports = JSON.parse(localStorage.getItem('ks_lf_reports') || '[]');
-  reports.unshift(report);
-  localStorage.setItem('ks_lf_reports', JSON.stringify(reports.slice(0, 50))); // Max 50 reports
+  await window.submitFirebaseReport(report);
   e.target.reset();
   renderReports();
   showToast('Report submitted successfully!');
 }
 
-function renderReports() {
+async function renderReports() {
   const container = document.getElementById('reports-container');
   if (!container) return;
-  const reports = JSON.parse(localStorage.getItem('ks_lf_reports') || '[]');
+  const reports = await window.loadFirebaseReports();
   if (!reports.length) {
     container.innerHTML = `
       <div class="empty-state">
