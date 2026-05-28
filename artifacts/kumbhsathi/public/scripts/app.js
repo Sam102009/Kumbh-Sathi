@@ -367,6 +367,8 @@ function shareLocation() {
 /* ===== LOST & FOUND PAGE ===== */
 let activeReportType = 'lost';
 
+let _reportsUnsubscribe = null;
+
 function initLostFound() {
   document.querySelectorAll('.form-tab').forEach(tab => {
     tab.addEventListener('click', () => {
@@ -375,7 +377,11 @@ function initLostFound() {
       activeReportType = tab.dataset.type;
     });
   });
-  renderReports();
+
+  if (typeof window.subscribeToReports === 'function') {
+    if (_reportsUnsubscribe) _reportsUnsubscribe();
+    _reportsUnsubscribe = window.subscribeToReports(renderReports);
+  }
 
   const form = document.getElementById('lf-form');
   if (form) {
@@ -387,7 +393,6 @@ async function submitReport(e) {
   e.preventDefault();
   const fd = new FormData(e.target);
   const report = {
-    id: Date.now(),
     type: activeReportType,
     name: fd.get('name'),
     age: fd.get('age'),
@@ -399,14 +404,21 @@ async function submitReport(e) {
   };
   await window.submitFirebaseReport(report);
   e.target.reset();
-  renderReports();
   showToast('Report submitted successfully!');
 }
 
-async function renderReports() {
+function renderReports(reports) {
   const container = document.getElementById('reports-container');
   if (!container) return;
-  const reports = await window.loadFirebaseReports();
+  if (!reports) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        <p>Loading reports…</p>
+      </div>
+    `;
+    return;
+  }
   if (!reports.length) {
     container.innerHTML = `
       <div class="empty-state">

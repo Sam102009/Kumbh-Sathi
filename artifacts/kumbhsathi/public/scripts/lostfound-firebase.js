@@ -3,7 +3,7 @@ import {
   getFirestore,
   collection,
   addDoc,
-  getDocs,
+  onSnapshot,
   orderBy,
   query,
   serverTimestamp
@@ -33,13 +33,18 @@ window.submitFirebaseReport = async function(report) {
   }
 };
 
-window.loadFirebaseReports = async function() {
-  try {
-    const q = query(collection(db, "lostfound"), orderBy("createdAt", "desc"));
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({ firestoreId: doc.id, ...doc.data() }));
-  } catch (err) {
-    console.error("[KumbhSathi] Firestore read failed:", err);
-    return [];
-  }
+window.subscribeToReports = function(callback) {
+  const q = query(collection(db, "lostfound"), orderBy("createdAt", "desc"));
+  const unsubscribe = onSnapshot(
+    q,
+    (snapshot) => {
+      const reports = snapshot.docs.map(doc => ({ firestoreId: doc.id, ...doc.data() }));
+      callback(reports);
+    },
+    (err) => {
+      console.error("[KumbhSathi] Firestore listener error:", err);
+      callback([]);
+    }
+  );
+  return unsubscribe;
 };
