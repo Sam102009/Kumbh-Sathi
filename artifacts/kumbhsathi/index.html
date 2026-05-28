@@ -736,6 +736,7 @@
 <script src="/scripts/translations.js"></script>
 <script src="/scripts/router.js"></script>
 <script src="/scripts/map.js"></script>
+<script src="/scripts/lostfound.js"></script>
 <script src="/scripts/app.js"></script>
 
 <script>
@@ -766,46 +767,5 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
-<script>
-(function () {
-  var firebaseConfig = {
-    apiKey: "AIzaSyC2EforYq6_MMuhDy2OLTyD-Agtknau8pc",
-    authDomain: "kumbhsathi.firebaseapp.com",
-    projectId: "kumbhsathi",
-    storageBucket: "kumbhsathi.firebasestorage.app",
-    messagingSenderId: "315391398454",
-    appId: "1:315391398454:web:8710cb44bc17541210be97"
-  };
-
-  var app = firebase.initializeApp(firebaseConfig);
-  var db = firebase.firestore();
-
-  window.submitFirebaseReport = async function (report) {
-    await db.collection("lostfound").add({
-      ...report,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-  };
-
-  window.subscribeToReports = function (callback) {
-    return db.collection("lostfound")
-      .orderBy("createdAt", "desc")
-      .onSnapshot(
-        function (snapshot) {
-          var reports = snapshot.docs.map(function (doc) {
-            return Object.assign({ firestoreId: doc.id }, doc.data());
-          });
-          callback(reports);
-        },
-        function (err) {
-          console.error("[KumbhSathi] Firestore error:", err);
-          callback([]);
-        }
-      );
-  };
-})();
-</script>
 </body>
 </html>
