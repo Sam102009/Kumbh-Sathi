@@ -286,20 +286,7 @@ function renderTransport() {
 /* ===== EMERGENCY PAGE ===== */
 function initEmergency() {
   renderHospitals();
-  // First aid accordion
   renderFirstAid();
-  document.querySelectorAll('.first-aid-header').forEach(header => {
-    header.addEventListener('click', () => {
-      const body = header.nextElementSibling;
-      const isOpen = body.classList.contains('open');
-      document.querySelectorAll('.first-aid-body').forEach(b => b.classList.remove('open'));
-      document.querySelectorAll('.first-aid-header').forEach(h => h.classList.remove('open'));
-      if (!isOpen) {
-        body.classList.add('open');
-        header.classList.add('open');
-      }
-    });
-  });
 }
 
 function renderHospitals() {
