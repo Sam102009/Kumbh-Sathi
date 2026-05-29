@@ -572,3 +572,35 @@ body::before {
 #main-content {
   margin-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom));
 }
+
+/* --- First Aid Accordion --- */
+.first-aid-item {
+  background: #fff;
+  border-radius: var(--radius-md);
+  margin-bottom: 10px;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  border: 1px solid rgba(255,111,0,0.12);
+}
+.first-aid-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+.first-aid-header:active { background: var(--orange-light); }
+.first-aid-header h4 {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--dark-brown);
+}
+.first-aid-header .main-icon { color: var(--saffron); font-size: 18px; }
+.first-aid-header .toggle { color: var(--light-brown); font-size: 13px; transition: transform var(--transition); }
+.first-aid-header.open .toggle { transform: rotate(180deg); }
+.first-aid-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+.first-aid-body.open { max-height: 500px; }
+.first-aid-body ul { padding: 0 16px 14px 16px; list-style: disc; }
+.first-aid-body ul li { font-size: 12px; color: var(--light-brown); line-height: 1.7; margin-left: 16px; }
