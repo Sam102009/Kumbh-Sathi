@@ -1,18 +1,20 @@
-const CACHE_NAME = 'kumbhsathi-v3';
+const CACHE_NAME = 'kumbhsathi-v4';
+const BASE = '/Kumbh-Sathi/';
+
 const ASSETS = [
-  './',
-  './index.html',
-  './styles/main.css',
-  './styles/components.css',
-  './styles/animations.css',
-  './scripts/app.js',
-  './scripts/data.js',
-  './scripts/map.js',
-  './scripts/router.js',
-  './scripts/translations.js',
-  './manifest.json',
-  './assets/icons/icon-192.png',
-  './assets/icons/icon-512.png'
+  BASE,
+  BASE + 'index.html',
+  BASE + 'styles/main.css',
+  BASE + 'styles/components.css',
+  BASE + 'styles/animations.css',
+  BASE + 'scripts/app.js',
+  BASE + 'scripts/data.js',
+  BASE + 'scripts/map.js',
+  BASE + 'scripts/router.js',
+  BASE + 'scripts/translations.js',
+  BASE + 'manifest.json',
+  BASE + 'assets/icons/icon-192.png',
+  BASE + 'assets/icons/icon-512.png'
 ];
 
 self.addEventListener('install', e => {
@@ -33,6 +35,6 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request).catch(() => caches.match('./index.html')))
+    caches.match(e.request).then(cached => cached || fetch(e.request).catch(() => caches.match(BASE + 'index.html')))
   );
 });
