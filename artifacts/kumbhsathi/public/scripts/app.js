@@ -498,14 +498,6 @@ window.addEventListener('beforeinstallprompt', e => {
   // Could show a custom install button here
 });
 
-/* ===== SERVICE WORKER REGISTRATION ===== */
-function registerServiceWorker() {
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/service-worker.js')
-      .then(reg => console.log('[SW] Registered:', reg.scope))
-      .catch(err => console.log('[SW] Registration failed:', err));
-  }
-}
 
 /* ===== HOME PAGE QUICK CARDS ===== */
 function initQuickCards() {
@@ -536,9 +528,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initEmergency();
   renderAkharas();
   renderAbout();
-
-  // Register Service Worker
-  registerServiceWorker();
 
   // Update ticker when language changes
   const originalSetLang = window.setLang || function(){};
