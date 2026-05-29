@@ -286,20 +286,7 @@ function renderTransport() {
 /* ===== EMERGENCY PAGE ===== */
 function initEmergency() {
   renderHospitals();
-  // First aid accordion
   renderFirstAid();
-  document.querySelectorAll('.first-aid-header').forEach(header => {
-    header.addEventListener('click', () => {
-      const body = header.nextElementSibling;
-      const isOpen = body.classList.contains('open');
-      document.querySelectorAll('.first-aid-body').forEach(b => b.classList.remove('open'));
-      document.querySelectorAll('.first-aid-header').forEach(h => h.classList.remove('open'));
-      if (!isOpen) {
-        body.classList.add('open');
-        header.classList.add('open');
-      }
-    });
-  });
 }
 
 function renderHospitals() {
@@ -364,93 +351,7 @@ function shareLocation() {
   });
 }
 
-/* ===== LOST & FOUND PAGE ===== */
-let activeReportType = 'lost';
-
-function initLostFound() {
-  document.querySelectorAll('.form-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.form-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      activeReportType = tab.dataset.type;
-    });
-  });
-  renderReports();
-
-  const form = document.getElementById('lf-form');
-  if (form) {
-    form.addEventListener('submit', submitReport);
-  }
-}
-
-function submitReport(e) {
-  e.preventDefault();
-  const fd = new FormData(e.target);
-  const report = {
-    id: Date.now(),
-    type: activeReportType,
-    name: fd.get('name'),
-    age: fd.get('age'),
-    gender: fd.get('gender'),
-    location: fd.get('location'),
-    desc: fd.get('desc'),
-    contact: fd.get('contact'),
-    timestamp: new Date().toLocaleString('en-IN'),
-  };
-  // Save to localStorage
-  const reports = JSON.parse(localStorage.getItem('ks_lf_reports') || '[]');
-  reports.unshift(report);
-  localStorage.setItem('ks_lf_reports', JSON.stringify(reports.slice(0, 50))); // Max 50 reports
-  e.target.reset();
-  renderReports();
-  showToast('Report submitted successfully!');
-}
-
-function renderReports() {
-  const container = document.getElementById('reports-container');
-  if (!container) return;
-  const reports = JSON.parse(localStorage.getItem('ks_lf_reports') || '[]');
-  if (!reports.length) {
-    container.innerHTML = `
-      <div class="empty-state">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <p data-t="no_reports">No reports yet. Reports appear here.</p>
-      </div>
-    `;
-    return;
-  }
-  container.innerHTML = reports.map(r => {
-    const waText = encodeURIComponent(
-      `🔍 *KumbhSathi — ${r.type === 'lost' ? 'LOST PERSON' : 'FOUND PERSON'}*\n\n` +
-      `Name: ${r.name}\nAge: ${r.age}\nGender: ${r.gender}\n` +
-      `Last Seen: ${r.location}\nDetails: ${r.desc}\nContact: ${r.contact}\n` +
-      `Reported: ${r.timestamp}\n\n` +
-      `Download KumbhSathi App for Kumbh Nashik 2027`
-    );
-    return `
-      <div class="report-card ${r.type}">
-        <span class="report-type-badge ${r.type}">${r.type.toUpperCase()}</span>
-        <div style="font-size:15px;font-weight:700;color:var(--dark-brown);margin-bottom:4px;">${r.name}</div>
-        <div style="font-size:12px;color:var(--light-brown);margin-bottom:4px;">
-          <i class="fa-solid fa-user"></i> ${r.age} yrs, ${r.gender} &nbsp;|&nbsp;
-          <i class="fa-solid fa-location-dot"></i> ${r.location}
-        </div>
-        <div style="font-size:12px;color:var(--light-brown);margin-bottom:8px;">${r.desc}</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <a href="tel:${r.contact.replace(/[^0-9]/g,'')}" class="btn btn-primary btn-sm">
-            <i class="fa-solid fa-phone"></i> ${r.contact}
-          </a>
-          <a href="https://wa.me/?text=${waText}" target="_blank" rel="noopener" class="btn btn-whatsapp btn-sm">
-            <i class="fa-brands fa-whatsapp"></i> Share
-          </a>
-        </div>
-        <div style="font-size:10px;color:var(--light-brown);margin-top:8px;">
-          <i class="fa-solid fa-clock"></i> ${r.timestamp}
-        </div>
-      </div>
-    `;
-  }).join('');
-}
+/* ===== LOST & FOUND PAGE — handled by scripts/lostfound.js ===== */
 
 /* ===== NEWS PAGE ===== */
 let activeNewsCategory = 'all';
