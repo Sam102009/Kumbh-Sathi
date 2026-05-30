@@ -68,6 +68,9 @@ function onRouteChange(route) {
   if (route === 'news') {
     if (typeof renderNews === 'function') renderNews();
   }
+  if (route === 'emergency') {
+    if (typeof renderFirstAid === 'function') renderFirstAid();
+  }
   if (route === 'lostfound') {
     if (typeof renderReports === 'function') renderReports();
   }
