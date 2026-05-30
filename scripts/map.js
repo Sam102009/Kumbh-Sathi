@@ -5,18 +5,19 @@
 
 let leafletMap = null;
 let mapLayers = {};
+let routingControl = null;
 let activeFilters = new Set(['ghats','temples','camps','hospitals','police','parking','transport','toilets']);
 
 /* Color-coded marker icons per category */
 const CATEGORY_COLORS = {
-  ghats:     '#1565c0',  // Blue
-  temples:   '#FF6F00',  // Saffron
-  camps:     '#6a1b9a',  // Purple
-  hospitals: '#b71c1c',  // Red
-  police:    '#1b5e20',  // Dark Green
-  parking:   '#e65100',  // Orange
-  transport: '#004d40',  // Teal
-  toilets:   '#4e342e',  // Brown
+  ghats:     '#1565c0',
+  temples:   '#FF6F00',
+  camps:     '#6a1b9a',
+  hospitals: '#b71c1c',
+  police:    '#1b5e20',
+  parking:   '#e65100',
+  transport: '#004d40',
+  toilets:   '#4e342e',
 };
 
 const CATEGORY_ICONS = {
@@ -55,14 +56,74 @@ function createMarkerIcon(category) {
   });
 }
 
+/* Get directions inside the app using Leaflet Routing Machine */
+function getDirections(destLat, destLng, destName) {
+  if (!leafletMap) return;
+
+  if (!navigator.geolocation) {
+    alert('आपके डिवाइस पर जियोलोकेशन समर्थित नहीं है।');
+    return;
+  }
+
+  leafletMap.closePopup();
+
+  // Show loading indicator
+  if (typeof showToast === 'function') showToast('आपकी लोकेशन ढूंढी जा रही है...');
+
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      const userLat = pos.coords.latitude;
+      const userLng = pos.coords.longitude;
+
+      // Remove previous route if exists
+      if (routingControl) {
+        leafletMap.removeControl(routingControl);
+        routingControl = null;
+      }
+
+      routingControl = L.Routing.control({
+        waypoints: [
+          L.latLng(userLat, userLng),
+          L.latLng(destLat, destLng)
+        ],
+        routeWhileDragging: false,
+        addWaypoints: false,
+        fitSelectedRoutes: true,
+        show: true,
+        collapsible: true,
+        lineOptions: {
+          styles: [{ color: '#FF6F00', weight: 5, opacity: 0.8 }]
+        },
+        createMarker: function(i, wp) {
+          const label = i === 0 ? '📍 आप यहाँ हैं' : `🏁 ${destName}`;
+          return L.marker(wp.latLng).bindPopup(label);
+        }
+      }).addTo(leafletMap);
+
+      if (typeof showToast === 'function') showToast(`${destName} का रास्ता दिखाया जा रहा है`);
+    },
+    err => {
+      alert('लोकेशन एक्सेस नहीं मिली। कृपया लोकेशन परमिशन दें।');
+    },
+    { enableHighAccuracy: true, timeout: 10000 }
+  );
+}
+
+/* Clear current route */
+function clearRoute() {
+  if (routingControl && leafletMap) {
+    leafletMap.removeControl(routingControl);
+    routingControl = null;
+  }
+}
+
 /* Initialize the map (called on first visit to map page) */
 function initMap() {
-  if (leafletMap) return; // already initialized
+  if (leafletMap) return;
 
   const mapEl = document.getElementById('leaflet-map');
   if (!mapEl || typeof L === 'undefined') return;
 
-  // Create map centered on Nashik / Ramkund area
   leafletMap = L.map('leaflet-map', {
     center: [20.0024, 73.7882],
     zoom: 14,
@@ -70,7 +131,6 @@ function initMap() {
     attributionControl: true,
   });
 
-  // OpenStreetMap tiles (completely free, no API key)
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     maxZoom: 19,
@@ -87,20 +147,26 @@ function initMap() {
         title: point.name,
       });
 
-      // Popup with Get Directions link
-      const mapsUrl = `https://maps.google.com/?q=${point.lat},${point.lng}`;
       marker.bindPopup(`
-        <div style="font-family:'Poppins',sans-serif;min-width:160px;">
+        <div style="font-family:'Poppins',sans-serif;min-width:180px;">
           <strong style="font-size:13px;color:#3E2723;display:block;margin-bottom:4px;">${point.name}</strong>
-          <p style="font-size:11px;color:#6D4C41;margin:0 0 8px;line-height:1.4;">${point.info}</p>
-          <a href="${mapsUrl}" target="_blank" rel="noopener"
-             style="display:inline-flex;align-items:center;gap:4px;background:#FF6F00;color:#fff;
-                    padding:5px 10px;border-radius:12px;font-size:11px;font-weight:600;
-                    text-decoration:none;">
-            📍 Get Directions
-          </a>
+          <p style="font-size:11px;color:#6D4C41;margin:0 0 10px;line-height:1.4;">${point.info}</p>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button onclick="getDirections(${point.lat},${point.lng},'${point.name.replace(/'/g, '')}')"
+               style="display:inline-flex;align-items:center;gap:4px;background:#FF6F00;color:#fff;
+                      padding:6px 10px;border-radius:12px;font-size:11px;font-weight:600;
+                      border:none;cursor:pointer;">
+              📍 रास्ता देखें
+            </button>
+            <button onclick="clearRoute()"
+               style="display:inline-flex;align-items:center;gap:4px;background:#6D4C41;color:#fff;
+                      padding:6px 10px;border-radius:12px;font-size:11px;font-weight:600;
+                      border:none;cursor:pointer;">
+              ✕ रास्ता हटाएं
+            </button>
+          </div>
         </div>
-      `, { maxWidth: 220 });
+      `, { maxWidth: 240 });
 
       layerGroup.addLayer(marker);
     });
@@ -116,14 +182,13 @@ function initMap() {
     if (cat === 'all') {
       btn.addEventListener('click', () => {
         const showAll = !btn.classList.contains('active');
-        // Toggle all
         Object.keys(mapLayers).forEach(c => {
           if (showAll) {
             activeFilters.add(c);
             if (!leafletMap.hasLayer(mapLayers[c])) mapLayers[c].addTo(leafletMap);
           } else {
             activeFilters.delete(c);
-            if (leafletMap.hasLayer(mapLayers[c]))  leafletMap.removeLayer(mapLayers[c]);
+            if (leafletMap.hasLayer(mapLayers[c])) leafletMap.removeLayer(mapLayers[c]);
           }
         });
         document.querySelectorAll('.map-filter-btn[data-category]').forEach(b => {
@@ -146,3 +211,4 @@ function initMap() {
     }
   });
 }
+   
