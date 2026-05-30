@@ -69,7 +69,7 @@ function onRouteChange(route) {
     if (typeof renderNews === 'function') renderNews();
   }
   if (route === 'emergency') {
-    if (typeof initEmergency === 'function') initEmergency();
+    if (typeof renderFirstAid === 'function') renderFirstAid();
   }
   if (route === 'lostfound') {
     if (typeof renderReports === 'function') renderReports();
