@@ -119,6 +119,43 @@ function getDensityLevel(score) {
   };
 }
 
+const CROWD_LOCATIONS = [
+  { id: 'ramkund', name: 'Ramkund Ghat', name_hi: 'रामकुंड घाट', icon: '💧', area: 'nashik' },
+  { id: 'kushavart', name: 'Kushavart Kund', name_hi: 'कुशावर्त कुंड', icon: '💧', area: 'trimbak' },
+  { id: 'trimbakeshwar', name: 'Trimbakeshwar Temple', name_hi: 'त्र्यंबकेश्वर मंदिर', icon: '🕉️', area: 'trimbak' },
+  { id: 'kalaram', name: 'Kalaram Temple', name_hi: 'कालाराम मंदिर', icon: '🕉️', area: 'nashik' },
+  { id: 'panchavati', name: 'Panchavati Area', name_hi: 'पंचवटी क्षेत्र', icon: '🌿', area: 'nashik' },
+  { id: 'cbs', name: 'CBS Bus Stand', name_hi: 'सीबीएस बस स्टैंड', icon: '🚌', area: 'nashik' },
+  { id: 'nashikroad', name: 'Nashik Road Railway Station', name_hi: 'नाशिक रोड रेलवे स्टेशन', icon: '🚆', area: 'nashik' },
+  { id: 'parking_a', name: 'Parking Zone A', name_hi: 'पार्किंग जोन A', icon: '🅿️', area: 'nashik' },
+  { id: 'civil_hospital', name: 'Civil Hospital', name_hi: 'सिविल अस्पताल', icon: '🏥', area: 'nashik' },
+  { id: 'trimbak_road', name: 'Nashik-Trimbak Road', name_hi: 'नाशिक-त्र्यंबक मार्ग', icon: '🛣️', area: 'nashik' }
+];
+
+function renderCrowd() {
+  const container = document.getElementById('crowd-container');
+  if (!container) return;
+
+  let html = '';
+
+  const nashik = CROWD_LOCATIONS.filter(loc => loc.area === 'nashik');
+  const trimbak = CROWD_LOCATIONS.filter(loc => loc.area === 'trimbak');
+
+  html += '<div class="section-title">नाशिक — मुख्य क्षेत्र</div>';
+
+  nashik.forEach(loc => {
+    html += buildCard(loc);
+  });
+
+  html += '<div class="section-title">त्र्यंबकेश्वर क्षेत्र</div>';
+
+  trimbak.forEach(loc => {
+    html += buildCard(loc);
+  });
+
+  container.innerHTML = html;
+}
+
 function buildCard(loc) {
   const override = crowdOverrides[loc.id];
 
