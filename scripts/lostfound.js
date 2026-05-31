@@ -3,7 +3,7 @@
    Replace APPS_SCRIPT_URL with your deployed Web App URL.
    ===================================================== */
 
-var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwdyCiH2W3q7bGoRMjSl2U3grEuNWSDgg3p-oEqrxpVabbizuVh7V0Qa9XpxLJfhlicWg/exec';
+var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyp_E-2tqiBfAtswJIxIeeq2iH6gwMjjlPZwlxxijqU6RdfZW8UOlcM83Gd9Yay7ZbufQ/exec';
 
 var activeReportType = 'lost';
 

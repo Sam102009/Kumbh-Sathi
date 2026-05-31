@@ -3,7 +3,7 @@
    Auto time-based + Google Sheets manual override
    =================================================== */
 
-const CROWD_SHEET_URL = 'https://script.google.com/macros/s/AKfycbwdyCiH2W3q7bGoRMjSl2U3grEuNWSDgg3p-oEqrxpVabbizuVh7V0Qa9XpxLJfhlicWg/exec?sheet=Crowd';
+const CROWD_SHEET_URL = 'https://script.google.com/macros/s/AKfycbyp_E-2tqiBfAtswJIxIeeq2iH6gwMjjlPZwlxxijqU6RdfZW8UOlcM83Gd9Yay7ZbufQ/exec?sheet=Crowd';
 
 /* Key locations to track */
 const CROWD_LOCATIONS = [
