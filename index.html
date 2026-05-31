@@ -680,6 +680,32 @@
       <div style="height:24px;"></div>
     </section>
 
+    <!-- ================================================
+         PAGE: CROWD DENSITY
+         ================================================ -->
+    <section class="page" id="page-crowd">
+      <div class="page-hero">
+        <h1>भीड़ घनत्व</h1>
+        <p>प्रमुख स्थानों पर वास्तविक समय भीड़ की जानकारी</p>
+        <i class="fa-solid fa-people-group hero-icon"></i>
+      </div>
+      <div style="padding:12px 16px 4px;display:flex;align-items:center;justify-content:space-between;">
+        <span id="crowd-last-updated" style="font-size:11px;color:var(--light-brown);"></span>
+        <button class="crowd-refresh-btn" onclick="loadCrowdOverrides()"><i class="fa-solid fa-rotate"></i> रिफ्रेश</button>
+      </div>
+      <div id="crowd-shahi-alert" class="crowd-shahi-alert">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <p>आज शाही स्नान है! सभी घाटों पर अत्यधिक भीड़ की संभावना है।</p>
+      </div>
+      <div class="crowd-legend">
+        <div class="crowd-legend-item">🟢 कम भीड़</div>
+        <div class="crowd-legend-item">🟡 सामान्य</div>
+        <div class="crowd-legend-item">🟠 अधिक भीड़</div>
+        <div class="crowd-legend-item">🔴 अत्यधिक</div>
+      </div>
+      <div id="crowd-container"></div>
+      <div style="height:16px;"></div>
+    </section>
   </main>
 
   <!-- ===== BOTTOM NAVIGATION ===== -->
