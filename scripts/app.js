@@ -520,14 +520,17 @@ document.addEventListener('DOMContentLoaded', () => {
   initRouter();
 
   // Initialize page-specific content
-  initSchedule();
-  initStay();
-  initTransport();
-  initLostFound();
-  initNews();
-  initEmergency();
-  renderAkharas();
-  renderAbout();
+initSchedule();
+initStay();
+initTransport();
+initLostFound();
+initNews();
+initEmergency();
+
+initCrowd(); // ← ADD THIS LINE
+
+renderAkharas();
+renderAbout();
 
   // Update ticker when language changes
   const originalSetLang = window.setLang || function(){};
