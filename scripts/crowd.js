@@ -170,6 +170,7 @@ function loadCrowdOverrides() {
 }
 
 function initCrowd() {
+  renderCrowd();
   loadCrowdOverrides();
   // Auto refresh every 5 minutes
   setInterval(loadCrowdOverrides, 5 * 60 * 1000);
