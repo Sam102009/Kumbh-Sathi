@@ -1364,56 +1364,6 @@
     font-size: 11px;
   }
 
-.weather-card{
-  background: linear-gradient(135deg,#ff8c00,#ff6b00);
-  color:white;
-  border-radius:20px;
-  padding:18px;
-  margin:15px;
-  box-shadow:0 8px 25px rgba(0,0,0,.15);
-}
-
-.weather-top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.weather-temp{
-  font-size:36px;
-  font-weight:700;
-}
-
-.weather-city{
-  font-size:18px;
-  opacity:.9;
-}
-
-.forecast-row{
-  display:flex;
-  gap:10px;
-  overflow-x:auto;
-  margin-top:15px;
-}
-
-.forecast-item{
-  min-width:75px;
-  background:rgba(255,255,255,.15);
-  padding:10px;
-  border-radius:12px;
-  text-align:center;
-}
-
-.forecast-day{
-  font-size:13px;
-  margin-bottom:5px;
-}
-
-.forecast-temp{
-  font-size:16px;
-  font-weight:600;
-                             }
-
 /* ===== WEATHER WIDGET ===== */
 .weather-card {
   margin: 8px 16px;
