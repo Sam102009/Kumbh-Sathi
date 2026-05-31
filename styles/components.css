@@ -1171,3 +1171,36 @@
 .location-btn i { font-size: 24px; }
 .location-btn-text h4 { font-size: 14px; font-weight: 700; }
 .location-btn-text p  { font-size: 11px; opacity: 0.85; margin-top: 2px; }
+
+/* ===== CROWD DENSITY PAGE ===== */
+.crowd-card {
+  background: #fff;
+  border-radius: var(--radius-md);
+  margin: 0 16px 12px;
+  padding: 14px;
+  box-shadow: var(--shadow-sm);
+  border-left: 4px solid var(--saffron);
+}
+.crowd-card-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.crowd-icon { font-size: 24px; flex-shrink: 0; }
+.crowd-info { flex: 1; }
+.crowd-name { font-size: 14px; font-weight: 700; color: var(--dark-brown); }
+.crowd-name-en { font-size: 11px; color: var(--light-brown); margin-top: 1px; }
+.crowd-note { font-size: 11px; color: var(--saffron); margin-top: 4px; }
+.crowd-badge { flex-shrink: 0; font-size: 10px; font-weight: 700; color: #fff; padding: 4px 8px; border-radius: 12px; white-space: nowrap; }
+.crowd-bar-wrap { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.crowd-bar-bg { flex: 1; height: 8px; background: rgba(0,0,0,0.08); border-radius: 4px; overflow: hidden; }
+.crowd-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+.crowd-score { font-size: 12px; font-weight: 700; min-width: 35px; text-align: right; }
+.crowd-footer { display: flex; align-items: center; justify-content: space-between; }
+.crowd-shahi-alert { display: none; margin: 0 16px 12px; background: rgba(183,28,28,0.1); border: 1.5px solid rgba(183,28,28,0.3); border-radius: var(--radius-md); padding: 12px; align-items: center; gap: 10px; }
+.crowd-shahi-alert i { color: #b71c1c; font-size: 20px; flex-shrink: 0; }
+.crowd-shahi-alert p { font-size: 12px; color: #b71c1c; font-weight: 600; line-height: 1.4; }
+.crowd-legend { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 16px 16px; }
+.crowd-legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--light-brown); }
+.crowd-refresh-btn { display: flex; align-items: center; gap: 6px; background: var(--saffron); color: #fff; border: none; border-radius: 20px; padding: 8px 16px; font-size: 12px; font-weight: 600; cursor: pointer; margin: 0 16px 16px; }
