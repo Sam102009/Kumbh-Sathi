@@ -15,6 +15,7 @@ const ROUTES = {
   'akharas':   { page: 'page-akharas',   nav: null,         more: 'akharas' },
   'about':     { page: 'page-about',     nav: null,         more: 'about' },
   'sponsor':   { page: 'page-sponsor',   nav: null,         more: 'sponsor' },
+  'crowd':     { page: 'page-crowd',     nav: null,         more: 'crowd' },
 };
 
 let currentRoute = 'home';
@@ -67,6 +68,9 @@ function onRouteChange(route) {
   }
   if (route === 'news') {
     if (typeof renderNews === 'function') renderNews();
+  }
+  if (route === 'crowd') {
+    if (typeof initCrowd === 'function') initCrowd();
   }
   if (route === 'emergency') {
     if (typeof renderFirstAid === 'function') renderFirstAid();
