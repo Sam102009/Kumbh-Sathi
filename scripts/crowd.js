@@ -294,3 +294,9 @@ function initCrowd() {
     loadCrowdOverrides();
   }, 5 * 60 * 1000);
     }
+
+// Backup init in case router timing fails
+document.addEventListener('DOMContentLoaded', function() {
+  var hash = window.location.hash.replace('#','');
+  if (hash === 'crowd') setTimeout(initCrowd, 500);
+});
