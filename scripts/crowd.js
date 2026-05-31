@@ -1,3 +1,5 @@
+alert("crowd.js loaded");
+
 const CROWD_SHEET_URL =
   'https://script.google.com/macros/s/AKfycbyp_E-2tqiBfAtswJIxIeeq2iH6gwMjjlPZwlxxijqU6RdfZW8UOlcM83Gd9Yay7ZbufQ/exec?sheet=Crowd';
 
