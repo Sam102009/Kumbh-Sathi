@@ -70,7 +70,7 @@ function onRouteChange(route) {
     if (typeof renderNews === 'function') renderNews();
   }
   if (route === 'crowd') {
-    if (typeof initCrowd === 'function') initCrowd();
+    if (typeof initCrowd === "function") initCrowd(); else setTimeout(function(){ if (typeof initCrowd === "function") initCrowd(); }, 1000);
   }
   if (route === 'emergency') {
     if (typeof renderFirstAid === 'function') renderFirstAid();
