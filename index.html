@@ -710,6 +710,41 @@
       <div id="crowd-container"><div class="crowd-card" style="border-left:4px solid #b71c1c;background:rgba(183,28,28,0.08);"><div class="crowd-card-top"><div class="crowd-icon">💧</div><div class="crowd-info"><div class="crowd-name">रामकुंड घाट</div><div class="crowd-name-en">Ramkund Ghat</div></div><div class="crowd-badge" style="background:#b71c1c;">🔴 Extreme</div></div><div class="crowd-bar-wrap"><div class="crowd-bar-bg"><div class="crowd-bar-fill" style="width:90%;background:#b71c1c;"></div></div><span class="crowd-score" style="color:#b71c1c;">90%</span></div><div class="crowd-footer"><span style="font-size:10px;color:var(--light-brown);">अत्यधिक भीड़ • Demo</span></div></div><div class="crowd-card" style="border-left:4px solid #e65100;background:rgba(230,81,0,0.08);"><div class="crowd-card-top"><div class="crowd-icon">🕉️</div><div class="crowd-info"><div class="crowd-name">त्र्यंबकेश्वर मंदिर</div><div class="crowd-name-en">Trimbakeshwar Temple</div></div><div class="crowd-badge" style="background:#e65100;">🟠 High</div></div><div class="crowd-bar-wrap"><div class="crowd-bar-bg"><div class="crowd-bar-fill" style="width:70%;background:#e65100;"></div></div><span class="crowd-score" style="color:#e65100;">70%</span></div><div class="crowd-footer"><span style="font-size:10px;color:var(--light-brown);">अधिक भीड़ • Demo</span></div></div><div class="crowd-card" style="border-left:4px solid #2e7d32;background:rgba(46,125,50,0.08);"><div class="crowd-card-top"><div class="crowd-icon">🚌</div><div class="crowd-info"><div class="crowd-name">सीबीएस बस स्टैंड</div><div class="crowd-name-en">CBS Bus Stand</div></div><div class="crowd-badge" style="background:#2e7d32;">🟢 Low</div></div><div class="crowd-bar-wrap"><div class="crowd-bar-bg"><div class="crowd-bar-fill" style="width:25%;background:#2e7d32;"></div></div><span class="crowd-score" style="color:#2e7d32;">25%</span></div><div class="crowd-footer"><span style="font-size:10px;color:var(--light-brown);">कम भीड़ • Demo</span></div></div></div>
       <div style="height:16px;"></div>
     </section>
+    <!-- GROUPS PAGE -->
+    <section class="page" id="page-groups">
+      <div class="page-hero">
+        <h1>ग्रुप लोकेशन</h1>
+        <p>परिवार और दोस्तों के साथ लोकेशन शेयर करें</p>
+        <i class="fa-solid fa-people-group hero-icon"></i>
+      </div>
+      <div style="padding:16px;" id="group-setup">
+        <div class="card" style="padding:16px;margin-bottom:12px;">
+          <div style="font-size:14px;font-weight:700;color:var(--dark-brown);margin-bottom:12px;">👤 अपना नाम दर्ज करें</div>
+          <input id="group-member-name" type="text" placeholder="आपका नाम" style="width:100%;padding:10px;border:1.5px solid rgba(255,111,0,0.3);border-radius:8px;font-size:14px;margin-bottom:12px;font-family:inherit;">
+          <button onclick="createGroup()" class="btn btn-primary btn-full" style="margin-bottom:8px;"><i class="fa-solid fa-plus"></i> नया ग्रुप बनाएं</button>
+          <div style="text-align:center;color:var(--light-brown);font-size:12px;margin:8px 0;">— या —</div>
+          <input id="group-join-code" type="text" placeholder="ग्रुप कोड दर्ज करें" style="width:100%;padding:10px;border:1.5px solid rgba(255,111,0,0.3);border-radius:8px;font-size:14px;margin-bottom:8px;font-family:inherit;text-transform:uppercase;">
+          <button onclick="joinGroup()" class="btn btn-outline btn-full"><i class="fa-solid fa-right-to-bracket"></i> ग्रुप से जुड़ें</button>
+        </div>
+      </div>
+      <div style="padding:16px;display:none;" id="group-active">
+        <div class="card" style="padding:14px;margin-bottom:12px;background:linear-gradient(135deg,var(--dark-brown),var(--saffron));">
+          <div style="color:rgba(255,255,255,0.8);font-size:11px;margin-bottom:4px;">ग्रुप कोड</div>
+          <div style="color:#fff;font-size:28px;font-weight:800;letter-spacing:4px;" id="active-group-code"></div>
+          <div style="color:rgba(255,255,255,0.8);font-size:12px;margin-top:4px;">सदस्य: <span id="active-member-name"></span></div>
+          <div style="display:flex;gap:8px;margin-top:10px;">
+            <button onclick="copyGroupCode()" class="btn btn-sm" style="background:rgba(255,255,255,0.2);color:#fff;flex:1;"><i class="fa-solid fa-copy"></i> कॉपी</button>
+            <button onclick="shareGroupWhatsApp()" class="btn btn-sm" style="background:#25D366;color:#fff;flex:1;"><i class="fa-brands fa-whatsapp"></i> शेयर</button>
+          </div>
+        </div>
+        <button onclick="sendPanic()" class="btn btn-full" style="background:#b71c1c;color:#fff;padding:14px;font-size:16px;font-weight:700;margin-bottom:12px;border-radius:var(--radius-md);">🚨 SOS — मैं खो गया!</button>
+        <div class="section-title">सदस्यों की लोकेशन</div>
+        <div id="group-map" style="height:220px;border-radius:var(--radius-md);overflow:hidden;margin:0 0 12px;"></div>
+        <div id="group-members-list"></div>
+        <button onclick="leaveGroup()" class="btn btn-outline btn-full" style="margin-top:12px;color:#b71c1c;border-color:#b71c1c;"><i class="fa-solid fa-right-from-bracket"></i> ग्रुप छोड़ें</button>
+      </div>
+      <div style="height:16px;"></div>
+    </section>
   </main>
 
   <!-- ===== BOTTOM NAVIGATION ===== -->
