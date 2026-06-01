@@ -16,6 +16,7 @@ const ROUTES = {
   'about':     { page: 'page-about',     nav: null,         more: 'about' },
   'sponsor':   { page: 'page-sponsor',   nav: null,         more: 'sponsor' },
   'crowd':     { page: 'page-crowd',     nav: null,         more: 'crowd' },
+  'groups':    { page: 'page-groups',    nav: null,         more: 'groups' },
 };
 
 let currentRoute = 'home';
@@ -68,6 +69,9 @@ function onRouteChange(route) {
   }
   if (route === 'news') {
     if (typeof renderNews === 'function') renderNews();
+  }
+  if (route === 'groups') {
+    if (typeof initGroups === 'function') initGroups();
   }
   if (route === 'crowd') {
     if (typeof initCrowd === "function") initCrowd(); else setTimeout(function(){ if (typeof initCrowd === "function") initCrowd(); }, 1000);
