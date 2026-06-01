@@ -299,12 +299,3 @@ document.addEventListener('DOMContentLoaded', function() {
   if (hash === "crowd") setTimeout(initCrowd, 800);
 });
 
-/* Direct fallback render */
-window.addEventListener('load', function() {
-  setTimeout(function() {
-    var container = document.getElementById('crowd-container');
-    if (container && container.innerHTML.trim() === '') {
-      initCrowd();
-    }
-  }, 2000);
-});

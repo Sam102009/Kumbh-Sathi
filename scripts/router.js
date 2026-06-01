@@ -74,7 +74,7 @@ function onRouteChange(route) {
     if (typeof initGroups === 'function') initGroups();
   }
   if (route === 'crowd') {
-    if (typeof initCrowd === "function") initCrowd(); else setTimeout(function(){ if (typeof initCrowd === "function") initCrowd(); }, 1500);
+    if (typeof initCrowd === "function") initCrowd(); else setTimeout(function(){ if (typeof initCrowd === "function") initCrowd(); }, 3000);
   }
   if (route === 'emergency') {
     if (typeof renderFirstAid === 'function') renderFirstAid();
