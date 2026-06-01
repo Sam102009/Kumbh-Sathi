@@ -717,7 +717,7 @@
     <!-- GROUPS PAGE -->
     <section class="page" id="page-groups">
       <div class="page-hero">
-        <h1>ग्रुप लोकेशन</h1>
+        <h1 data-t="group_title">ग्रुप लोकेशन</h1>
         <p>परिवार और दोस्तों के साथ लोकेशन शेयर करें</p>
         <i class="fa-solid fa-people-group hero-icon"></i>
       </div>
@@ -725,15 +725,15 @@
         <div class="card" style="padding:16px;margin-bottom:12px;">
           <div style="font-size:14px;font-weight:700;color:var(--dark-brown);margin-bottom:12px;">👤 अपना नाम दर्ज करें</div>
           <input id="group-member-name" type="text" placeholder="आपका नाम" style="width:100%;padding:10px;border:1.5px solid rgba(255,111,0,0.3);border-radius:8px;font-size:14px;margin-bottom:12px;font-family:inherit;">
-          <button onclick="createGroup()" class="btn btn-primary btn-full" style="margin-bottom:8px;"><i class="fa-solid fa-plus"></i> नया ग्रुप बनाएं</button>
+          <button onclick="createGroup()" class="btn btn-primary btn-full" style="margin-bottom:8px;"><i class="fa-solid fa-plus"></i> <span data-t="group_create">नया ग्रुप बनाएं</span></button>
           <div style="text-align:center;color:var(--light-brown);font-size:12px;margin:8px 0;">— या —</div>
-          <input id="group-join-code" type="text" placeholder="ग्रुप कोड दर्ज करें" style="width:100%;padding:10px;border:1.5px solid rgba(255,111,0,0.3);border-radius:8px;font-size:14px;margin-bottom:8px;font-family:inherit;text-transform:uppercase;">
+          <input id="group-join-code" type="text" placeholder="ग्रुप कोड दर्ज करें" data-t-placeholder="group_code_placeholder" style="width:100%;padding:10px;border:1.5px solid rgba(255,111,0,0.3);border-radius:8px;font-size:14px;margin-bottom:8px;font-family:inherit;text-transform:uppercase;">
           <button onclick="joinGroup()" class="btn btn-outline btn-full"><i class="fa-solid fa-right-to-bracket"></i> ग्रुप से जुड़ें</button>
         </div>
       </div>
       <div style="padding:16px;display:none;" id="group-active">
         <div class="card" style="padding:14px;margin-bottom:12px;background:linear-gradient(135deg,var(--dark-brown),var(--saffron));">
-          <div style="color:rgba(255,255,255,0.8);font-size:11px;margin-bottom:4px;">ग्रुप कोड</div>
+          <div style="color:rgba(255,255,255,0.8);font-size:11px;margin-bottom:4px;" data-t="group_code_label">ग्रुप कोड</div>
           <div style="color:#fff;font-size:28px;font-weight:800;letter-spacing:4px;" id="active-group-code"></div><span id="group-code-display" style="display:none;"></span>
           <div style="color:rgba(255,255,255,0.8);font-size:12px;margin-top:4px;">सदस्य: <span id="active-member-name"></span></div>
           <div style="display:flex;gap:8px;margin-top:10px;">
@@ -742,7 +742,7 @@
           </div>
         </div>
         <button onclick="sendPanic()" class="btn btn-full" style="background:#b71c1c;color:#fff;padding:14px;font-size:16px;font-weight:700;margin-bottom:12px;border-radius:var(--radius-md);">🚨 SOS — मैं खो गया!</button>
-        <div class="section-title">सदस्यों की लोकेशन</div>
+        <div class="section-title"><span data-t="group_members">सदस्यों की लोकेशन</span></div>
         <div id="group-map" style="height:220px;border-radius:var(--radius-md);overflow:hidden;margin:0 0 12px;"></div>
         <div id="group-members-list"></div>
         <button onclick="leaveGroup()" class="btn btn-outline btn-full" style="margin-top:12px;color:#b71c1c;border-color:#b71c1c;"><i class="fa-solid fa-right-from-bracket"></i> ग्रुप छोड़ें</button>

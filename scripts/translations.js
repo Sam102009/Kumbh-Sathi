@@ -28,6 +28,17 @@ const T = {
     more_about:      'About',
     more_sponsor:    'Advertise',
 
+    /* --- Groups --- */
+    group_title: 'Group Tracking',
+    group_subtitle: 'Stay connected with your family',
+    group_create: 'Create Group',
+    group_join: 'Join Group',
+    group_name_placeholder: 'Enter your name',
+    group_code_placeholder: 'Enter group code',
+    group_leave: 'Leave Group',
+    group_members: 'Members Location',
+    group_sos: 'SOS - I am lost',
+
     /* --- Home Screen --- */
     countdown_label:  'Countdown to First Shahi Snan',
     countdown_days:   'Days',
@@ -201,6 +212,17 @@ const T = {
     card_map:         'नक्शा',
     card_stay:        'ठहरें',
     card_transport:   'परिवहन',
+
+    /* --- Groups --- */
+    group_title: 'ग्रुप ट्रैकिंग',
+    group_subtitle: 'परिवार से जुड़े रहें',
+    group_create: 'ग्रुप बनाएं',
+    group_join: 'ग्रुप जॉइन करें',
+    group_name_placeholder: 'अपना नाम दर्ज करें',
+    group_code_placeholder: 'ग्रुप कोड दर्ज करें',
+    group_leave: 'ग्रुप छोड़ें',
+    group_members: 'सदस्यों की लोकेशन',
+    group_sos: 'SOS - मैं खो गया',
     card_emergency:   'आपातकाल',
     card_lost_found:  'खोया-पाया',
     card_news:        'समाचार',
@@ -364,6 +386,17 @@ const T = {
     latest_news:      'ताज्या बातम्या',
     view_all:         'सर्व पहा',
 
+
+    /* --- Groups --- */
+    group_title: 'ग्रुप ट्रॅकिंग',
+    group_subtitle: 'कुटुंबासोबत जोडलेले राहा',
+    group_create: 'ग्रुप तयार करा',
+    group_join: 'ग्रुप जॉइन करा',
+    group_name_placeholder: 'आपले नाव टाका',
+    group_code_placeholder: 'ग्रुप कोड टाका',
+    group_leave: 'ग्रुप सोडा',
+    group_members: 'सदस्यांचे स्थान',
+    group_sos: 'SOS - मी हरवलो',
     schedule_title:     'कार्यक्रम व वेळापत्रक',
     schedule_subtitle:  'शाही स्नान, सांस्कृतिक व धार्मिक कार्यक्रम',
     filter_all:         'सर्व कार्यक्रम',
