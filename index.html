@@ -723,12 +723,12 @@
       </div>
       <div style="padding:16px;" id="group-setup">
         <div class="card" style="padding:16px;margin-bottom:12px;">
-          <div style="font-size:14px;font-weight:700;color:var(--dark-brown);margin-bottom:12px;">👤 अपना नाम दर्ज करें</div>
-          <input id="group-member-name" type="text" placeholder="आपका नाम" style="width:100%;padding:10px;border:1.5px solid rgba(255,111,0,0.3);border-radius:8px;font-size:14px;margin-bottom:12px;font-family:inherit;">
+          <div style="font-size:14px;font-weight:700;color:var(--dark-brown);margin-bottom:12px;">👤 <span data-t="group_name_label">अपना नाम दर्ज करें</span></div>
+          <input id="group-member-name" type="text" placeholder="आपका नाम" data-t-placeholder="group_name_placeholder" style="width:100%;padding:10px;border:1.5px solid rgba(255,111,0,0.3);border-radius:8px;font-size:14px;margin-bottom:12px;font-family:inherit;">
           <button onclick="createGroup()" class="btn btn-primary btn-full" style="margin-bottom:8px;"><i class="fa-solid fa-plus"></i> <span data-t="group_create">नया ग्रुप बनाएं</span></button>
           <div style="text-align:center;color:var(--light-brown);font-size:12px;margin:8px 0;">— या —</div>
           <input id="group-join-code" type="text" placeholder="ग्रुप कोड दर्ज करें" data-t-placeholder="group_code_placeholder" style="width:100%;padding:10px;border:1.5px solid rgba(255,111,0,0.3);border-radius:8px;font-size:14px;margin-bottom:8px;font-family:inherit;text-transform:uppercase;">
-          <button onclick="joinGroup()" class="btn btn-outline btn-full"><i class="fa-solid fa-right-to-bracket"></i> ग्रुप से जुड़ें</button>
+          <button onclick="joinGroup()" class="btn btn-outline btn-full"><i class="fa-solid fa-right-to-bracket"></i> <span data-t="group_join">ग्रुप से जुड़ें</span></button>
         </div>
       </div>
       <div style="padding:16px;display:none;" id="group-active">
