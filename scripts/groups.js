@@ -33,7 +33,6 @@ function loadGroupInfo() {
 
 /* Create new group */
 function createGroup() {
-  alert('createGroup called');
   var name = document.getElementById('group-member-name').value.trim();
   if (!name) { showToast('कृपया अपना नाम दर्ज करें'); return; }
   var code = generateGroupCode();
