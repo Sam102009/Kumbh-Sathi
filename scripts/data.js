@@ -675,112 +675,48 @@ const FIRST_AID_DATA = [
 ];
 
 /* ===== MAP MARKERS ===== */
+/* ===== MAP MARKERS ===== */
 const MAP_MARKERS = {
   ghats: [
-    { name: 'Ramkund Ghat', lat: 20.0032, lng: 73.7891, info: 'Most sacred ghat — main Shahi Snan location' },
-    { name: 'Kushavart Kund', lat: 19.9322, lng: 73.5308, info: 'Main ghat at Trimbakeshwar for Shahi Snan' },
-    { name: 'Someshwar Ghat', lat: 20.0089, lng: 73.7944, info: 'Popular ghat for daily ritual baths' },
-    { name: 'Holkar Bridge Ghat', lat: 19.9998, lng: 73.7921, info: 'Ghat near Holkar Bridge, Godavari river' },
+    { name: 'Ramkund Ghat', lat: 20.0067, lng: 73.7935, info: 'Most sacred ghat — main Shahi Snan location' },
+    { name: 'Kushavart Kund', lat: 19.9324, lng: 73.5284, info: 'Main ghat at Trimbakeshwar for Shahi Snan' },
+    { name: 'Someshwar Ghat', lat: 20.0163, lng: 73.7371, info: 'Popular ghat for daily ritual baths' },
+    { name: 'Holkar Bridge Ghat', lat: 20.0080, lng: 73.7919, info: 'Ghat near Holkar Bridge, Godavari river' },
   ],
   temples: [
-    { name: 'Trimbakeshwar Jyotirlinga', lat: 19.9322, lng: 73.5308, info: 'One of 12 Jyotirlingas — most sacred temple of Kumbh' },
-    { name: 'Kapaleshwar Temple', lat: 20.0031, lng: 73.7889, info: 'Ancient Shiva temple at Ramkund' },
-    { name: 'Sundernarayan Temple', lat: 20.0028, lng: 73.7883, info: 'Beautiful Vishnu temple near Ramkund' },
-    { name: 'Muktidhaam Temple', lat: 20.0209, lng: 73.8174, info: 'Marble replica of 12 Jyotirlingas' },
-    { name: 'Kalaram Temple', lat: 19.9956, lng: 73.7899, info: 'Famous Ram temple in Panchavati' },
+    { name: 'Trimbakeshwar Jyotirlinga', lat: 19.9321, lng: 73.5312, info: 'One of 12 Jyotirlingas — most sacred temple of Kumbh' },
+    { name: 'Kapaleshwar Temple', lat: 20.0075, lng: 73.7938, info: 'Ancient Shiva temple at Ramkund' },
+    { name: 'Sundernarayan Temple', lat: 20.0063, lng: 73.7916, info: 'Beautiful Vishnu temple near Ramkund' },
+    { name: 'Muktidhaam Temple', lat: 19.9546, lng: 73.8341, info: 'Marble replica of 12 Jyotirlingas' },
   ],
   camps: [
-    { name: 'Juna Akhara Camp', lat: 20.0018, lng: 73.7865, info: 'Camp of Juna Akhara — largest akhara at Kumbh' },
-    { name: 'Niranjani Akhara Camp', lat: 20.0041, lng: 73.7898, info: 'Camp of Niranjani Akhara' },
-    { name: 'Mahanirvani Akhara Camp', lat: 19.9995, lng: 73.7856, info: 'Camp of Mahanirvani Akhara' },
-    { name: 'Peshwai Ground', lat: 20.0062, lng: 73.7925, info: 'Main procession ground for Peshwai ceremonies' },
+    { name: 'Juna Akhara Camp', lat: 20.0018, lng: 73.8155, info: 'Camp of Juna Akhara — Tapovan Sadhugram' },
+    { name: 'Niranjani Akhara Camp', lat: 20.0025, lng: 73.8160, info: 'Camp of Niranjani Akhara — Tapovan Sadhugram' },
+    { name: 'Mahanirvani Akhara Camp', lat: 20.0030, lng: 73.8145, info: 'Camp of Mahanirvani Akhara — Tapovan Sadhugram' },
+    { name: 'Peshwai Ground', lat: 19.9980, lng: 73.8100, info: 'Main procession ground — Tapovan entry' },
   ],
   hospitals: [
-    { name: 'Civil Hospital Nashik', lat: 19.9978, lng: 73.7813, info: '24/7 Emergency — 0253-2577000' },
-    { name: 'Kumbh Medical Camp (Main)', lat: 20.0025, lng: 73.7880, info: 'Free medical camp at Ramkund — 24/7' },
-    { name: 'Trimbak Medical Camp', lat: 19.9335, lng: 73.5298, info: 'Medical camp near Trimbakeshwar Temple' },
-    { name: 'Wockhardt Hospital', lat: 19.9876, lng: 73.7732, info: 'Private hospital with emergency care' },
+    { name: 'Civil Hospital Nashik', lat: 19.9984, lng: 73.7836, info: '24/7 Emergency — 0253-2577000' },
+    { name: 'Kumbh Medical Camp (Main)', lat: 20.0020, lng: 73.8150, info: 'Free medical camp at Tapovan — 24/7' },
+    { name: 'Trimbak Medical Camp', lat: 19.9375, lng: 73.5350, info: 'Medical camp near Trimbakeshwar Mela Ground' },
   ],
   police: [
-    { name: 'Ramkund Police Post', lat: 20.0030, lng: 73.7893, info: 'Kumbh security police post at Ramkund' },
-    { name: 'Panchavati Police Station', lat: 20.0010, lng: 73.7856, info: 'Main police station — 0253-2510888' },
-    { name: 'Trimbakeshwar Police', lat: 19.9328, lng: 73.5290, info: 'Police station at Trimbakeshwar' },
+    { name: 'Ramkund Police Post', lat: 20.0068, lng: 73.7936, info: 'Kumbh security police post at Ramkund' },
+    { name: 'CBS Police Station', lat: 19.9981, lng: 73.7818, info: 'Sarkarwada Police Station' },
+    { name: 'Trimbakeshwar Police', lat: 19.9348, lng: 73.5290, info: 'Police station at Trimbakeshwar' },
   ],
   parking: [
-    { name: 'Parking Zone A (Nashik)', lat: 20.0102, lng: 73.7836, info: 'Capacity: 5,000 vehicles. Shuttle available.' },
-    { name: 'Parking Zone B', lat: 19.9968, lng: 73.7948, info: 'Capacity: 3,000 vehicles. 2km from Ramkund.' },
-    { name: 'Trimbak Parking', lat: 19.9345, lng: 73.5315, info: 'Parking for Trimbakeshwar visitors.' },
+    { name: 'Parking Zone A', lat: 19.9850, lng: 73.8200, info: 'Aurangabad Road approach — Shuttle available' },
+    { name: 'Parking Zone B', lat: 20.0300, lng: 73.7800, info: 'Makhmalabad Road approach — 2km from Ramkund' },
+    { name: 'Trimbak Parking', lat: 19.9372, lng: 73.5385, info: 'Pahine Road/Trimbak entry parking' },
   ],
   transport: [
-    { name: 'Nashik Bus Stand (CBS)', lat: 20.0008, lng: 73.7804, info: 'Main MSRTC bus stand — Free Kumbh shuttle point' },
-    { name: 'Nashik Road Railway Station', lat: 19.9929, lng: 73.8209, info: 'Main railway station, 8km from Ramkund' },
-    { name: 'Nashik City Railway Station', lat: 20.0002, lng: 73.7936, info: 'City railway station closer to Ramkund' },
+    { name: 'Nashik Bus Stand (CBS)', lat: 19.9972, lng: 73.7788, info: 'Thakkar Bazar — Free Kumbh shuttle point' },
+    { name: 'Nashik Road Railway Station', lat: 19.9534, lng: 73.8373, info: 'Main railway station serving Nashik city' },
   ],
   toilets: [
-    { name: 'Toilet Complex 1 (Ramkund)', lat: 20.0033, lng: 73.7900, info: 'Mobile toilet complex — 50 units' },
-    { name: 'Toilet Complex 2 (Panchavati)', lat: 20.0055, lng: 73.7914, info: 'Permanent toilet facility' },
-    { name: 'Toilet Complex 3 (Trimbakeshwar)', lat: 19.9330, lng: 73.5285, info: 'Toilet facility near Kushavart Kund' },
+    { name: 'Toilet Complex 1 (Ramkund)', lat: 20.0070, lng: 73.7940, info: 'Mobile toilet complex near Ramkund' },
+    { name: 'Toilet Complex 2 (Panchavati)', lat: 20.0025, lng: 73.8120, info: 'Toilet facility near Tapovan/Panchavati' },
+    { name: 'Toilet Complex 3 (Trimbakeshwar)', lat: 19.9360, lng: 73.5320, info: 'Toilet facility near Trimbakeshwar' },
   ],
 };
-
-/* ===== BREAKING NEWS TICKER ===== */
-const TICKER_ITEMS = {
-  en: [
-    '🔔 First Shahi Snan on August 29, 2027 at Ramkund Ghat, Nashik',
-    '🕉️ Free shuttle service between Nashik and Trimbakeshwar',
-    '📢 Register for free accommodation at government dharamshalas',
-    '⚠️ Carry identity proof for entry to restricted zones',
-    '🚑 Emergency helpline: 108 | Police: 100 | Control Room: 1800-XXX-XXXX',
-    '🙏 Kumbh Mela Nashik 2027 — Jai Jai Gange!',
-  ],
-  hi: [
-    '🔔 प्रथम शाही स्नान 29 अगस्त 2027 को रामकुंड घाट, नाशिक',
-    '🕉️ नाशिक-त्र्यंबकेश्वर के बीच मुफ्त शटल सेवा',
-    '📢 सरकारी धर्मशाला में मुफ्त ठहरने के लिए पंजीकरण करें',
-    '⚠️ प्रतिबंधित क्षेत्रों में प्रवेश के लिए पहचान पत्र साथ रखें',
-    '🚑 आपातकालीन हेल्पलाइन: 108 | पुलिस: 100 | नियंत्रण कक्ष: 1800-XXX-XXXX',
-    '🙏 कुंभ मेला नाशिक 2027 — जय जय गंगे!',
-  ],
-  mr: [
-    '🔔 पहिले शाही स्नान 29 ऑगस्ट 2027 रोजी रामकुंड घाट, नाशिक',
-    '🕉️ नाशिक-त्र्यंबकेश्वर दरम्यान मोफत शटल सेवा',
-    '📢 सरकारी धर्मशाळेत मोफत राहण्यासाठी नोंदणी करा',
-    '⚠️ प्रतिबंधित क्षेत्रात प्रवेशासाठी ओळखपत्र सोबत ठेवा',
-    '🚑 आणीबाणी हेल्पलाइन: 108 | पोलिस: 100 | नियंत्रण कक्ष: 1800-XXX-XXXX',
-    '🙏 कुंभ मेळा नाशिक 2027 — जय जय गंगे!',
-  ],
-};
-
-/* ===== ABOUT KUMBH CONTENT ===== */
-const ABOUT_CONTENT = {
-  what_is_kumbh_en: `Kumbh Mela is the world's largest religious gathering, attended by hundreds of millions of pilgrims from across the globe. It is held at four sacred locations in India — Prayagraj, Haridwar, Nashik, and Ujjain — based on a rotation linked to the positions of Jupiter, the Sun, and the Moon in the zodiac.
-
-The name "Kumbh" refers to the holy pitcher (kumbh/kalash) of nectar (amrit) that emerged during the churning of the cosmic ocean (Samudra Manthan). Drops of this nectar are believed to have fallen at these four locations, making them eternally sacred.
-
-The origins of Kumbh Mela trace back thousands of years to the Vedic and Puranic traditions. It is mentioned in the Rig Veda and various Puranas. The current systematic form of Kumbh Mela is believed to have been organized by Adi Shankaracharya in the 8th century CE.`,
-
-  nashik_special_en: `Nashik, situated on the banks of the sacred Godavari river in Maharashtra, is one of the four Kumbh Mela sites. The Nashik Kumbh is also known as "Simhastha" and occurs when Jupiter is in Leo (Simha) and the Sun is in Aries (Mesh).
-
-Trimbakeshwar, located 28km from Nashik, is the source of the Godavari river and home to one of the 12 sacred Jyotirlingas (divine light manifestations of Lord Shiva). The Shahi Snan at Nashik's Ramkund and Trimbakeshwar's Kushavart Kund are considered among the most purifying acts in Hindu religious tradition.
-
-Nashik is also deeply connected to the Ramayana — it is the place where Lord Rama, Sita, and Lakshmana spent significant years of their 14-year exile at Panchavati. The sacred banyan trees at Panchavati still stand.`,
-
-  shahi_significance_en: `The "Shahi Snan" (Royal Bath) is the most sacred and spectacular event of the Kumbh Mela. The word "Shahi" means royal, and these bathing processions involve elaborate, grand processions of akharas (monastic orders) with their saints, elephants, horses, and decorated chariots.
-
-The timing of each Shahi Snan is determined by precise astronomical calculations based on the positions of the sun, moon, and Jupiter. Bathing at these specific times is believed to purify the soul of all sins accumulated over multiple lifetimes and to grant moksha (liberation from the cycle of rebirth).
-
-The sequence of akharas in the Shahi Snan procession follows a strict historical order determined centuries ago. Witnessing or participating in the Shahi Snan is considered among the highest religious privileges in Hindu tradition.`,
-};
-
-/* ===== GALLERY IMAGES ===== */
-const GALLERY_IMAGES = [
-  { src: 'https://picsum.photos/seed/kumbh1/200/200', alt: 'Ghat at Nashik' },
-  { src: 'https://picsum.photos/seed/kumbh2/200/200', alt: 'Ramkund Puja' },
-  { src: 'https://picsum.photos/seed/kumbh3/200/200', alt: 'Trimbakeshwar Temple' },
-  { src: 'https://picsum.photos/seed/kumbh4/200/200', alt: 'Akhara Procession' },
-  { src: 'https://picsum.photos/seed/kumbh5/200/200', alt: 'Godavari River' },
-  { src: 'https://picsum.photos/seed/kumbh6/200/200', alt: 'Devotees at Ghat' },
-  { src: 'https://picsum.photos/seed/kumbh7/200/200', alt: 'Lamps at Ghat' },
-  { src: 'https://picsum.photos/seed/kumbh8/200/200', alt: 'Sadhus at Kumbh' },
-  { src: 'https://picsum.photos/seed/kumbh9/200/200', alt: 'Nashik Market' },
-];
