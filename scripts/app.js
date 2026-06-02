@@ -535,3 +535,19 @@ renderAbout();
   // Update ticker when language changes
   const originalSetLang = window.setLang || function(){};
 });
+
+/* Watch for crowd page activation */
+(function() {
+  var crowdPage = document.getElementById('page-crowd');
+  if (!crowdPage) return;
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(m) {
+      if (crowdPage.classList.contains('active')) {
+        setTimeout(function() {
+          if (typeof renderCrowd === 'function') renderCrowd();
+        }, 100);
+      }
+    });
+  });
+  observer.observe(crowdPage, { attributes: true, attributeFilter: ['class'] });
+})();
