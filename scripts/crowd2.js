@@ -11,7 +11,8 @@ var LOCATIONS = [
   { id: 'parking_a', name: 'Parking Zone A', name_hi: 'पार्किंग जोन A', icon: '🅿️', area: 'nashik' }
 ];
 
-function getScore(id) {
+function getScore(id, loc) {
+  if (loc && loc.overrideScore) return loc.overrideScore;
   var h = new Date().getHours();
   var base = 20;
   if (h >= 4 && h < 7) base = 60;
@@ -38,7 +39,7 @@ function drawCrowd() {
   var html = '<div class="section-title">नाशिक — मुख्य क्षेत्र</div>';
   
   LOCATIONS.filter(function(l){ return l.area === 'nashik'; }).forEach(function(loc) {
-    var score = getScore(loc.id);
+    var score = getScore(loc.id, loc);
     var lv = getLevel(score);
     html += '<div class="crowd-card" style="border-left:4px solid ' + lv.color + ';background:rgba(0,0,0,0.03);margin-bottom:10px;padding:12px;border-radius:8px;">';
     html += '<div style="display:flex;justify-content:space-between;align-items:center;">';
@@ -55,7 +56,7 @@ function drawCrowd() {
   html += '<div class="section-title" style="margin-top:16px;">त्र्यंबकेश्वर क्षेत्र</div>';
   
   LOCATIONS.filter(function(l){ return l.area === 'trimbak'; }).forEach(function(loc) {
-    var score = getScore(loc.id);
+    var score = getScore(loc.id, loc);
     var lv = getLevel(score);
     html += '<div class="crowd-card" style="border-left:4px solid ' + lv.color + ';background:rgba(0,0,0,0.03);margin-bottom:10px;padding:12px;border-radius:8px;">';
     html += '<div style="display:flex;justify-content:space-between;align-items:center;">';
@@ -75,3 +76,34 @@ function drawCrowd() {
 
 function initCrowd() { drawCrowd(); }
 function loadCrowdOverrides() { drawCrowd(); }
+
+/* Fetch overrides from Google Sheet */
+var CROWD_URL = 'https://script.google.com/macros/s/AKfycbyp_E-2tqiBfAtswJIxIeeq2iH6gwMjjlPZwlxxijqU6RdfZW8UOlcM83Gd9Yay7ZbufQ/exec?sheet=Crowd';
+
+function loadCrowdOverrides() {
+  fetch(CROWD_URL)
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      if (Array.isArray(data)) {
+        data.forEach(function(row) {
+          if (row.location && row.override) {
+            LOCATIONS.forEach(function(loc) {
+              if (loc.id === row.location) {
+                loc.overrideScore = parseInt(row.override);
+                loc.note = row.note || '';
+              }
+            });
+          }
+        });
+      }
+      drawCrowd();
+    })
+    .catch(function() {
+      drawCrowd();
+    });
+}
+
+function initCrowd() {
+  drawCrowd();
+  loadCrowdOverrides();
+}
