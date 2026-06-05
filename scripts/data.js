@@ -683,8 +683,8 @@ const MAP_MARKERS = {
     { name: 'Holkar Bridge Ghat', lat: 19.9987, lng: 73.7923, info: 'Ghat near Holkar Bridge, Godavari river' },
   ],
   temples: [
-    { name: 'Trimbakeshwar Jyotirlinga', lat: 19.9330, lng: 73.5291, info: 'One of 12 Jyotirlingas — most sacred temple of Kumbh' },
-    { name: 'Kapaleshwar Temple', lat: 19.9990, lng: 73.7895, info: 'Ancient Shiva temple at Ramkund' },
+    { name: 'Trimbakeshwar Jyotirlinga', lat: 19.9321, lng: 73.5304, info: 'One of 12 Jyotirlingas — most sacred temple of Kumbh' },
+    { name: 'Kapaleshwar Temple', lat: 20.0110, lng: 73.7909, info: 'Ancient Shiva temple at Ramkund' },
     { name: 'Sundernarayan Temple', lat: 20.0032, lng: 73.7882, info: 'Beautiful Vishnu temple near Ramkund' },
     { name: 'Muktidhaam Temple', lat: 20.0210, lng: 73.8176, info: 'Marble replica of 12 Jyotirlingas' },
   ],
@@ -705,14 +705,14 @@ const MAP_MARKERS = {
     { name: 'Trimbakeshwar Police', lat: 19.9325, lng: 73.5286, info: 'Police station at Trimbakeshwar' },
   ],
   parking: [
-    { name: 'Parking Zone A (Nashik)', lat: 20.0098, lng: 73.7834, info: 'Capacity: 5,000 vehicles. Shuttle available.' },
-    { name: 'Parking Zone B', lat: 19.9965, lng: 73.7945, info: 'Capacity: 3,000 vehicles. 2km from Ramkund.' },
-    { name: 'Trimbak Parking', lat: 19.9350, lng: 73.5310, info: 'Parking for Trimbakeshwar visitors.' },
+    { name: 'Parking Zone A (Nashik)', lat: 20.0085, lng: 73.7920, info: 'Capacity: 5,000 vehicles. Shuttle available.' },
+    { name: 'Parking Zone B', lat: 19.9945, lng: 73.7830, info: 'Capacity: 3,000 vehicles. 2km from Ramkund.' },
+    { name: 'Trimbak Parking', lat: 19.9328, lng: 73.5303, info: 'Parking for Trimbakeshwar visitors.' },
   ],
   transport: [
-    { name: 'Nashik Bus Stand (CBS)', lat: 20.0004, lng: 73.7802, info: 'Main MSRTC bus stand — Free Kumbh shuttle point' },
-    { name: 'Nashik Road Railway Station', lat: 20.0012, lng: 73.8256, info: 'Main railway station, 8km from Ramkund' },
-    { name: 'Nashik City Railway Station', lat: 19.9999, lng: 73.7934, info: 'City railway station closer to Ramkund' },
+    { name: 'Nashik Bus Stand (CBS)', lat: 19.9955, lng: 73.7820, info: 'Main MSRTC bus stand — Free Kumbh shuttle point' },
+    { name: 'Nashik Road Railway Station', lat: 19.9515, lng: 73.8242, info: 'Main railway station, 8km from Ramkund' },
+    { name: 'Nashik City Railway Station', lat: 19.9975, lng: 73.7898, info: 'City railway station closer to Ramkund' },
   ],
   toilets: [
     { name: 'Toilet Complex 1 (Ramkund)', lat: 20.0030, lng: 73.7898, info: 'Mobile toilet complex — 50 units' },
