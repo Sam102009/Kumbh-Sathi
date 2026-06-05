@@ -677,6 +677,10 @@ const FIRST_AID_DATA = [
 /* ===== MAP MARKERS ===== */
 const MAP_MARKERS = {
   ghats: [
+    { name: 'Ramkund Ghat', lat: 20.0094, lng: 73.7915, info: 'Main bathing ghat for Kumbh Mela' },
+    { name: 'Lakshmikund Ghat', lat: 20.0040, lng: 73.7925, info: 'Sacred ghat on Godavari river' },
+    { name: 'Sita Gumpha', lat: 20.0098, lng: 73.7941, info: 'Cave where Sita stayed during exile' },
+    { name: 'Tapovan Temple', lat: 20.0076, lng: 73.8153, info: 'Temple at Tapovan area' },
     { name: 'Ramkund Ghat', lat: 20.0026, lng: 73.7887, info: 'Most sacred ghat — main Shahi Snan location' },
     { name: 'Kushavart Kund', lat: 19.9333, lng: 73.5289, info: 'Main ghat at Trimbakeshwar for Shahi Snan' },
     { name: 'Someshwar Ghat', lat: 20.0088, lng: 73.7943, info: 'Popular ghat for daily ritual baths' },
