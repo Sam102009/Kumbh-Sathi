@@ -28,6 +28,15 @@ const T = {
     more_about:      'About',
     more_sponsor:    'Advertise',
 
+
+    /* --- Crowd --- */
+    crowd_title: 'Crowd Density',
+    crowd_subtitle: 'Real-time crowd info at key locations',
+    crowd_refresh: 'Refresh',
+    crowd_low: 'Low',
+    crowd_moderate: 'Moderate',
+    crowd_high: 'High',
+    crowd_extreme: 'Extreme',
     /* --- Groups --- */
     group_title: 'Group Tracking',
     group_subtitle: 'Stay connected with your family',
@@ -213,6 +222,15 @@ const T = {
     card_stay:        'ठहरें',
     card_transport:   'परिवहन',
 
+
+    /* --- Crowd --- */
+    crowd_title: 'भीड़ घनत्व',
+    crowd_subtitle: 'प्रमुख स्थानों पर वास्तविक समय भीड़ की जानकारी',
+    crowd_refresh: 'रिफ्रेश',
+    crowd_low: 'कम',
+    crowd_moderate: 'सामान्य',
+    crowd_high: 'अधिक',
+    crowd_extreme: 'अत्यधिक',
     /* --- Groups --- */
     group_title: 'ग्रुप ट्रैकिंग',
     group_subtitle: 'परिवार से जुड़े रहें',
@@ -387,6 +405,15 @@ const T = {
     view_all:         'सर्व पहा',
 
 
+
+    /* --- Crowd --- */
+    crowd_title: 'गर्दी घनता',
+    crowd_subtitle: 'प्रमुख ठिकाणी रिअल-टाइम गर्दीची माहिती',
+    crowd_refresh: 'रिफ्रेश',
+    crowd_low: 'कमी',
+    crowd_moderate: 'सामान्य',
+    crowd_high: 'जास्त',
+    crowd_extreme: 'अत्यधिक',
     /* --- Groups --- */
     group_title: 'ग्रुप ट्रॅकिंग',
     group_subtitle: 'कुटुंबासोबत जोडलेले राहा',
