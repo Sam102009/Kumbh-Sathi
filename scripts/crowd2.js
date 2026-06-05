@@ -26,10 +26,10 @@ function getScore(id, loc) {
 }
 
 function getLevel(score) {
-  if (score >= 85) return { label: 'Extreme', label_hi: 'अत्यधिक', color: '#b71c1c', emoji: '🔴' };
-  if (score >= 65) return { label: 'High', label_hi: 'अधिक', color: '#e65100', emoji: '🟠' };
-  if (score >= 40) return { label: 'Moderate', label_hi: 'सामान्य', color: '#f9a825', emoji: '🟡' };
-  return { label: 'Low', label_hi: 'कम', color: '#2e7d32', emoji: '🟢' };
+  if (score >= 85) return { label: t('crowd_extreme') || 'Extreme', label_hi: 'अत्यधिक', color: '#b71c1c', emoji: '🔴' };
+  if (score >= 65) return { label: t('crowd_high') || 'High', label_hi: 'अधिक', color: '#e65100', emoji: '🟠' };
+  if (score >= 40) return { label: t('crowd_moderate') || 'Moderate', label_hi: 'सामान्य', color: '#f9a825', emoji: '🟡' };
+  return { label: t('crowd_low') || 'Low', label_hi: 'कम', color: '#2e7d32', emoji: '🟢' };
 }
 
 function drawCrowd() {
