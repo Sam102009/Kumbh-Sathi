@@ -694,12 +694,12 @@
     <section class="page" id="page-crowd">
       <div class="page-hero">
         <h1 data-t="crowd_title">भीड़ घनत्व</h1>
-        <p>प्रमुख स्थानों पर वास्तविक समय भीड़ की जानकारी</p>
+        <p data-t="crowd_subtitle">प्रमुख स्थानों पर वास्तविक समय भीड़ की जानकारी</p>
         <i class="fa-solid fa-people-group hero-icon"></i>
       </div>
       <div style="padding:12px 16px 4px;display:flex;align-items:center;justify-content:space-between;">
         <span id="crowd-last-updated" style="font-size:11px;color:var(--light-brown);"></span>
-        <button class="crowd-refresh-btn" onclick="loadCrowdOverrides()"><i class="fa-solid fa-rotate"></i> रिफ्रेश</button>
+        <button class="crowd-refresh-btn" onclick="loadCrowdOverrides()"><i class="fa-solid fa-rotate"></i> <span data-t="crowd_refresh">रिफ्रेश</span></button>
       </div>
       <div id="crowd-shahi-alert" class="crowd-shahi-alert">
         <i class="fa-solid fa-triangle-exclamation"></i>
