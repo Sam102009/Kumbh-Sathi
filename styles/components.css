@@ -404,7 +404,7 @@
   white-space: nowrap;
   font-size: 12px;
   font-weight: 500;
-  animation: tickerScroll 35s linear infinite;
+  animation: tickerScroll 60s linear infinite;
   display: inline-block;
 }
 
