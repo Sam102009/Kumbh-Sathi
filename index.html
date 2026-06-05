@@ -59,7 +59,11 @@
     </div>
   </header>
   <!-- ===== MAIN CONTENT ===== -->
-  <main id="main-content">
+  
+<div id="offline-banner" style="display:none;background:#b71c1c;color:#fff;text-align:center;padding:8px 16px;font-size:13px;font-weight:600;">
+  📡 आप ऑफलाइन हैं — कैश्ड डेटा दिखाया जा रहा है
+</div>
+<main id="main-content">
 
     <!-- ================================================
          PAGE: HOME
@@ -841,5 +845,20 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <script>if("serviceWorker" in navigator){navigator.serviceWorker.register("./sw.js").then(function(reg){console.log("SW registered");}).catch(function(e){console.log("SW error",e);});}</script>
+
+<script>
+function updateOnlineStatus() {
+  var banner = document.getElementById('offline-banner');
+  if (!banner) return;
+  if (navigator.onLine) {
+    banner.style.display = 'none';
+  } else {
+    banner.style.display = 'block';
+  }
+}
+window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
+updateOnlineStatus();
+</script>
 </body>
 </html>
