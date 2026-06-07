@@ -45,6 +45,9 @@
   <div id="splash-screen" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;background:#fff;">
   <img src="assets/icons/splash.png" style="width:100%;height:100%;object-fit:cover;">
 </div>
+<div id="splash-screen" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;background:#fff;">
+  <img src="assets/icons/splash.png" style="width:100%;height:100%;object-fit:cover;">
+</div>
 <header id="app-header">
     <div class="header-logo" id="header-logo-btn" style="cursor:pointer;">
       <img src="assets/icons/icon-512.png" style="width:40px;height:40px;object-fit:contain;border-radius:50%;">
@@ -860,6 +863,17 @@ function updateOnlineStatus() {
 window.addEventListener('online', updateOnlineStatus);
 window.addEventListener('offline', updateOnlineStatus);
 updateOnlineStatus();
+</script>
+
+<script>
+setTimeout(function() {
+  var splash = document.getElementById('splash-screen');
+  if (splash) {
+    splash.style.transition = 'opacity 0.5s ease';
+    splash.style.opacity = '0';
+    setTimeout(function() { splash.style.display = 'none'; }, 500);
+  }
+}, 2500);
 </script>
 
 <script>
