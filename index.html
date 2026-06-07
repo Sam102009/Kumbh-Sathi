@@ -866,25 +866,29 @@ updateOnlineStatus();
 </script>
 
 <script>
-setTimeout(function() {
-  var splash = document.getElementById('splash-screen');
-  if (splash) {
-    splash.style.transition = 'opacity 0.5s ease';
-    splash.style.opacity = '0';
-    setTimeout(function() { splash.style.display = 'none'; }, 500);
-  }
-}, 2500);
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    var splash = document.getElementById('splash-screen');
+    if (splash) {
+      splash.style.transition = 'opacity 0.5s ease';
+      splash.style.opacity = '0';
+      setTimeout(function() { splash.remove(); }, 500);
+    }
+  }, 2000);
+});
 </script>
 
 <script>
-setTimeout(function() {
-  var splash = document.getElementById('splash-screen');
-  if (splash) {
-    splash.style.transition = 'opacity 0.5s ease';
-    splash.style.opacity = '0';
-    setTimeout(function() { splash.style.display = 'none'; }, 500);
-  }
-}, 2500);
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    var splash = document.getElementById('splash-screen');
+    if (splash) {
+      splash.style.transition = 'opacity 0.5s ease';
+      splash.style.opacity = '0';
+      setTimeout(function() { splash.remove(); }, 500);
+    }
+  }, 2000);
+});
 </script>
 </body>
 </html>
