@@ -68,7 +68,7 @@ function onRouteChange(route) {
     if (typeof initMap === 'function') initMap();
   }
   if (route === 'news') {
-    if (typeof renderNews === 'function') renderNews();
+    if (typeof initNews === "function") initNews();
   }
   if (route === 'groups') {
     if (typeof initGroups === 'function') initGroups();
