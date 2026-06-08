@@ -410,6 +410,7 @@ function fetchAndRenderNews() {
   fetch(GAS_URL + '?sheet=News')
     .then(r => r.json())
     .then(rows => {
+      console.log("News rows:", rows);
       const news = rows.slice(1).map((r, i) => ({
         id: 'n' + i,
         category: (r[1] || 'announce').toLowerCase(),
