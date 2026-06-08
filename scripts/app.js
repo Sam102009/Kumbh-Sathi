@@ -414,17 +414,17 @@ function fetchAndRenderNews() {
         container.innerHTML = '<div style="padding:20px;color:#FF6F00;">No news found in sheet.</div>';
         return;
       }
-      const news = rows.slice(1).map((r, i) => ({
+      const news = rows.map((r, i) => ({
         id: 'n' + i,
-        category: (r[1] || 'announce').toLowerCase(),
-        headline_en: r[2] || '',
-        headline_hi: r[3] || r[2] || '',
-        headline_mr: r[4] || r[2] || '',
-        short_en: r[5] || '',
-        short_hi: r[6] || r[5] || '',
-        short_mr: r[7] || r[5] || '',
-        date: r[0] || '',
-        image: r[8] || ''
+        category: (r['Category'] || 'announce').toLowerCase(),
+        headline_en: r['Headline_EN'] || '',
+        headline_hi: r['Headline_HI'] || r['Headline_EN'] || '',
+        headline_mr: r['Headline_MR'] || r['Headline_EN'] || '',
+        short_en: r['Short_EN'] || '',
+        short_hi: r['Short_HI'] || r['Short_EN'] || '',
+        short_mr: r['Short_MR'] || r['Short_EN'] || '',
+        date: r['Date'] || '',
+        image: r['Image'] || ''
       }));
       window._newsCache = news;
       renderNews(news);
