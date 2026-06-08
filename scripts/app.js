@@ -426,9 +426,9 @@ function fetchAndRenderNews() {
       window._newsCache = news;
       renderNews(news);
     })
-    .catch(() => {
-      window._newsCache = NEWS_DATA;
-      renderNews(NEWS_DATA);
+    .catch((err) => {
+      const container = document.getElementById('news-container');
+      if(container) container.innerHTML = '<div style="padding:20px;color:red;">Error: ' + err.message + '</div>';
     });
 }
 
