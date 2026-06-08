@@ -356,12 +356,13 @@ function shareLocation() {
 /* ===== NEWS PAGE ===== */
 let activeNewsCategory = 'all';
 
-function renderNews() {
+function renderNews(newsArray) {
   const container = document.getElementById('news-container');
   if (!container) return;
-  let filtered = NEWS_DATA;
+  const data = newsArray || window._newsCache || [];
+  let filtered = data;
   if (activeNewsCategory !== 'all') {
-    filtered = NEWS_DATA.filter(n => n.category === activeNewsCategory);
+    filtered = data.filter(n => n.category === activeNewsCategory);
   }
   const lang = currentLang;
   container.innerHTML = filtered.map(n => {
@@ -401,6 +402,35 @@ function toggleNewsCard(card) {
   if (label) label.textContent = isOpen ? t('read_more') : t('read_less');
 }
 
+function fetchAndRenderNews() {
+  const GAS_URL = 'https://script.google.com/macros/s/AKfycbyp_E-2tqiBfAtswJIxIeeq2iH6gwMjjlPZwlxxijqU6RdfZW8UOlcM83Gd9Yay7ZbufQ/exec';
+  const container = document.getElementById('news-container');
+  if (!container) return;
+  container.innerHTML = '<div style="text-align:center;padding:40px"><div class="spinner"></div></div>';
+  fetch(GAS_URL + '?sheet=News')
+    .then(r => r.json())
+    .then(rows => {
+      const news = rows.slice(1).map((r, i) => ({
+        id: 'n' + i,
+        category: (r[1] || 'announce').toLowerCase(),
+        headline_en: r[2] || '',
+        headline_hi: r[3] || r[2] || '',
+        headline_mr: r[4] || r[2] || '',
+        short_en: r[5] || '',
+        short_hi: r[6] || r[5] || '',
+        short_mr: r[7] || r[5] || '',
+        date: r[0] || '',
+        image: r[8] || ''
+      }));
+      window._newsCache = news;
+      renderNews(news);
+    })
+    .catch(() => {
+      window._newsCache = NEWS_DATA;
+      renderNews(NEWS_DATA);
+    });
+}
+
 function initNews() {
   document.querySelectorAll('.news-filter-chip').forEach(chip => {
     chip.addEventListener('click', () => {
@@ -410,7 +440,7 @@ function initNews() {
       renderNews();
     });
   });
-  renderNews();
+  fetchAndRenderNews();
 }
 
 /* ===== AKHARAS PAGE ===== */
