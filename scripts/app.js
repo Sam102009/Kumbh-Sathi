@@ -406,16 +406,14 @@ function fetchAndRenderNews() {
   const GAS_URL = 'https://script.google.com/macros/s/AKfycbyp_E-2tqiBfAtswJIxIeeq2iH6gwMjjlPZwlxxijqU6RdfZW8UOlcM83Gd9Yay7ZbufQ/exec';
   const container = document.getElementById('news-container');
   if (!container) return;
-  container.innerHTML = '<div style="text-align:center;padding:40px"><div class="spinner"></div></div>';
+  container.innerHTML = '<div style="text-align:center;padding:40px;color:#FF6F00;">Loading news...</div>';
   fetch(GAS_URL + '?sheet=News')
-    .then(r => r.text())
-    .then(text => {
-      const container = document.getElementById('news-container');
-      if(container) container.innerHTML = '<div style="padding:20px;font-size:11px;word-break:break-all;">' + text.substring(0,500) + '</div>';
-    })
-    .then(() => fetch(GAS_URL + '?sheet=News'))
     .then(r => r.json())
     .then(rows => {
+      if (!rows || rows.length < 2) {
+        container.innerHTML = '<div style="padding:20px;color:#FF6F00;">No news found in sheet.</div>';
+        return;
+      }
       const news = rows.slice(1).map((r, i) => ({
         id: 'n' + i,
         category: (r[1] || 'announce').toLowerCase(),
@@ -432,8 +430,7 @@ function fetchAndRenderNews() {
       renderNews(news);
     })
     .catch((err) => {
-      const container = document.getElementById('news-container');
-      if(container) container.innerHTML = '<div style="padding:20px;color:red;">Error: ' + err.message + '</div>';
+      container.innerHTML = '<div style="padding:20px;color:red;">Failed: ' + err + '</div>';
     });
 }
 
