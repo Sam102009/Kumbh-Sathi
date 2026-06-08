@@ -410,6 +410,7 @@ function fetchAndRenderNews() {
   fetch(GAS_URL + '?sheet=News')
     .then(r => r.json())
     .then(rows => {
+      document.getElementById('news-container').innerHTML = '<div style="padding:10px;font-size:10px;word-break:break-all;">' + JSON.stringify(rows).substring(0,300) + '</div>';
       if (!rows || rows.length < 2) {
         container.innerHTML = '<div style="padding:20px;color:#FF6F00;">No news found in sheet.</div>';
         return;
