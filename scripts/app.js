@@ -408,9 +408,14 @@ function fetchAndRenderNews() {
   if (!container) return;
   container.innerHTML = '<div style="text-align:center;padding:40px"><div class="spinner"></div></div>';
   fetch(GAS_URL + '?sheet=News')
+    .then(r => r.text())
+    .then(text => {
+      const container = document.getElementById('news-container');
+      if(container) container.innerHTML = '<div style="padding:20px;font-size:11px;word-break:break-all;">' + text.substring(0,500) + '</div>';
+    })
+    .then(() => fetch(GAS_URL + '?sheet=News'))
     .then(r => r.json())
     .then(rows => {
-      console.log("News rows:", rows);
       const news = rows.slice(1).map((r, i) => ({
         id: 'n' + i,
         category: (r[1] || 'announce').toLowerCase(),
