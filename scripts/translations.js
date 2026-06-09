@@ -171,6 +171,23 @@ const T = {
     akharas_title:    'Major Akharas',
     akharas_subtitle: 'Participating Akharas at Nashik Kumbh 2027',
 
+    /* --- Transport extra --- */
+    how_to_reach:          'How to Reach Nashik',
+    local_transport:       'Local Transport',
+    local_transport_inside:'Transport Within Nashik',
+
+    /* --- Lost & Found extra --- */
+    new_report: 'Submit New Report',
+
+    /* --- Home / Shahi Snan labels --- */
+    card_group:     'Group',
+    shahi_1_label:  'First Shahi Snan',
+    shahi_2_label:  'Second Shahi Snan',
+    shahi_3_label:  'Third Shahi Snan',
+
+    /* --- Share App --- */
+    share_app: 'Share App',
+
     /* --- About --- */
     about_title:    'About Kumbh Mela',
     about_subtitle: 'History, Significance & Nashik',
@@ -345,6 +362,23 @@ const T = {
     akharas_title:    'प्रमुख अखाड़े',
     akharas_subtitle: 'नाशिक कुंभ 2027 में भाग लेने वाले अखाड़े',
 
+    /* --- Transport extra --- */
+    how_to_reach:          'नाशिक कैसे पहुँचें',
+    local_transport:       'स्थानीय परिवहन',
+    local_transport_inside:'नाशिक के अंदर परिवहन',
+
+    /* --- Lost & Found extra --- */
+    new_report: 'नई रिपोर्ट दर्ज करें',
+
+    /* --- Home / Shahi Snan labels --- */
+    card_group:     'ग्रुप',
+    shahi_1_label:  'प्रथम शाही स्नान',
+    shahi_2_label:  'द्वितीय शाही स्नान',
+    shahi_3_label:  'तृतीय शाही स्नान',
+
+    /* --- Share App --- */
+    share_app: 'ऐप शेयर करें',
+
     about_title:    'कुंभ मेले के बारे में',
     about_subtitle: 'इतिहास, महत्व और नाशिक',
     what_is_kumbh:  'कुंभ मेला क्या है?',
@@ -516,6 +550,23 @@ const T = {
 
     akharas_title:    'प्रमुख आखाडे',
     akharas_subtitle: 'नाशिक कुंभ 2027 मध्ये भाग घेणारे आखाडे',
+
+    /* --- Transport extra --- */
+    how_to_reach:          'नाशिकला कसे पोहोचावे',
+    local_transport:       'स्थानिक वाहतूक',
+    local_transport_inside:'नाशिकमधील वाहतूक',
+
+    /* --- Lost & Found extra --- */
+    new_report: 'नवीन तक्रार नोंदवा',
+
+    /* --- Home / Shahi Snan labels --- */
+    card_group:     'ग्रुप',
+    shahi_1_label:  'पहिले शाही स्नान',
+    shahi_2_label:  'दुसरे शाही स्नान',
+    shahi_3_label:  'तिसरे शाही स्नान',
+
+    /* --- Share App --- */
+    share_app: 'ॲप शेअर करा',
 
     about_title:    'कुंभ मेळाविषयी',
     about_subtitle: 'इतिहास, महत्त्व आणि नाशिक',

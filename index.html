@@ -165,7 +165,7 @@
         </div>
         <div class="quick-card tap-bounce nav-link" data-nav="groups">
           <div class="card-icon bg-indigo"><i class="fa-solid fa-people-group"></i></div>
-          <div class="card-label">ग्रुप</div>
+          <div class="card-label" data-t="card_group">ग्रुप</div>
         </div>
       </div>
 
@@ -175,27 +175,27 @@
         <div class="card nav-link" style="padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer;" data-nav="schedule">
           <div style="width:50px;height:50px;background:linear-gradient(135deg,var(--gold),#ff8f00);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">⭐</div>
           <div>
-            <div style="font-weight:700;color:var(--dark-brown);font-size:14px;">प्रथम शाही स्नान</div>
-            <div style="font-size:12px;color:var(--saffron);font-weight:600;">29 अगस्त 2027 — श्रावण पूर्णिमा</div>
-            <div style="font-size:11px;color:var(--light-brown);">रामकुंड घाट, नाशिक</div>
+            <div style="font-weight:700;color:var(--dark-brown);font-size:14px;" data-t="shahi_1_label">प्रथम शाही स्नान</div>
+            <div style="font-size:12px;color:var(--saffron);font-weight:600;">29 Aug 2027 — Shravan Purnima</div>
+            <div style="font-size:11px;color:var(--light-brown);">Ramkund Ghat, Nashik</div>
           </div>
           <i class="fa-solid fa-chevron-right" style="margin-left:auto;color:var(--light-brown);"></i>
         </div>
         <div class="card nav-link" style="padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer;" data-nav="schedule">
           <div style="width:50px;height:50px;background:linear-gradient(135deg,var(--saffron),var(--deep-orange));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">⭐</div>
           <div>
-            <div style="font-weight:700;color:var(--dark-brown);font-size:14px;">द्वितीय शाही स्नान</div>
-            <div style="font-size:12px;color:var(--saffron);font-weight:600;">12 सितंबर 2027 — भाद्रपद अमावस्या</div>
-            <div style="font-size:11px;color:var(--light-brown);">रामकुंड घाट, नाशिक</div>
+            <div style="font-weight:700;color:var(--dark-brown);font-size:14px;" data-t="shahi_2_label">द्वितीय शाही स्नान</div>
+            <div style="font-size:12px;color:var(--saffron);font-weight:600;">12 Sep 2027 — Bhadrapad Amavasya</div>
+            <div style="font-size:11px;color:var(--light-brown);">Ramkund Ghat, Nashik</div>
           </div>
           <i class="fa-solid fa-chevron-right" style="margin-left:auto;color:var(--light-brown);"></i>
         </div>
         <div class="card nav-link" style="padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer;" data-nav="schedule">
           <div style="width:50px;height:50px;background:linear-gradient(135deg,var(--dark-brown),var(--light-brown));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">⭐</div>
           <div>
-            <div style="font-weight:700;color:var(--dark-brown);font-size:14px;">तृतीय शाही स्नान</div>
-            <div style="font-size:12px;color:var(--saffron);font-weight:600;">27 सितंबर 2027 — महालया अमावस्या</div>
-            <div style="font-size:11px;color:var(--light-brown);">रामकुंड + त्र्यंबकेश्वर</div>
+            <div style="font-weight:700;color:var(--dark-brown);font-size:14px;" data-t="shahi_3_label">तृतीय शाही स्नान</div>
+            <div style="font-size:12px;color:var(--saffron);font-weight:600;">27 Sep 2027 — Mahalaya Amavasya</div>
+            <div style="font-size:11px;color:var(--light-brown);">Ramkund + Trimbakeshwar</div>
           </div>
           <i class="fa-solid fa-chevron-right" style="margin-left:auto;color:var(--light-brown);"></i>
         </div>
@@ -311,7 +311,7 @@
         <p data-t="transport_subtitle">नाशिक कैसे पहुँचें और स्थानीय परिवहन</p>
         <i class="fa-solid fa-bus hero-icon"></i>
       </div>
-      <div class="section-title">नाशिक कैसे पहुँचें</div>
+      <div class="section-title" data-t="how_to_reach">नाशिक कैसे पहुँचें</div>
       <div class="transport-section">
         <div class="transport-mode">
           <div class="transport-mode-header">
@@ -352,12 +352,12 @@
           <div class="transport-mode-body"><div id="road-routes-container"></div></div>
         </div>
       </div>
-      <div class="section-title">स्थानीय परिवहन</div>
+      <div class="section-title" data-t="local_transport">स्थानीय परिवहन</div>
       <div class="transport-section">
         <div class="transport-mode">
           <div class="transport-mode-header open">
             <i class="fa-solid fa-van-shuttle"></i>
-            <h3>नाशिक के अंदर परिवहन</h3>
+            <h3 data-t="local_transport_inside">नाशिक के अंदर परिवहन</h3>
             <i class="fa-solid fa-chevron-down chevron"></i>
           </div>
           <div class="transport-mode-body open"><div id="local-transport-container"></div></div>
@@ -397,7 +397,7 @@
           </div>
         </div>
       </div>
-      <div class="section-title">नई रिपोर्ट दर्ज करें</div>
+      <div class="section-title" data-t="new_report">नई रिपोर्ट दर्ज करें</div>
       <div class="report-form">
         <div class="form-tabs">
           <button class="form-tab active" data-type="lost" data-t="report_lost">🔍 खोया रिपोर्ट करें</button>
@@ -710,10 +710,10 @@
         <p>आज शाही स्नान है! सभी घाटों पर अत्यधिक भीड़ की संभावना है।</p>
       </div>
       <div class="crowd-legend">
-        <div class="crowd-legend-item">🟢 कम भीड़</div>
-        <div class="crowd-legend-item">🟡 सामान्य</div>
-        <div class="crowd-legend-item">🟠 अधिक भीड़</div>
-        <div class="crowd-legend-item">🔴 अत्यधिक</div>
+        <div class="crowd-legend-item">🟢 <span data-t="crowd_low">कम</span></div>
+        <div class="crowd-legend-item">🟡 <span data-t="crowd_moderate">सामान्य</span></div>
+        <div class="crowd-legend-item">🟠 <span data-t="crowd_high">अधिक</span></div>
+        <div class="crowd-legend-item">🔴 <span data-t="crowd_extreme">अत्यधिक</span></div>
       </div>
       <div id="crowd-container"></div>
       <div style="height:16px;"></div>
@@ -793,6 +793,7 @@
     <div class="drawer-item" data-route="akharas"><i class="fa-solid fa-om"></i><span data-t="more_akharas">अखाड़े</span></div>
     <div class="drawer-item" data-route="about"><i class="fa-solid fa-book-open"></i><span data-t="more_about">परिचय</span></div>
     <div class="drawer-item" data-route="sponsor"><i class="fa-solid fa-bullhorn"></i><span data-t="more_sponsor">विज्ञापन</span></div>
+    <div class="drawer-item" onclick="shareAppWhatsApp()" style="cursor:pointer;"><i class="fa-brands fa-whatsapp" style="color:#25D366;"></i><span data-t="share_app">ऐप शेयर करें</span></div>
   </div>
 </div>
 <div id="drawer-overlay"></div>

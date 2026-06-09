@@ -3,6 +3,8 @@
    Kumbh Mela Nashik 2027 PWA
    =================================================== */
 
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyp_E-2tqiBfAtswJIxIeeq2iH6gwMjjlPZwlxxijqU6RdfZW8UOlcM83Gd9Yay7ZbufQ/exec';
+
 /* ===== COUNTDOWN TIMER ===== */
 function updateCountdown() {
   const now = new Date();
@@ -31,6 +33,15 @@ function updateCountdown() {
 
 /* ===== SCHEDULE PAGE ===== */
 let activeScheduleFilter = 'all';
+window._scheduleCache = null;
+
+function getShortMonth(dateStr) {
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  if (!dateStr) return '';
+  const parts = String(dateStr).split('-');
+  if (parts.length >= 2) return months[parseInt(parts[1]) - 1] || '';
+  return '';
+}
 
 function renderSchedule() {
   const container = document.getElementById('events-container');
@@ -41,8 +52,8 @@ function renderSchedule() {
     filtered = EVENTS_DATA.filter(ev => ev.type === activeScheduleFilter);
   }
 
+  const lang = currentLang;
   container.innerHTML = filtered.map(ev => {
-    const lang = currentLang;
     const title = ev[`title_${lang}`] || ev.title_en;
     const desc  = ev.significance_en || '';
     const typeClass = ev.type === 'shahi' ? 'type-shahi' : ev.type === 'cultural' ? 'type-cultural' : 'type-religious';
@@ -76,13 +87,76 @@ function renderSchedule() {
             </span>
             <a href="${calUrl}" class="btn btn-outline btn-sm" style="padding:4px 12px;font-size:11px;">
               <i class="fa-solid fa-calendar-plus"></i>
-              <span data-t="add_to_calendar">Add to Calendar</span>
+              <span data-t="add_to_calendar">${t('add_to_calendar')}</span>
             </a>
           </div>
         </div>
       </div>
     `;
   }).join('');
+}
+
+function renderSheetSchedule(rows) {
+  const container = document.getElementById('events-container');
+  if (!container) return;
+  let filtered = rows;
+  if (activeScheduleFilter !== 'all') {
+    filtered = rows.filter(r => (r['Category'] || '').toLowerCase() === activeScheduleFilter);
+  }
+  if (filtered.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:30px;color:var(--light-brown);">कोई कार्यक्रम नहीं मिला</div>';
+    return;
+  }
+  container.innerHTML = filtered.map(r => {
+    const cat = (r['Category'] || 'religious').toLowerCase();
+    const typeClass = cat === 'shahi' ? 'type-shahi' : cat === 'cultural' ? 'type-cultural' : 'type-religious';
+    const typeLabel = cat === 'shahi' ? '⭐ Shahi Snan' : cat === 'cultural' ? '🎭 Cultural' : '🕉️ Religious';
+    const dateStr = r['Date'] || '';
+    const dayNum = dateStr ? dateStr.split('-')[2] || dateStr : '';
+    return `
+      <div class="event-card ${typeClass} reveal">
+        <div class="event-card-inner">
+          ${r['Image'] ? `<img src="${r['Image']}" style="width:100%;height:140px;object-fit:cover;border-radius:8px;margin-bottom:10px;" onerror="this.style.display='none'">` : ''}
+          <div style="display:flex;gap:12px;align-items:flex-start;">
+            <div class="event-date-badge ${cat === 'shahi' ? 'shahi' : ''}">
+              <span class="day">${dayNum}</span>
+              <span class="month">${getShortMonth(dateStr)}</span>
+              <span class="year">2027</span>
+            </div>
+            <div style="flex:1;">
+              <div class="event-title">${r['Event'] || ''}</div>
+              <div class="event-desc">${r['Description'] || ''}</div>
+              <div class="event-meta">
+                <span><i class="fa-solid fa-location-dot"></i> ${r['Location'] || ''}</span>
+                <span><i class="fa-solid fa-clock"></i> ${r['Time'] || ''}</span>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:10px;">
+            <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:12px;
+                         background:${cat==='shahi'?'rgba(255,215,0,0.15)':cat==='cultural'?'rgba(123,31,162,0.12)':'rgba(21,101,192,0.12)'};
+                         color:${cat==='shahi'?'#e65100':cat==='cultural'?'#6a1b9a':'#1565c0'};">
+              ${typeLabel}
+            </span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function fetchAndRenderSchedule() {
+  const container = document.getElementById('events-container');
+  if (!container) return;
+  container.innerHTML = '<div style="text-align:center;padding:40px;color:#FF6F00;">📅 कार्यक्रम लोड हो रहे हैं...</div>';
+  fetch(GAS_URL + '?sheet=Schedule')
+    .then(r => r.json())
+    .then(rows => {
+      if (!rows || rows.length === 0) { renderSchedule(); return; }
+      window._scheduleCache = rows;
+      renderSheetSchedule(rows);
+    })
+    .catch(() => renderSchedule());
 }
 
 function makeCalendarUrl(ev) {
@@ -99,67 +173,105 @@ function initSchedule() {
       document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
       activeScheduleFilter = chip.dataset.filter;
-      renderSchedule();
+      if (window._scheduleCache && window._scheduleCache.length > 0) {
+        renderSheetSchedule(window._scheduleCache);
+      } else {
+        renderSchedule();
+      }
     });
   });
-  renderSchedule();
+  fetchAndRenderSchedule();
 }
 
 /* ===== STAY PAGE ===== */
 let activeStayFilter = 'all';
+window._stayCache = null;
 
-function renderStay() {
+function renderStay(staysArray) {
   const container = document.getElementById('stay-container');
   if (!container) return;
 
-  let filtered = STAY_DATA;
+  const source = staysArray || window._stayCache || STAY_DATA;
+  let filtered = source;
   if (activeStayFilter !== 'all') {
-    filtered = STAY_DATA.filter(s => s.category === activeStayFilter);
+    filtered = source.filter(s => s.category === activeStayFilter);
   }
 
   container.innerHTML = filtered.map(s => {
-    const stars = '★'.repeat(Math.floor(s.rating)) + (s.rating % 1 >= 0.5 ? '½' : '');
-    const facilities = s.facilities.map(f =>
+    const stars = '★'.repeat(Math.floor(s.rating || 3)) + ((s.rating % 1) >= 0.5 ? '½' : '');
+    const facilities = (s.facilities || []).map(f =>
       `<span style="font-size:10px;background:rgba(255,111,0,0.08);color:var(--saffron);
                     padding:2px 7px;border-radius:8px;border:1px solid rgba(255,111,0,0.18);">${f}</span>`
     ).join('');
 
     return `
       <div class="listing-card${s.sponsored ? ' sponsored' : ''} reveal">
+        ${s.image ? `
         <div class="stay-card-image">
-          <img src="${s.image}" alt="${s.name}" loading="lazy">
+          <img src="${s.image}" alt="${s.name}" loading="lazy" onerror="this.style.display='none'">
           <div class="stay-card-overlay"></div>
           <div class="stay-badges">
-            ${s.sponsored ? '<span class="sponsored-badge"><i class="fa-solid fa-star"></i> Sponsored</span>' : ''}
+            ${s.sponsored ? `<span class="sponsored-badge"><i class="fa-solid fa-star"></i> ${t('sponsored_tag')}</span>` : ''}
           </div>
-        </div>
+        </div>` : ''}
         <div class="listing-card-header">
           <div>
             <div class="listing-name">${s.name}</div>
             <div class="listing-meta">
-              <span><i class="fa-solid fa-hotel"></i> ${s.type}</span>
-              <span><i class="fa-solid fa-map-marker-alt"></i> ${s.distance}</span>
+              <span><i class="fa-solid fa-hotel"></i> ${s.type || ''}</span>
+              <span><i class="fa-solid fa-map-marker-alt"></i> ${s.address || s.distance || ''}</span>
             </div>
             <div class="stars">${stars}</div>
           </div>
-          <div class="listing-price">${s.price}<br><span style="font-size:10px;color:var(--light-brown);font-weight:400;">per night</span></div>
+          <div class="listing-price">${s.price}<br><span style="font-size:10px;color:var(--light-brown);font-weight:400;">${t('per_night')}</span></div>
         </div>
         <div class="listing-card-body">
-          <p style="font-size:12px;color:var(--light-brown);line-height:1.6;margin-bottom:8px;">${s.description}</p>
-          <div style="display:flex;flex-wrap:wrap;gap:4px;">${facilities}</div>
+          <p style="font-size:12px;color:var(--light-brown);line-height:1.6;margin-bottom:8px;">${s.description || ''}</p>
+          ${facilities ? `<div style="display:flex;flex-wrap:wrap;gap:4px;">${facilities}</div>` : ''}
         </div>
         <div class="listing-card-footer">
-          <a href="tel:${s.contact.replace(/\s/g,'')}" class="btn btn-primary btn-sm" style="flex:1;">
-            <i class="fa-solid fa-phone"></i> Book / Contact
+          <a href="tel:${(s.phone || s.contact || '').replace(/[^0-9]/g,'')}" class="btn btn-primary btn-sm" style="flex:1;">
+            <i class="fa-solid fa-phone"></i> ${t('book_contact')}
           </a>
-          <a href="https://wa.me/${s.contact.replace(/[^0-9]/g,'')}" target="_blank" rel="noopener"
+          ${(s.phone || s.contact) ? `
+          <a href="https://wa.me/${(s.phone || s.contact || '').replace(/[^0-9]/g,'')}" target="_blank" rel="noopener"
              class="btn btn-whatsapp btn-sm">
             <i class="fa-brands fa-whatsapp"></i>
-          </a>
+          </a>` : ''}
         </div>
       </div>
     `;
-  }).join('');
+  }).join('') || '<div style="text-align:center;padding:30px;color:var(--light-brown);">कोई आवास नहीं मिला</div>';
+}
+
+function fetchAndRenderStay() {
+  const container = document.getElementById('stay-container');
+  if (!container) return;
+  container.innerHTML = '<div style="text-align:center;padding:40px;color:#FF6F00;">🏨 आवास जानकारी लोड हो रही है...</div>';
+  fetch(GAS_URL + '?sheet=Stay')
+    .then(r => r.json())
+    .then(rows => {
+      if (!rows || rows.length === 0) { renderStay(); return; }
+      const stays = rows.map((r, i) => ({
+        id: 's' + i,
+        name: r['Name'] || '',
+        type: r['Type'] || 'Hotel',
+        category: (r['Type'] || 'mid').toLowerCase().replace(/[\s\/\-]/g, '').replace('dharamshala','dharam').replace('budget','budget').replace('midrange','mid').replace('premium','premium'),
+        address: r['Address'] || '',
+        price: r['Price'] || t('contact_pricing'),
+        phone: r['Phone'] || '',
+        rating: parseFloat(r['Rating']) || 3.5,
+        description: r['Description'] || '',
+        image: r['Image'] || '',
+        facilities: [],
+        contact: r['Phone'] || '',
+        distance: r['Address'] || '',
+        sponsored: false,
+      }));
+      window._stayCache = stays;
+      renderStay(stays);
+    })
+    .catch(() => renderStay());
 }
 
 function initStay() {
@@ -168,17 +280,15 @@ function initStay() {
       document.querySelectorAll('.stay-filter-chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
       activeStayFilter = chip.dataset.filter;
-      renderStay();
+      renderStay(window._stayCache || null);
     });
   });
-  renderStay();
+  fetchAndRenderStay();
 }
 
 /* ===== TRANSPORT PAGE ===== */
 function initTransport() {
-  // Build transport sections dynamically
   renderTransport();
-  // Accordion toggles
   document.querySelectorAll('.transport-mode-header').forEach(header => {
     header.addEventListener('click', () => {
       const body = header.nextElementSibling;
@@ -194,7 +304,6 @@ function initTransport() {
 }
 
 function renderTransport() {
-  // Render local transport cards
   const localContainer = document.getElementById('local-transport-container');
   if (localContainer) {
     localContainer.innerHTML = TRANSPORT_DATA.local.map(item => `
@@ -212,7 +321,6 @@ function renderTransport() {
     `).join('');
   }
 
-  // Render by-train routes
   const trainContainer = document.getElementById('train-routes-container');
   if (trainContainer) {
     trainContainer.innerHTML = TRANSPORT_DATA.byTrain.map(r => `
@@ -230,7 +338,6 @@ function renderTransport() {
     `).join('');
   }
 
-  // Render by-bus routes
   const busContainer = document.getElementById('bus-routes-container');
   if (busContainer) {
     busContainer.innerHTML = TRANSPORT_DATA.byBus.map(r => `
@@ -248,7 +355,6 @@ function renderTransport() {
     `).join('');
   }
 
-  // Render by-air
   const airContainer = document.getElementById('air-routes-container');
   if (airContainer) {
     airContainer.innerHTML = TRANSPORT_DATA.byAir.map(r => `
@@ -263,7 +369,6 @@ function renderTransport() {
     `).join('');
   }
 
-  // Render by-road
   const roadContainer = document.getElementById('road-routes-container');
   if (roadContainer) {
     roadContainer.innerHTML = TRANSPORT_DATA.byRoad.map(r => `
@@ -323,7 +428,6 @@ function renderFirstAid() {
       </div>
     </div>
   `).join('');
-  // Re-attach events
   document.querySelectorAll('.first-aid-header').forEach(header => {
     header.addEventListener('click', () => {
       const body = header.nextElementSibling;
@@ -364,29 +468,34 @@ function renderNews(newsArray) {
   if (activeNewsCategory !== 'all') {
     filtered = data.filter(n => n.category === activeNewsCategory);
   }
+  if (!filtered.length) {
+    container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--light-brown);">कोई समाचार उपलब्ध नहीं</div>';
+    return;
+  }
   const lang = currentLang;
   container.innerHTML = filtered.map(n => {
-    const headline = n[`headline_${lang}`] || n.headline_en;
-    const short    = n[`short_${lang}`]    || n.short_en;
+    const headline = n[`headline_${lang}`] || n.headline_en || n.title || '';
+    const short    = n[`short_${lang}`]    || n.short_en || n.description || '';
     const catColors = { announce:'#FF6F00', vip:'#6a1b9a', weather:'#1565c0', traffic:'#e65100' };
     const catLabels = { announce:'📢 Announcement', vip:'⭐ VIP', weather:'🌧 Weather', traffic:'🚗 Traffic' };
 
     return `
       <div class="news-card reveal" onclick="toggleNewsCard(this)">
+        ${n.image ? `
         <div class="news-card-image">
-          <img src="${n.image}" alt="${headline}" loading="lazy">
+          <img src="${n.image}" alt="${headline}" loading="lazy" onerror="this.style.display='none'">
           <span class="news-card-category" style="background:${catColors[n.category]||'#FF6F00'};">
             ${catLabels[n.category] || n.category}
           </span>
-        </div>
+        </div>` : ''}
         <div class="news-card-content">
           <div class="news-card-title">${headline}</div>
-          <div class="news-card-date"><i class="fa-solid fa-calendar-days"></i> ${n.date}</div>
+          <div class="news-card-date"><i class="fa-solid fa-calendar-days"></i> ${n.date || ''}</div>
           <div class="news-card-desc">${short}</div>
-          <div class="news-card-expanded">${n.full_en}</div>
+          <div class="news-card-expanded">${n.full_en || short}</div>
           <button class="btn btn-outline btn-sm" style="margin-top:8px;font-size:11px;" onclick="event.stopPropagation();toggleNewsCard(this.closest('.news-card'))">
             <i class="fa-solid fa-chevron-down"></i>
-            <span class="read-more-label" data-t="read_more">Read More</span>
+            <span class="read-more-label" data-t="read_more">${t('read_more')}</span>
           </button>
         </div>
       </div>
@@ -403,16 +512,14 @@ function toggleNewsCard(card) {
 }
 
 function fetchAndRenderNews() {
-  const GAS_URL = 'https://script.google.com/macros/s/AKfycbyp_E-2tqiBfAtswJIxIeeq2iH6gwMjjlPZwlxxijqU6RdfZW8UOlcM83Gd9Yay7ZbufQ/exec';
   const container = document.getElementById('news-container');
   if (!container) return;
-  container.innerHTML = '<div style="text-align:center;padding:40px;color:#FF6F00;">Loading news...</div>';
+  container.innerHTML = '<div style="text-align:center;padding:40px;color:#FF6F00;">📰 समाचार लोड हो रहा है...</div>';
   fetch(GAS_URL + '?sheet=News')
     .then(r => r.json())
     .then(rows => {
-      document.getElementById('news-container').innerHTML = '<div style="padding:10px;font-size:10px;word-break:break-all;">' + JSON.stringify(rows).substring(0,300) + '</div>';
-      if (!rows || rows.length < 2) {
-        container.innerHTML = '<div style="padding:20px;color:#FF6F00;">No news found in sheet.</div>';
+      if (!rows || rows.length === 0) {
+        renderNews(NEWS_DATA);
         return;
       }
       const news = rows.map((r, i) => ({
@@ -424,14 +531,15 @@ function fetchAndRenderNews() {
         short_en: r['Short_EN'] || '',
         short_hi: r['Short_HI'] || r['Short_EN'] || '',
         short_mr: r['Short_MR'] || r['Short_EN'] || '',
+        full_en: r['Short_EN'] || '',
         date: r['Date'] || '',
         image: r['Image'] || ''
       }));
       window._newsCache = news;
       renderNews(news);
     })
-    .catch((err) => {
-      container.innerHTML = '<div style="padding:20px;color:red;">Failed: ' + err + '</div>';
+    .catch(() => {
+      renderNews(NEWS_DATA);
     });
 }
 
@@ -441,7 +549,7 @@ function initNews() {
       document.querySelectorAll('.news-filter-chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
       activeNewsCategory = chip.dataset.cat;
-      renderNews();
+      renderNews(window._newsCache || NEWS_DATA);
     });
   });
   fetchAndRenderNews();
@@ -467,6 +575,31 @@ function renderAkharas() {
       </div>
     </div>
   `).join('');
+}
+
+function fetchAndRenderAkharas() {
+  const container = document.getElementById('akharas-container');
+  if (!container) return;
+  container.innerHTML = '<div style="text-align:center;padding:40px;color:#FF6F00;">🕉️ अखाड़े लोड हो रहे हैं...</div>';
+  fetch(GAS_URL + '?sheet=Akharas')
+    .then(r => r.json())
+    .then(rows => {
+      if (!rows || rows.length === 0) { renderAkharas(); return; }
+      container.innerHTML = rows.map(r => `
+        <div class="akhara-card reveal">
+          ${r['Image'] ? `<img src="${r['Image']}" style="width:56px;height:56px;border-radius:50%;object-fit:cover;flex-shrink:0;" onerror="this.style.display='none'">` : '<div class="akhara-icon">🕉️</div>'}
+          <div style="flex:1;">
+            <div class="akhara-name">${r['Name'] || ''}</div>
+            <div class="akhara-type">${r['Location'] || ''}</div>
+            <div class="akhara-desc">${r['Description'] || ''}</div>
+            ${r['Location'] ? `<div class="akhara-location"><i class="fa-solid fa-location-dot"></i> ${r['Location']}</div>` : ''}
+            ${r['Founded'] ? `<div style="font-size:11px;color:var(--light-brown);margin-top:3px;"><i class="fa-solid fa-calendar"></i> Est: ${r['Founded']}</div>` : ''}
+            ${r['Significance'] ? `<div style="font-size:11px;color:var(--light-brown);line-height:1.5;margin-top:4px;">${r['Significance']}</div>` : ''}
+          </div>
+        </div>
+      `).join('');
+    })
+    .catch(() => renderAkharas());
 }
 
 /* ===== ABOUT PAGE ===== */
@@ -510,15 +643,21 @@ function showToast(msg) {
   toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
+/* ===== WHATSAPP SHARE APP ===== */
+function shareAppWhatsApp() {
+  const msg = encodeURIComponent('Check out KumbhSathi app for Kumbh Mela Nashik 2027! 🙏 https://Sam102009.github.io/Kumbh-Sathi/');
+  window.open('https://wa.me/?text=' + msg, '_blank');
+}
+
 /* ===== LANGUAGE SWITCHER ===== */
 function initLangSwitcher() {
   document.querySelectorAll('.lang-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       setLang(btn.dataset.lang);
-      // Re-render dynamic content with new language
       renderSchedule();
-      renderNews();
+      renderNews(window._newsCache || NEWS_DATA);
       renderAkharas();
+      renderStay(window._stayCache || null);
       initTicker();
     });
   });
@@ -529,9 +668,7 @@ let deferredPrompt = null;
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   deferredPrompt = e;
-  // Could show a custom install button here
 });
-
 
 /* ===== HOME PAGE QUICK CARDS ===== */
 function initQuickCards() {
@@ -540,34 +677,20 @@ function initQuickCards() {
 
 /* ===== MAIN APP INIT ===== */
 document.addEventListener('DOMContentLoaded', () => {
-  // Language switcher
   initLangSwitcher();
-
-  // Countdown timer
   updateCountdown();
   setInterval(updateCountdown, 1000);
-
-  // News ticker
   initTicker();
-
-  // Router
   initRouter();
-
-  // Initialize page-specific content
-initSchedule();
-initStay();
-initTransport();
-initLostFound();
-initNews();
-initEmergency();
-
-initCrowd(); // ← ADD THIS LINE
-
-renderAkharas();
-renderAbout();
-
-  // Update ticker when language changes
-  const originalSetLang = window.setLang || function(){};
+  initSchedule();
+  initStay();
+  initTransport();
+  initLostFound();
+  initNews();
+  initEmergency();
+  initCrowd();
+  fetchAndRenderAkharas();
+  renderAbout();
 });
 
 /* Watch for crowd page activation */
