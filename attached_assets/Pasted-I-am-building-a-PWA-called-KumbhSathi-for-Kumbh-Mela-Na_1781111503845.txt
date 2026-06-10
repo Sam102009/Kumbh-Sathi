@@ -1,0 +1,67 @@
+I am building a PWA called KumbhSathi for Kumbh Mela Nashik 2027.
+
+IMPORTANT RULES:
+- Always edit ROOT scripts/ folder (NOT public/scripts/)
+- Always edit ROOT index.html (NOT public/index.html)
+- Never break existing working features
+- Pure HTML, CSS, JavaScript only (no frameworks)
+
+GAS URL: https://script.google.com/macros/s/AKfycbyp_E-2tqiBfAtswJIxIeeq2iH6gwMjjlPZwlxxijqU6RdfZW8UOlcM83Gd9Yay7ZbufQ/exec
+The GAS returns JSON array of objects with header names as keys e.g. {Name:"...", Type:"..."}
+
+CURRENTLY WORKING (DO NOT BREAK):
+- News page fetching from Google Sheet ✅
+- Crowd density page (scripts/crowd2.js) ✅
+- Groups feature ✅
+- Lost & Found ✅
+- Weather widget ✅
+- Share button via WhatsApp ✅
+
+BUG 1 — STAY PAGE NOT LOADING FROM GOOGLE SHEET:
+- fetchAndRenderStay() exists in scripts/app.js
+- Google Sheet "Stay" tab has columns: Name, Type, Address, Price, Phone, Rating, Description, Image
+- Type values in sheet are exactly: hotel, dharamshala, camping, budget
+- The category mapping in fetchAndRenderStay() is too complex and breaking the filter chips
+- Fix the category mapping to be simple: just use r['Type'].toLowerCase().trim() directly
+- The filter chips use categories: all, hotel, dharam, budget, camping
+- Map sheet Type values: "hotel"→"hotel", "dharamshala"→"dharam", "budget"→"budget", "camping"→"camping"
+- renderStay(staysArray) should show cards from sheet data
+- Falls back to hardcoded STAY_DATA if fetch fails
+
+BUG 2 — SCHEDULE TIME COLUMN NOT WORKING:
+- Google Sheet "Schedule" tab has columns: Date, Event, Time, Location, Description, Category, Image
+- The Time column is not displaying correctly on the schedule cards
+- Fix the time mapping: use r['Time'] directly as a string
+- Make sure time shows on each schedule card
+
+BUG 3 — MULTILINGUAL / LANGUAGE SWITCHING NOT FULLY WORKING:
+- App supports Hindi (हि), Marathi (म), English (EN) via scripts/translations.js
+- The t('key') function reads from translations object
+- Many elements are still showing in Hindi even when EN or Marathi is selected
+- Specifically fix these pages: Stay, Schedule, Akharas, Emergency, Transport, Map page labels
+- Every hardcoded Hindi string in index.html must be replaced with data-t="key" attribute
+- Every hardcoded Hindi string in scripts/app.js must use t('key') function
+- The language switch must update ALL visible text instantly without page reload
+- Check that applyTranslations() function in scripts/translations.js is called after every renderXxx() function
+- After renderStay(), renderSchedule(), renderAkharas(), renderNews() — always call applyTranslations()
+
+BUG 4 — ANDROID BACK BUTTON NOT WORKING:
+- Pressing Android back button closes the app instead of navigating back
+- In scripts/router.js, add history.pushState({route: routeName}, '', '#' + routeName) when navigating to any page
+- Add window.addEventListener('popstate', ...) to handle back button
+- Back button should go to previous page, and if on home page, minimize app (default behavior)
+
+BUG 5 — PWAB UILDER CORS ISSUE:
+- PWABuilder at pwabuilder.com is stuck loading when scanning https://Sam102009.github.io/Kumbh-Sathi/
+- This is likely a CORS issue with service worker or manifest
+- In sw.js, make sure fetch responses include proper CORS headers
+- In manifest.json, verify: start_url, scope, display, icons all correct
+- Add this to index.html <head> if missing:
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+After ALL fixes:
+- Run: git add . && git commit -m "fix: stay page, schedule time, multilingual, back button, PWABuilder CORS" && git push origin main
+- Verify no existing features are broken
+- Make sure applyTranslations() is called after every dynamic render function

@@ -188,6 +188,16 @@ const T = {
     /* --- Share App --- */
     share_app: 'Share App',
 
+    /* --- Stay filters --- */
+    filter_hotel:   'Hotel',
+    filter_camping: 'Camping',
+
+    /* --- Generic UI --- */
+    loading:    'Loading...',
+    no_results: 'No results found.',
+    no_news:    'No news available.',
+    no_events:  'No events found.',
+
     /* --- About --- */
     about_title:    'About Kumbh Mela',
     about_subtitle: 'History, Significance & Nashik',
@@ -379,6 +389,16 @@ const T = {
     /* --- Share App --- */
     share_app: 'ऐप शेयर करें',
 
+    /* --- Stay filters --- */
+    filter_hotel:   'होटल',
+    filter_camping: 'कैंप',
+
+    /* --- Generic UI --- */
+    loading:    'लोड हो रहा है...',
+    no_results: 'कोई परिणाम नहीं मिला।',
+    no_news:    'कोई समाचार उपलब्ध नहीं।',
+    no_events:  'कोई कार्यक्रम नहीं मिला।',
+
     about_title:    'कुंभ मेले के बारे में',
     about_subtitle: 'इतिहास, महत्व और नाशिक',
     what_is_kumbh:  'कुंभ मेला क्या है?',
@@ -567,6 +587,16 @@ const T = {
 
     /* --- Share App --- */
     share_app: 'ॲप शेअर करा',
+
+    /* --- Stay filters --- */
+    filter_hotel:   'हॉटेल',
+    filter_camping: 'कॅम्पिंग',
+
+    /* --- Generic UI --- */
+    loading:    'लोड होत आहे...',
+    no_results: 'कोणताही निकाल नाही।',
+    no_news:    'कोणत्याही बातम्या नाहीत।',
+    no_events:  'कोणताही कार्यक्रम नाही।',
 
     about_title:    'कुंभ मेळाविषयी',
     about_subtitle: 'इतिहास, महत्त्व आणि नाशिक',

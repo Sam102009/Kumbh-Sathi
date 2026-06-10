@@ -26,12 +26,13 @@ function getRoute() {
   return ROUTES[hash] ? hash : 'home';
 }
 
-function navigateTo(route, pushState = true) {
+function navigateTo(route, addToHistory) {
+  if (addToHistory === undefined) addToHistory = true;
   if (!ROUTES[route]) route = 'home';
-  
+
   // Hide all pages
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  
+
   // Show target page
   const targetPage = document.getElementById(ROUTES[route].page);
   if (targetPage) targetPage.classList.add('active');
@@ -51,9 +52,10 @@ function navigateTo(route, pushState = true) {
   // Close more drawer if open
   closeMoreDrawer();
 
-  // Update hash (without triggering hashchange loop)
-  if (pushState) {
-    window.location.hash = route === 'home' ? '' : route;
+  // Push to browser history — enables Android back button
+  if (addToHistory) {
+    var url = route === 'home' ? (window.location.pathname + window.location.search) : '#' + route;
+    history.pushState({ route: route }, '', url);
   }
 
   currentRoute = route;
@@ -64,17 +66,17 @@ function navigateTo(route, pushState = true) {
 
 function onRouteChange(route) {
   if (route === 'map') {
-    // Initialize Leaflet map on first visit
     if (typeof initMap === 'function') initMap();
   }
   if (route === 'news') {
-    if (typeof initNews === "function") initNews();
+    if (typeof initNews === 'function') initNews();
   }
   if (route === 'groups') {
     if (typeof initGroups === 'function') initGroups();
   }
   if (route === 'crowd') {
-    if (typeof initCrowd === "function") initCrowd(); else setTimeout(function(){ if (typeof initCrowd === "function") initCrowd(); }, 3000);
+    if (typeof initCrowd === 'function') initCrowd();
+    else setTimeout(function() { if (typeof initCrowd === 'function') initCrowd(); }, 3000);
   }
   if (route === 'emergency') {
     if (typeof renderFirstAid === 'function') renderFirstAid();
@@ -83,6 +85,18 @@ function onRouteChange(route) {
     if (typeof renderReports === 'function') renderReports();
   }
 }
+
+/* --- Android / browser back button via popstate --- */
+window.addEventListener('popstate', function(e) {
+  var route = (e.state && e.state.route) ? e.state.route : getRoute();
+  navigateTo(route, false);
+});
+
+/* --- Also handle direct URL hash navigation (bookmarks etc.) --- */
+window.addEventListener('hashchange', function() {
+  var route = getRoute();
+  navigateTo(route, false);
+});
 
 /* --- More Drawer --- */
 function openMoreDrawer() {
@@ -97,32 +111,28 @@ function closeMoreDrawer() {
   document.body.style.overflow = '';
 }
 
-/* --- Listen for hash changes --- */
-window.addEventListener('hashchange', () => {
-  const route = getRoute();
-  navigateTo(route, false);
-});
-
 /* --- Initialize router --- */
 function initRouter() {
-  const route = getRoute();
+  var route = getRoute();
+  // Push initial state so back button from first page works correctly
+  history.replaceState({ route: route }, '', window.location.href);
   navigateTo(route, false);
 
   // Bottom nav click handlers
-  document.querySelectorAll('.nav-item[data-route]').forEach(item => {
-    item.addEventListener('click', () => {
-      const route = item.dataset.route;
-      if (route === 'more') {
+  document.querySelectorAll('.nav-item[data-route]').forEach(function(item) {
+    item.addEventListener('click', function() {
+      var r = item.dataset.route;
+      if (r === 'more') {
         openMoreDrawer();
       } else {
-        navigateTo(route);
+        navigateTo(r);
       }
     });
   });
 
   // More drawer item click handlers
-  document.querySelectorAll('.drawer-item[data-route]').forEach(item => {
-    item.addEventListener('click', () => {
+  document.querySelectorAll('.drawer-item[data-route]').forEach(function(item) {
+    item.addEventListener('click', function() {
       navigateTo(item.dataset.route);
     });
   });
@@ -131,7 +141,7 @@ function initRouter() {
   document.getElementById('drawer-overlay').addEventListener('click', closeMoreDrawer);
 
   // Quick access card clicks
-  document.querySelectorAll('[data-nav]').forEach(el => {
-    el.addEventListener('click', () => navigateTo(el.dataset.nav));
+  document.querySelectorAll('[data-nav]').forEach(function(el) {
+    el.addEventListener('click', function() { navigateTo(el.dataset.nav); });
   });
 }

@@ -35,6 +35,21 @@ function updateCountdown() {
 let activeScheduleFilter = 'all';
 window._scheduleCache = null;
 
+/* Convert Google Sheets time value (fraction or string) to readable format */
+function parseSheetTime(val) {
+  if (!val && val !== 0) return '';
+  if (typeof val === 'string') return val;
+  if (typeof val === 'number') {
+    const totalMins = Math.round(val * 24 * 60);
+    const h = Math.floor(totalMins / 60);
+    const m = totalMins % 60;
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const h12 = h % 12 || 12;
+    return h12 + ':' + String(m).padStart(2, '0') + ' ' + ampm;
+  }
+  return String(val);
+}
+
 function getShortMonth(dateStr) {
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   if (!dateStr) return '';
@@ -94,6 +109,7 @@ function renderSchedule() {
       </div>
     `;
   }).join('');
+  if (typeof applyTranslations === 'function') applyTranslations();
 }
 
 function renderSheetSchedule(rows) {
@@ -104,15 +120,16 @@ function renderSheetSchedule(rows) {
     filtered = rows.filter(r => (r['Category'] || '').toLowerCase() === activeScheduleFilter);
   }
   if (filtered.length === 0) {
-    container.innerHTML = '<div style="text-align:center;padding:30px;color:var(--light-brown);">कोई कार्यक्रम नहीं मिला</div>';
+    container.innerHTML = '<div style="text-align:center;padding:30px;color:var(--light-brown);">' + t('no_events') + '</div>';
     return;
   }
   container.innerHTML = filtered.map(r => {
     const cat = (r['Category'] || 'religious').toLowerCase();
     const typeClass = cat === 'shahi' ? 'type-shahi' : cat === 'cultural' ? 'type-cultural' : 'type-religious';
     const typeLabel = cat === 'shahi' ? '⭐ Shahi Snan' : cat === 'cultural' ? '🎭 Cultural' : '🕉️ Religious';
-    const dateStr = r['Date'] || '';
-    const dayNum = dateStr ? dateStr.split('-')[2] || dateStr : '';
+    const dateStr = String(r['Date'] || '');
+    const dayNum = dateStr.includes('-') ? (dateStr.split('-')[2] || '') : dateStr;
+    const timeVal = parseSheetTime(r['Time']);
     return `
       <div class="event-card ${typeClass} reveal">
         <div class="event-card-inner">
@@ -127,8 +144,8 @@ function renderSheetSchedule(rows) {
               <div class="event-title">${r['Event'] || ''}</div>
               <div class="event-desc">${r['Description'] || ''}</div>
               <div class="event-meta">
-                <span><i class="fa-solid fa-location-dot"></i> ${r['Location'] || ''}</span>
-                <span><i class="fa-solid fa-clock"></i> ${r['Time'] || ''}</span>
+                ${r['Location'] ? `<span><i class="fa-solid fa-location-dot"></i> ${r['Location']}</span>` : ''}
+                ${timeVal ? `<span><i class="fa-solid fa-clock"></i> ${timeVal}</span>` : ''}
               </div>
             </div>
           </div>
@@ -143,12 +160,13 @@ function renderSheetSchedule(rows) {
       </div>
     `;
   }).join('');
+  if (typeof applyTranslations === 'function') applyTranslations();
 }
 
 function fetchAndRenderSchedule() {
   const container = document.getElementById('events-container');
   if (!container) return;
-  container.innerHTML = '<div style="text-align:center;padding:40px;color:#FF6F00;">📅 कार्यक्रम लोड हो रहे हैं...</div>';
+  container.innerHTML = '<div style="text-align:center;padding:40px;color:#FF6F00;">📅 ' + t('loading') + '</div>';
   fetch(GAS_URL + '?sheet=Schedule')
     .then(r => r.json())
     .then(rows => {
@@ -187,6 +205,13 @@ function initSchedule() {
 let activeStayFilter = 'all';
 window._stayCache = null;
 
+/* Map sheet Type values to filter chip categories */
+function mapStayCategory(typeStr) {
+  const t = (typeStr || '').toLowerCase().trim();
+  if (t === 'dharamshala') return 'dharam';
+  return t; // hotel, budget, camping map directly
+}
+
 function renderStay(staysArray) {
   const container = document.getElementById('stay-container');
   if (!container) return;
@@ -195,6 +220,11 @@ function renderStay(staysArray) {
   let filtered = source;
   if (activeStayFilter !== 'all') {
     filtered = source.filter(s => s.category === activeStayFilter);
+  }
+
+  if (!filtered.length) {
+    container.innerHTML = '<div style="text-align:center;padding:30px;color:var(--light-brown);">' + t('no_results') + '</div>';
+    return;
   }
 
   container.innerHTML = filtered.map(s => {
@@ -210,9 +240,7 @@ function renderStay(staysArray) {
         <div class="stay-card-image">
           <img src="${s.image}" alt="${s.name}" loading="lazy" onerror="this.style.display='none'">
           <div class="stay-card-overlay"></div>
-          <div class="stay-badges">
-            ${s.sponsored ? `<span class="sponsored-badge"><i class="fa-solid fa-star"></i> ${t('sponsored_tag')}</span>` : ''}
-          </div>
+          ${s.sponsored ? `<div class="stay-badges"><span class="sponsored-badge"><i class="fa-solid fa-star"></i> ${t('sponsored_tag')}</span></div>` : ''}
         </div>` : ''}
         <div class="listing-card-header">
           <div>
@@ -241,13 +269,14 @@ function renderStay(staysArray) {
         </div>
       </div>
     `;
-  }).join('') || '<div style="text-align:center;padding:30px;color:var(--light-brown);">कोई आवास नहीं मिला</div>';
+  }).join('');
+  if (typeof applyTranslations === 'function') applyTranslations();
 }
 
 function fetchAndRenderStay() {
   const container = document.getElementById('stay-container');
   if (!container) return;
-  container.innerHTML = '<div style="text-align:center;padding:40px;color:#FF6F00;">🏨 आवास जानकारी लोड हो रही है...</div>';
+  container.innerHTML = '<div style="text-align:center;padding:40px;color:#FF6F00;">🏨 ' + t('loading') + '</div>';
   fetch(GAS_URL + '?sheet=Stay')
     .then(r => r.json())
     .then(rows => {
@@ -255,10 +284,10 @@ function fetchAndRenderStay() {
       const stays = rows.map((r, i) => ({
         id: 's' + i,
         name: r['Name'] || '',
-        type: r['Type'] || 'Hotel',
-        category: (r['Type'] || 'mid').toLowerCase().replace(/[\s\/\-]/g, '').replace('dharamshala','dharam').replace('budget','budget').replace('midrange','mid').replace('premium','premium'),
+        type: r['Type'] || '',
+        category: mapStayCategory(r['Type']),
         address: r['Address'] || '',
-        price: r['Price'] || t('contact_pricing'),
+        price: r['Price'] || '',
         phone: r['Phone'] || '',
         rating: parseFloat(r['Rating']) || 3.5,
         description: r['Description'] || '',
@@ -440,6 +469,7 @@ function renderFirstAid() {
       }
     });
   });
+  if (typeof applyTranslations === 'function') applyTranslations();
 }
 
 function shareLocation() {
@@ -469,7 +499,7 @@ function renderNews(newsArray) {
     filtered = data.filter(n => n.category === activeNewsCategory);
   }
   if (!filtered.length) {
-    container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--light-brown);">कोई समाचार उपलब्ध नहीं</div>';
+    container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--light-brown);">' + t('no_news') + '</div>';
     return;
   }
   const lang = currentLang;
@@ -501,6 +531,7 @@ function renderNews(newsArray) {
       </div>
     `;
   }).join('');
+  if (typeof applyTranslations === 'function') applyTranslations();
 }
 
 function toggleNewsCard(card) {
@@ -514,7 +545,7 @@ function toggleNewsCard(card) {
 function fetchAndRenderNews() {
   const container = document.getElementById('news-container');
   if (!container) return;
-  container.innerHTML = '<div style="text-align:center;padding:40px;color:#FF6F00;">📰 समाचार लोड हो रहा है...</div>';
+  container.innerHTML = '<div style="text-align:center;padding:40px;color:#FF6F00;">📰 ' + t('loading') + '</div>';
   fetch(GAS_URL + '?sheet=News')
     .then(r => r.json())
     .then(rows => {
@@ -575,12 +606,13 @@ function renderAkharas() {
       </div>
     </div>
   `).join('');
+  if (typeof applyTranslations === 'function') applyTranslations();
 }
 
 function fetchAndRenderAkharas() {
   const container = document.getElementById('akharas-container');
   if (!container) return;
-  container.innerHTML = '<div style="text-align:center;padding:40px;color:#FF6F00;">🕉️ अखाड़े लोड हो रहे हैं...</div>';
+  container.innerHTML = '<div style="text-align:center;padding:40px;color:#FF6F00;">🕉️ ' + t('loading') + '</div>';
   fetch(GAS_URL + '?sheet=Akharas')
     .then(r => r.json())
     .then(rows => {
@@ -598,6 +630,7 @@ function fetchAndRenderAkharas() {
           </div>
         </div>
       `).join('');
+      if (typeof applyTranslations === 'function') applyTranslations();
     })
     .catch(() => renderAkharas());
 }
@@ -625,11 +658,8 @@ function renderAbout() {
 function initTicker() {
   const el = document.getElementById('ticker-content');
   if (!el) return;
-  function updateTicker() {
-    const items = TICKER_ITEMS[currentLang] || TICKER_ITEMS.hi;
-    el.textContent = items.join('   •••   ');
-  }
-  updateTicker();
+  const items = TICKER_ITEMS[currentLang] || TICKER_ITEMS.hi;
+  el.textContent = items.join('   •••   ');
 }
 
 /* ===== TOAST NOTIFICATION ===== */
@@ -654,11 +684,21 @@ function initLangSwitcher() {
   document.querySelectorAll('.lang-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       setLang(btn.dataset.lang);
+      // Re-render all dynamic content with new language
       renderSchedule();
+      if (window._scheduleCache && window._scheduleCache.length) renderSheetSchedule(window._scheduleCache);
       renderNews(window._newsCache || NEWS_DATA);
       renderAkharas();
       renderStay(window._stayCache || null);
       initTicker();
+      // Sync second ticker on news page
+      var t2 = document.getElementById('ticker-content-2');
+      if (t2) {
+        var items = TICKER_ITEMS[currentLang] || TICKER_ITEMS['hi'];
+        t2.textContent = items.join('   •••   ');
+      }
+      // Final pass to catch any remaining data-t elements
+      if (typeof applyTranslations === 'function') applyTranslations();
     });
   });
 }
@@ -669,11 +709,6 @@ window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   deferredPrompt = e;
 });
-
-/* ===== HOME PAGE QUICK CARDS ===== */
-function initQuickCards() {
-  // Already handled via data-nav attributes in router.js
-}
 
 /* ===== MAIN APP INIT ===== */
 document.addEventListener('DOMContentLoaded', () => {
