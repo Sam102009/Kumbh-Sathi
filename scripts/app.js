@@ -295,7 +295,7 @@ function fetchAndRenderStay() {
         facilities: [],
         contact: r['Phone'] || '',
         distance: r['Address'] || '',
-        sponsored: false,
+        sponsored: (r['Sponsored'] === true || r['Sponsored'] === 'TRUE' || r['Sponsored'] === 'true'),
       }));
       window._stayCache = stays;
       renderStay(stays);
@@ -636,6 +636,28 @@ function fetchAndRenderAkharas() {
 }
 
 /* ===== ABOUT PAGE ===== */
+function fetchAndRenderSponsors() {
+  const GAS_URL = 'https://script.google.com/macros/s/AKfycbyp_E-2tqiBfAtswJIxIeeq2iH6gwMjjlPZwlxxijqU6RdfZW8UOlcM83Gd9Yay7ZbufQ/exec';
+  const container = document.getElementById('sponsors-container');
+  if (!container) return;
+  container.innerHTML = '<div style="text-align:center;padding:20px;color:#FF6F00;">Loading...</div>';
+  fetch(GAS_URL + '?sheet=Sponsors')
+    .then(r => r.json())
+    .then(rows => {
+      const active = rows.filter(r => r['Active'] === true || r['Active'] === 'TRUE');
+      if (!active.length) { container.innerHTML = ''; return; }
+      container.innerHTML = active.map(s => `
+        <a href="${s['Website'] || '#'}" target="_blank" style="display:inline-block;margin:8px;text-align:center;text-decoration:none;">
+          <div style="background:#fff;border-radius:12px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,0.1);min-width:120px;">
+            <img src="${s['Logo']}" alt="${s['Name']}" style="height:50px;object-fit:contain;" onerror="this.style.display='none'">
+            <div style="font-size:11px;color:#FF6F00;font-weight:600;margin-top:6px;">${s['Name']}</div>
+            <div style="font-size:10px;color:#666;">${s['Tagline'] || ''}</div>
+          </div>
+        </a>`).join('');
+    })
+    .catch(() => { container.innerHTML = ''; });
+}
+
 function renderAbout() {
   const g = document.getElementById('gallery-container');
   if (g) {
@@ -646,6 +668,7 @@ function renderAbout() {
       </div>
     `).join('');
   }
+  fetchAndRenderSponsors();
   const about1 = document.getElementById('about-content-1');
   if (about1) about1.textContent = ABOUT_CONTENT.what_is_kumbh_en;
   const about2 = document.getElementById('about-content-2');
