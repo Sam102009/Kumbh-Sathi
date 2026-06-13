@@ -1,0 +1,75 @@
+I am building a PWA called KumbhSathi for Kumbh Mela Nashik 2027.
+
+IMPORTANT RULES:
+- Always edit ROOT scripts/ folder (NOT public/scripts/)
+- Always edit ROOT index.html (NOT public/index.html)
+- Always edit ROOT styles/ folder (NOT public/styles/)
+- Never break existing working features
+- Pure HTML, CSS, JavaScript only (no frameworks)
+
+GAS URL: https://script.google.com/macros/s/AKfycbyp_E-2tqiBfAtswJIxIeeq2iH6gwMjjlPZwlxxijqU6RdfZW8UOlcM83Gd9Yay7ZbufQ/exec
+The GAS returns JSON array of objects with header names as keys e.g. {Name:"...", Type:"..."}
+
+CURRENTLY WORKING (DO NOT BREAK):
+- News page fetching from Google Sheet ✅
+- Sponsors section on About page ✅
+- Crowd density page (scripts/crowd2.js) ✅
+- Groups feature ✅
+- Lost & Found ✅
+- Weather widget ✅
+- Share button via WhatsApp ✅
+- Language switcher (Hindi/Marathi/English) ✅
+
+BUG 1 — STAY PAGE STUCK ON LOADING:
+- fetchAndRenderStay() in scripts/app.js fetches ?sheet=Stay
+- Google Sheet "Stay" tab has columns: Name, Type, Address, Price, Phone, Rating, Description, Image, Sponsored
+- The page shows "Loading..." forever and never renders cards
+- The issue is likely the fetch is failing silently or rows are being filtered out
+- Fix fetchAndRenderStay() completely:
+  * Remove any complex category mapping
+  * Use simple: category = (r['Type'] || 'hotel').toLowerCase().trim()
+  * Map 'dharamshala' to 'dharam' only
+  * sponsored = (r['Sponsored'] === true || r['Sponsored'] === 'TRUE' || r['Sponsored'] === 'true')
+  * If fetch fails show fallback hardcoded STAY_DATA
+  * Add proper error handling with .catch()
+  * Show "No accommodations found" if rows empty instead of staying on loading
+
+BUG 2 — SCHEDULE TIME NOT SHOWING:
+- Google Sheet "Schedule" tab has columns: Date, Event, Time, Location, Description, Category, Image
+- Time column value is not showing on schedule cards
+- Fix time mapping to use r['Time'] as plain string
+- Show time prominently on each card
+
+BUG 3 — ANDROID BACK BUTTON:
+- Pressing Android back button closes app instead of navigating back
+- In scripts/router.js add history.pushState({route: routeName}, '', '#' + routeName) on every navigation
+- Add window.addEventListener('popstate', (e) => { if(e.state && e.state.route) navigateTo(e.state.route); }) 
+- Back from home page should minimize app (default behavior)
+
+BUG 4 — MULTILINGUAL INCOMPLETE:
+- After renderStay(), renderSchedule(), renderAkharas(), renderNews() always call applyTranslations()
+- Make sure all data-t attributes in index.html have translations in all 3 languages in scripts/translations.js
+- Add missing translation keys: our_sponsors, sponsored_tag, loading, no_results, read_more, read_less
+
+FEATURE — DARK MODE:
+- Add a dark mode toggle button next to the language switcher in the header
+- Use a moon 🌙 icon for dark mode and sun ☀️ for light mode
+- Toggle should switch between light and dark theme instantly
+- Save preference to localStorage as 'theme' key
+- Dark mode colors:
+  * Background: #121212
+  * Card background: #1e1e1e
+  * Text: #f0f0f0
+  * Primary accent: keep saffron #FF6F00
+  * Secondary: #2d2d2d for borders/dividers
+  * Header background: #1a1a1a
+  * Bottom nav background: #1a1a1a
+- Add dark mode CSS to ROOT styles/main.css using class 'dark-mode' on body
+- On page load, check localStorage and apply saved theme
+- The toggle button should be small and round, matching the language buttons style
+- Make sure ALL pages look good in dark mode including: Home, News, Stay, Schedule, Map, Emergency, Akharas, More
+
+After ALL fixes:
+- Run: git add . && git commit -m "fix: stay page loading, dark mode, back button, multilingual" && git push origin main
+- Verify no existing features are broken
+- Test dark mode on all pages

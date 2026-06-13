@@ -553,6 +553,217 @@ body::before {
   pointer-events: all;
 }
 
+/* ===================================================
+   DARK MODE
+   Applied via class 'dark-mode' on <body>
+   =================================================== */
+
+/* Dark mode toggle button */
+#dark-mode-toggle {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 20px;
+  padding: 4px 8px;
+  font-size: 14px;
+  cursor: pointer;
+  color: #fff;
+  line-height: 1;
+  transition: background var(--transition);
+}
+#dark-mode-toggle:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+body.dark-mode {
+  background: #121212;
+  color: #e8e8e8;
+}
+
+/* Body pseudo-element (mandala pattern) – keep but dim */
+body.dark-mode::before {
+  opacity: 0.3;
+}
+
+/* Main scrollable area */
+body.dark-mode #main-content {
+  background: #121212;
+}
+
+/* Header & Nav */
+body.dark-mode #app-header {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2a1a0a 100%);
+}
+body.dark-mode #bottom-nav {
+  background: #1a1a1a;
+  border-top: 1px solid #2d2d2d;
+}
+body.dark-mode .nav-item {
+  color: #9E9E9E;
+}
+body.dark-mode .nav-item.active {
+  color: #FF6F00;
+}
+body.dark-mode #more-drawer {
+  background: #1e1e1e;
+}
+body.dark-mode .drawer-item {
+  color: #e8e8e8;
+  border-bottom-color: #2d2d2d;
+}
+body.dark-mode .drawer-item:hover,
+body.dark-mode .drawer-item:active {
+  background: #2d2d2d;
+}
+
+/* Cards */
+body.dark-mode .card,
+body.dark-mode .listing-card,
+body.dark-mode .event-card-inner,
+body.dark-mode .akhara-card,
+body.dark-mode .hospital-card,
+body.dark-mode .news-card,
+body.dark-mode .transport-mode,
+body.dark-mode .first-aid-item,
+body.dark-mode .group-card,
+body.dark-mode .sponsor-tier,
+body.dark-mode .weather-card {
+  background: #1e1e1e !important;
+  border-color: #2d2d2d !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4) !important;
+}
+body.dark-mode .listing-card {
+  border: 1px solid #2d2d2d;
+}
+
+/* Text */
+body.dark-mode .listing-name,
+body.dark-mode .event-title,
+body.dark-mode .akhara-name,
+body.dark-mode .news-card-title,
+body.dark-mode .section-title,
+body.dark-mode .home-section-title,
+body.dark-mode h1, body.dark-mode h2, body.dark-mode h3, body.dark-mode h4 {
+  color: #f0f0f0 !important;
+}
+body.dark-mode .listing-meta,
+body.dark-mode .event-desc,
+body.dark-mode .akhara-desc,
+body.dark-mode .news-card-desc,
+body.dark-mode .news-card-date,
+body.dark-mode .listing-card-body p {
+  color: #9E9E9E !important;
+}
+
+/* Section titles */
+body.dark-mode .section-title {
+  background: transparent;
+  color: #FF8C00 !important;
+}
+body.dark-mode .section-title::before {
+  background: #FF6F00;
+}
+
+/* Filter chips */
+body.dark-mode .filter-chip,
+body.dark-mode .stay-filter-chip,
+body.dark-mode .news-filter-chip {
+  background: #2d2d2d;
+  color: #e8e8e8;
+  border-color: #3d3d3d;
+}
+body.dark-mode .filter-chip.active,
+body.dark-mode .stay-filter-chip.active,
+body.dark-mode .news-filter-chip.active {
+  background: #FF6F00;
+  color: #fff;
+}
+
+/* Hero sections */
+body.dark-mode .page-hero {
+  background: linear-gradient(135deg, #2a1a0a 0%, #1a0a00 100%) !important;
+}
+
+/* Quick cards */
+body.dark-mode .quick-card {
+  background: #1e1e1e;
+  border: 1px solid #2d2d2d;
+}
+body.dark-mode .card-label {
+  color: #e8e8e8;
+}
+
+/* Home hero */
+body.dark-mode .home-hero {
+  background: linear-gradient(180deg, #2a1500 0%, #1a1a1a 100%);
+}
+
+/* Countdown */
+body.dark-mode .countdown-box {
+  background: rgba(255,111,0,0.15);
+  border-color: rgba(255,111,0,0.3);
+}
+body.dark-mode .countdown-number {
+  color: #FF8C00;
+}
+
+/* News ticker */
+body.dark-mode .news-ticker {
+  background: #1a1a1a;
+  border-color: #2d2d2d;
+}
+
+/* Inputs and forms */
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select {
+  background: #2d2d2d;
+  color: #e8e8e8;
+  border-color: #3d3d3d;
+}
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+  color: #777;
+}
+
+/* Lang switcher */
+body.dark-mode .lang-btn {
+  background: rgba(255,255,255,0.08);
+  color: #e8e8e8;
+}
+body.dark-mode .lang-btn.active {
+  background: #FF6F00;
+  color: #fff;
+}
+
+/* Crowd density cards */
+body.dark-mode .crowd-card,
+body.dark-mode .crowd-legend {
+  background: #1e1e1e;
+  color: #e8e8e8;
+}
+
+/* About gallery */
+body.dark-mode .gallery-item img {
+  opacity: 0.85;
+}
+
+/* Offline banner */
+body.dark-mode #offline-banner {
+  background: #7f0000;
+}
+
+/* Ad slot */
+body.dark-mode .ad-slot {
+  background: #1e1e1e;
+  border-color: #2d2d2d;
+}
+
+/* Toast */
+body.dark-mode #toast {
+  background: #2d2d2d;
+  color: #e8e8e8;
+}
+
 /* --- Responsive for larger screens --- */
 @media (min-width: 600px) {
   body {

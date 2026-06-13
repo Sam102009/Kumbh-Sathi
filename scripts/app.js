@@ -207,9 +207,9 @@ window._stayCache = null;
 
 /* Map sheet Type values to filter chip categories */
 function mapStayCategory(typeStr) {
-  const t = (typeStr || '').toLowerCase().trim();
-  if (t === 'dharamshala') return 'dharam';
-  return t; // hotel, budget, camping map directly
+  const val = (typeStr || '').toLowerCase().trim();
+  if (val === 'dharamshala') return 'dharam';
+  return val; // hotel, budget, camping map directly
 }
 
 function renderStay(staysArray) {
@@ -276,31 +276,47 @@ function renderStay(staysArray) {
 function fetchAndRenderStay() {
   const container = document.getElementById('stay-container');
   if (!container) return;
-  container.innerHTML = '<div style="text-align:center;padding:40px;color:#FF6F00;">🏨 ' + t('loading') + '</div>';
+  container.innerHTML = '<div style="text-align:center;padding:40px;color:#FF6F00;">🏨 Loading accommodations...</div>';
+
+  /* 8-second timeout fallback — if GAS takes too long, show hardcoded data */
+  var fallbackTimer = setTimeout(function() { renderStay(); }, 8000);
+
   fetch(GAS_URL + '?sheet=Stay')
-    .then(r => r.json())
-    .then(rows => {
-      if (!rows || rows.length === 0) { renderStay(); return; }
-      const stays = rows.map((r, i) => ({
-        id: 's' + i,
-        name: r['Name'] || '',
-        type: r['Type'] || '',
-        category: mapStayCategory(r['Type']),
-        address: r['Address'] || '',
-        price: r['Price'] || '',
-        phone: r['Phone'] || '',
-        rating: parseFloat(r['Rating']) || 3.5,
-        description: r['Description'] || '',
-        image: r['Image'] || '',
-        facilities: [],
-        contact: r['Phone'] || '',
-        distance: r['Address'] || '',
-        sponsored: (r['Sponsored'] === true || r['Sponsored'] === 'TRUE' || r['Sponsored'] === 'true'),
-      }));
+    .then(function(r) {
+      if (!r.ok) throw new Error('Network response not ok');
+      return r.json();
+    })
+    .then(function(rows) {
+      clearTimeout(fallbackTimer);
+      if (!rows || !Array.isArray(rows) || rows.length === 0) {
+        renderStay();
+        return;
+      }
+      var stays = rows.map(function(r, i) {
+        return {
+          id: 's' + i,
+          name: r['Name'] || '',
+          type: r['Type'] || '',
+          category: mapStayCategory(r['Type']),
+          address: r['Address'] || '',
+          price: r['Price'] || '',
+          phone: r['Phone'] || '',
+          rating: parseFloat(r['Rating']) || 3.5,
+          description: r['Description'] || '',
+          image: r['Image'] || '',
+          facilities: [],
+          contact: r['Phone'] || '',
+          distance: r['Address'] || '',
+          sponsored: (r['Sponsored'] === true || r['Sponsored'] === 'TRUE' || r['Sponsored'] === 'true' || r['Sponsored'] === '1'),
+        };
+      });
       window._stayCache = stays;
       renderStay(stays);
     })
-    .catch(() => renderStay());
+    .catch(function() {
+      clearTimeout(fallbackTimer);
+      renderStay();
+    });
 }
 
 function initStay() {
@@ -726,6 +742,23 @@ function initLangSwitcher() {
   });
 }
 
+/* ===== DARK MODE ===== */
+function initDarkMode() {
+  var saved = localStorage.getItem('theme');
+  if (saved === 'dark') {
+    document.body.classList.add('dark-mode');
+    var btn = document.getElementById('dark-mode-toggle');
+    if (btn) btn.textContent = '☀️';
+  }
+}
+
+function toggleDarkMode() {
+  var isDark = document.body.classList.toggle('dark-mode');
+  var btn = document.getElementById('dark-mode-toggle');
+  if (btn) btn.textContent = isDark ? '☀️' : '🌙';
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+}
+
 /* ===== PWA INSTALL PROMPT ===== */
 let deferredPrompt = null;
 window.addEventListener('beforeinstallprompt', e => {
@@ -735,6 +768,7 @@ window.addEventListener('beforeinstallprompt', e => {
 
 /* ===== MAIN APP INIT ===== */
 document.addEventListener('DOMContentLoaded', () => {
+  initDarkMode();
   initLangSwitcher();
   updateCountdown();
   setInterval(updateCountdown, 1000);

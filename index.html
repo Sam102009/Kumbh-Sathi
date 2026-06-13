@@ -53,6 +53,7 @@
       </div>
     </div>
     <div class="header-right">
+      <button id="dark-mode-toggle" onclick="toggleDarkMode()" aria-label="Toggle dark mode" title="Dark mode">🌙</button>
       <div id="lang-switcher" aria-label="Language Switcher">
         <button class="lang-btn active" data-lang="hi">हि</button>
         <button class="lang-btn" data-lang="mr">म</button>
@@ -69,16 +70,6 @@
          PAGE: HOME
          ================================================ -->
     <section class="page active" id="page-home">
-
-      <!-- Top Ad Slot -->
-      <div class="ad-slot" id="sponsor-banner-home" style="margin:8px 16px 0;">
-        <span class="ad-label">Advertisement</span>
-        <div class="ad-placeholder">
-          <i class="fa-solid fa-bullhorn"></i>
-          <p data-t="ad_here">Your Ad Here</p>
-          <a class="nav-link" data-nav="sponsor" data-t="ad_contact">Contact Us to Sponsor</a>
-        </div>
-      </div>
 
       <div id="weather-card" class="weather-card" style="margin:8px 16px 0;"><div class="weather-loading">Loading weather...</div></div>
       <!-- Breaking News Ticker -->

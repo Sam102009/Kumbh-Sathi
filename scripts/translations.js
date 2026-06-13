@@ -207,6 +207,7 @@ const T = {
     photo_gallery:  'Photo Gallery',
 
     /* --- Sponsor --- */
+    our_sponsors:      'Our Sponsors',
     sponsor_title:     'Advertise With Us',
     sponsor_subtitle:  'Reach Millions of Pilgrims at Kumbh Nashik 2027',
     bronze_pkg:    'Bronze Package',
@@ -406,6 +407,7 @@ const T = {
     shahi_significance: 'शाही स्नान का महत्व',
     photo_gallery:  'फोटो गैलरी',
 
+    our_sponsors:      'हमारे प्रायोजक',
     sponsor_title:     'हमारे साथ विज्ञापन करें',
     sponsor_subtitle:  'कुंभ नाशिक 2027 में करोड़ों श्रद्धालुओं तक पहुँचें',
     bronze_pkg:    'ब्रॉन्ज पैकेज',
@@ -605,6 +607,7 @@ const T = {
     shahi_significance: 'शाही स्नानाचे महत्त्व',
     photo_gallery:  'फोटो गॅलरी',
 
+    our_sponsors:      'आमचे प्रायोजक',
     sponsor_title:     'आमच्यासोबत जाहिरात करा',
     sponsor_subtitle:  'कुंभ नाशिक 2027 मध्ये कोट्यवधी यात्रेकरूंपर्यंत पोहोचा',
     bronze_pkg:    'ब्रॉन्झ पॅकेज',
