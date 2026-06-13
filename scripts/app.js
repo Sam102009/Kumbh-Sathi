@@ -651,6 +651,47 @@ function fetchAndRenderAkharas() {
     .catch(() => renderAkharas());
 }
 
+/* ===== MANAGED AD SLOTS ===== */
+function fetchAndRenderAds() {
+  fetch(GAS_URL + '?sheet=Ads')
+    .then(function(r) { return r.json(); })
+    .then(function(rows) {
+      if (!rows || !Array.isArray(rows)) return;
+      var active = rows.filter(function(r) {
+        return r['Active'] === true || r['Active'] === 'TRUE' || r['Active'] === 'true';
+      });
+      ['home', 'map'].forEach(function(slotName) {
+        var el = document.getElementById(slotName + '-ad-slot');
+        if (!el) return;
+        var ad = null;
+        for (var i = 0; i < active.length; i++) {
+          if ((active[i]['Slot'] || '').toLowerCase().trim() === slotName) { ad = active[i]; break; }
+        }
+        if (!ad) { el.style.display = 'none'; return; }
+        el.style.display = 'block';
+        var bg = ad['BgColor'] || 'linear-gradient(135deg,#FF6F00,#E64A19)';
+        el.innerHTML =
+          '<a href="' + (ad['Link'] || '#') + '" target="_blank" rel="noopener" ' +
+          'style="display:flex;align-items:center;gap:12px;padding:12px 14px;' +
+          'background:' + bg + ';border-radius:var(--radius-md);text-decoration:none;' +
+          'box-shadow:0 2px 10px rgba(255,111,0,0.25);">' +
+          (ad['Image'] ? '<img src="' + ad['Image'] + '" style="width:44px;height:44px;object-fit:contain;border-radius:8px;background:#fff;padding:4px;flex-shrink:0;" onerror="this.style.display=\'none\'">' : '') +
+          '<div style="flex:1;min-width:0;">' +
+          '<div style="font-size:9px;color:rgba(255,255,255,0.75);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;" data-t="home_ad_label">Sponsored</div>' +
+          '<div style="font-size:13px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + (ad['Title'] || '') + '</div>' +
+          '</div>' +
+          '<i class="fa-solid fa-chevron-right" style="color:rgba(255,255,255,0.7);flex-shrink:0;"></i>' +
+          '</a>';
+      });
+    })
+    .catch(function() {
+      ['home-ad-slot', 'map-ad-slot'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
+    });
+}
+
 /* ===== ABOUT PAGE ===== */
 function fetchAndRenderSponsors() {
   const GAS_URL = 'https://script.google.com/macros/s/AKfycbyp_E-2tqiBfAtswJIxIeeq2iH6gwMjjlPZwlxxijqU6RdfZW8UOlcM83Gd9Yay7ZbufQ/exec';
@@ -783,6 +824,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initCrowd();
   fetchAndRenderAkharas();
   renderAbout();
+  fetchAndRenderAds();
 });
 
 /* Watch for crowd page activation */

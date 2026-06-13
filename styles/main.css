@@ -764,6 +764,254 @@ body.dark-mode #toast {
   color: #e8e8e8;
 }
 
+/* About / More — info blocks, gallery, sponsors */
+body.dark-mode .info-block {
+  background: #1e1e1e !important;
+  border-color: #2d2d2d !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4) !important;
+}
+body.dark-mode .info-block h3 {
+  color: #FF8C00 !important;
+}
+body.dark-mode .info-block p,
+body.dark-mode .info-block li {
+  color: #9E9E9E !important;
+}
+body.dark-mode .gallery-grid {
+  background: transparent;
+}
+body.dark-mode .gallery-item {
+  background: #1e1e1e;
+  border: 1px solid #2d2d2d;
+}
+body.dark-mode .gallery-item img {
+  opacity: 0.8;
+}
+body.dark-mode #sponsors-container a > div {
+  background: #1e1e1e !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4) !important;
+}
+body.dark-mode #sponsors-container a > div div {
+  color: #FF8C00 !important;
+}
+
+/* More drawer inner text */
+body.dark-mode .drawer-title {
+  color: #FF8C00;
+  border-bottom-color: #2d2d2d;
+}
+
+/* Sponsor page inner white cards */
+body.dark-mode .sponsor-tier,
+body.dark-mode [style*="background:#fff"],
+body.dark-mode [style*="background: #fff"],
+body.dark-mode [style*="background:white"],
+body.dark-mode [style*="background: white"] {
+  background: #1e1e1e !important;
+  color: #e8e8e8 !important;
+}
+body.dark-mode .tier-feature {
+  color: #9E9E9E !important;
+}
+
+/* Transport page */
+body.dark-mode .transport-section {
+  background: transparent;
+}
+body.dark-mode .transport-mode {
+  background: #1e1e1e !important;
+  border-color: #2d2d2d !important;
+}
+body.dark-mode .transport-mode-header {
+  background: #252525 !important;
+  color: #e8e8e8 !important;
+  border-bottom-color: #2d2d2d;
+}
+body.dark-mode .transport-mode-header h3 {
+  color: #e8e8e8 !important;
+}
+body.dark-mode .transport-mode-header i {
+  color: #FF8C00 !important;
+}
+body.dark-mode .transport-route {
+  border-bottom-color: #2d2d2d !important;
+}
+body.dark-mode .transport-route-icon {
+  background: rgba(255,111,0,0.12) !important;
+  color: #FF8C00 !important;
+}
+body.dark-mode .transport-route-info h4 {
+  color: #f0f0f0 !important;
+}
+body.dark-mode .transport-route-info p {
+  color: #9E9E9E !important;
+}
+body.dark-mode .route-tag {
+  background: #2d2d2d !important;
+  color: #e8e8e8 !important;
+  border-color: #3d3d3d !important;
+}
+
+/* Emergency page */
+body.dark-mode .first-aid-item {
+  background: #1e1e1e !important;
+  border-color: #2d2d2d !important;
+}
+body.dark-mode .first-aid-header {
+  background: #252525 !important;
+}
+body.dark-mode .first-aid-header h4 {
+  color: #e8e8e8 !important;
+}
+body.dark-mode .first-aid-body {
+  background: #1a1a1a !important;
+  color: #9E9E9E !important;
+}
+body.dark-mode .first-aid-body li {
+  color: #9E9E9E;
+}
+body.dark-mode .hospital-card {
+  background: #1e1e1e !important;
+  border-color: #2d2d2d !important;
+}
+body.dark-mode .hospital-name {
+  color: #f0f0f0 !important;
+}
+body.dark-mode .hospital-addr {
+  color: #9E9E9E !important;
+}
+body.dark-mode .hospital-icon {
+  background: rgba(255,111,0,0.12) !important;
+  color: #FF8C00 !important;
+}
+/* Emergency number cards */
+body.dark-mode .emergency-number-card,
+body.dark-mode .emergency-card {
+  background: #1e1e1e !important;
+  border-color: #2d2d2d !important;
+}
+
+/* Lost & Found page */
+body.dark-mode .report-form {
+  background: #1e1e1e !important;
+  border-color: #2d2d2d !important;
+}
+body.dark-mode .form-tab {
+  background: #2d2d2d !important;
+  color: #9E9E9E !important;
+  border-color: #3d3d3d !important;
+}
+body.dark-mode .form-tab.active {
+  background: #FF6F00 !important;
+  color: #fff !important;
+}
+body.dark-mode .form-group label {
+  color: #e8e8e8 !important;
+}
+body.dark-mode .form-input,
+body.dark-mode .form-select,
+body.dark-mode .form-textarea {
+  background: #2d2d2d !important;
+  color: #e8e8e8 !important;
+  border-color: #3d3d3d !important;
+}
+body.dark-mode .report-card {
+  background: #1e1e1e !important;
+  border-color: #2d2d2d !important;
+}
+body.dark-mode .report-card-title {
+  color: #f0f0f0 !important;
+}
+body.dark-mode .report-card-meta {
+  color: #9E9E9E !important;
+}
+
+/* Crowd density page */
+body.dark-mode .crowd-card {
+  background: #1e1e1e !important;
+  border-color: #2d2d2d !important;
+}
+body.dark-mode .crowd-card-name {
+  color: #f0f0f0 !important;
+}
+body.dark-mode .crowd-card-sub {
+  color: #9E9E9E !important;
+}
+body.dark-mode .crowd-legend {
+  background: #1e1e1e !important;
+  border-color: #2d2d2d !important;
+}
+body.dark-mode .crowd-legend-item {
+  color: #e8e8e8 !important;
+}
+body.dark-mode .crowd-shahi-alert {
+  background: rgba(230,74,25,0.2) !important;
+  border-color: rgba(230,74,25,0.4) !important;
+}
+
+/* Groups page */
+body.dark-mode .group-card {
+  background: #1e1e1e !important;
+  border-color: #2d2d2d !important;
+}
+body.dark-mode .group-name,
+body.dark-mode .group-title {
+  color: #f0f0f0 !important;
+}
+body.dark-mode .group-meta,
+body.dark-mode .group-desc {
+  color: #9E9E9E !important;
+}
+
+/* News page expanded */
+body.dark-mode .news-card-expanded {
+  background: #252525 !important;
+  color: #9E9E9E !important;
+}
+
+/* Schedule filter row */
+body.dark-mode .schedule-filter {
+  background: #1a1a1a !important;
+  border-color: #2d2d2d !important;
+}
+
+/* Buttons in dark mode */
+body.dark-mode .btn-outline {
+  border-color: #FF6F00 !important;
+  color: #FF8C00 !important;
+}
+body.dark-mode .btn-outline:hover {
+  background: rgba(255,111,0,0.1) !important;
+}
+
+/* Leaflet map popup */
+body.dark-mode .leaflet-popup-content-wrapper {
+  background: #1e1e1e !important;
+  color: #e8e8e8 !important;
+}
+body.dark-mode .leaflet-popup-tip {
+  background: #1e1e1e !important;
+}
+
+/* Offline banner */
+body.dark-mode #offline-banner {
+  background: #7f0000 !important;
+}
+
+/* Section hero bg override for all dark pages */
+body.dark-mode .page-hero {
+  background: linear-gradient(135deg, #1a0a00 0%, #2a1500 100%) !important;
+}
+
+/* Ad slot in dark */
+body.dark-mode .ad-slot {
+  background: #1e1e1e !important;
+  border-color: #2d2d2d !important;
+}
+body.dark-mode .ad-placeholder {
+  color: #9E9E9E !important;
+}
+
 /* --- Responsive for larger screens --- */
 @media (min-width: 600px) {
   body {
