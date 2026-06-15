@@ -743,6 +743,15 @@
   </main>
 
   <!-- ===== BOTTOM NAVIGATION ===== -->
+  <!-- ================================================
+       AI CHATBOT — Floating button + Chat window
+       ================================================ -->
+  <button id="chatbot-btn" aria-label="Open KumbhSathi AI">
+    <span class="cb-btn-icon">💬</span>
+  </button>
+
+  <div id="chatbot-window" role="dialog" aria-label="KumbhSathi AI Chat"></div>
+
   <nav id="bottom-nav">
     <div class="nav-item active" id="nav-home" data-route="home">
       <i class="fa-solid fa-house"></i>
@@ -803,6 +812,7 @@
 <script src="scripts/router.js"></script>
 <script src="scripts/groups.js"></script>
 <script src="scripts/weather.js"></script>
+<script src="scripts/chatbot.js"></script>
 <script src="scripts/app.js"></script>
 
 <script>

@@ -825,6 +825,7 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchAndRenderAkharas();
   renderAbout();
   fetchAndRenderAds();
+  if (typeof initChatbot === 'function') initChatbot();
 });
 
 /* Watch for crowd page activation */
