@@ -604,15 +604,22 @@ body.dark-mode .nav-item.active {
   color: #FF6F00;
 }
 body.dark-mode #more-drawer {
-  background: #1e1e1e;
+  background: #1e1e1e !important;
 }
 body.dark-mode .drawer-item {
-  color: #e8e8e8;
-  border-bottom-color: #2d2d2d;
+  color: #e8e8e8 !important;
+  border-bottom-color: #2d2d2d !important;
+  background: transparent !important;
+}
+body.dark-mode .drawer-item i {
+  color: #FF8C00 !important;
 }
 body.dark-mode .drawer-item:hover,
 body.dark-mode .drawer-item:active {
-  background: #2d2d2d;
+  background: #2d2d2d !important;
+}
+body.dark-mode .drawer-overlay {
+  background: rgba(0,0,0,0.6) !important;
 }
 
 /* Cards */
@@ -632,7 +639,15 @@ body.dark-mode .weather-card {
   box-shadow: 0 2px 8px rgba(0,0,0,0.4) !important;
 }
 body.dark-mode .listing-card {
-  border: 1px solid #2d2d2d;
+  border: 1px solid #2d2d2d !important;
+}
+body.dark-mode .listing-card-footer {
+  border-top-color: #2d2d2d !important;
+  background: #252525 !important;
+}
+body.dark-mode .listing-sponsored-badge {
+  background: rgba(255,111,0,0.15) !important;
+  color: #FF8C00 !important;
 }
 
 /* Text */
@@ -683,13 +698,15 @@ body.dark-mode .page-hero {
   background: linear-gradient(135deg, #2a1a0a 0%, #1a0a00 100%) !important;
 }
 
-/* Quick cards */
+/* Quick cards — !important overrides components.css #fff */
 body.dark-mode .quick-card {
-  background: #1e1e1e;
-  border: 1px solid #2d2d2d;
+  background: #1e1e1e !important;
+  border: 1px solid #2d2d2d !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4) !important;
 }
-body.dark-mode .card-label {
-  color: #e8e8e8;
+body.dark-mode .card-label,
+body.dark-mode .quick-card .card-label {
+  color: #e8e8e8 !important;
 }
 
 /* Home hero */

@@ -1,0 +1,56 @@
+I am building a PWA called KumbhSathi for Kumbh Mela Nashik 2027.
+
+IMPORTANT RULES:
+- Always edit ROOT styles/ folder (NOT public/styles/)
+- Always edit ROOT index.html (NOT public/index.html)
+- Never break existing working features
+
+SINGLE BUG TO FIX — DARK MODE NOT WORKING ON MORE PAGE:
+
+The dark mode toggle (🌙/☀️) works on most pages but the "More Options" section 
+stays light/cream colored even in dark mode.
+
+The More Options grid has items: Transport, Lost & Found, Emergency, News, Akharas, 
+About, Advertise, Share App — all with cream/light background that doesn't change.
+
+Fix dark mode CSS in ROOT styles/main.css to cover the More page completely.
+Add these dark mode rules under the existing .dark-mode CSS:
+
+.dark-mode .more-grid,
+.dark-mode .more-menu,
+.dark-mode .quick-grid,
+.dark-mode .page-more,
+.dark-mode [id="page-more"] { background: #121212 !important; }
+
+.dark-mode .more-grid-item,
+.dark-mode .more-menu-item,
+.dark-mode .quick-grid-item { 
+  background: #1e1e1e !important; 
+  color: #f0f0f0 !important;
+  border-color: #2d2d2d !important;
+}
+
+.dark-mode .more-grid-item span,
+.dark-mode .more-menu-item span,
+.dark-mode .quick-grid-item span,
+.dark-mode .more-grid-item p,
+.dark-mode .more-grid-item label { 
+  color: #f0f0f0 !important; 
+}
+
+Also check index.html for the actual class names used on the More page grid items
+and make sure the dark mode CSS targets those exact class names.
+
+Also fix these dark mode issues on other pages:
+- .dark-mode .info-block { background: #1e1e1e !important; color: #f0f0f0 !important; }
+- .dark-mode .filter-chip { background: #2d2d2d !important; color: #f0f0f0 !important; }
+- .dark-mode input, .dark-mode textarea, .dark-mode select { background: #1e1e1e !important; color: #f0f0f0 !important; border-color: #2d2d2d !important; }
+- .dark-mode .accordion-content { background: #1e1e1e !important; color: #f0f0f0 !important; }
+- .dark-mode .transport-card { background: #1e1e1e !important; color: #f0f0f0 !important; }
+- .dark-mode .listing-card { background: #1e1e1e !important; color: #f0f0f0 !important; }
+- .dark-mode .news-card { background: #1e1e1e !important; color: #f0f0f0 !important; }
+- .dark-mode .crowd-card { background: #1e1e1e !important; color: #f0f0f0 !important; }
+
+After fix:
+- Run: git add styles/main.css && git commit -m "fix: dark mode more page and all cards" && git push origin main
+- Verify dark mode works on ALL pages
