@@ -132,18 +132,6 @@
     var sendBtn = document.getElementById('cb-send');
     if (sendBtn) sendBtn.disabled = true;
 
-    var contents = [
-      { role: 'user', parts: [{ text: SYSTEM_PROMPT + '\n\n---\n\nUser: ' + text }] }
-    ];
-
-    if (chatHistory.length > 1) {
-      contents = chatHistory.slice(0, -1).concat([
-        { role: 'user', parts: [{ text: SYSTEM_PROMPT + '\n\n---\nPrevious context provided. Now answer:\n\nUser: ' + text }] }
-      ]);
-      contents = chatHistory.slice();
-      contents[0] = { role: 'user', parts: [{ text: SYSTEM_PROMPT + '\n\n---\n\n' + chatHistory[0].parts[0].text }] };
-    }
-
     fetch(GEMINI_URL, {
       method: 'POST',
       headers: {
