@@ -132,7 +132,7 @@ function renderReports() {
   if (!container) return;
   _lfShowSpinner(container);
 
-  fetch(APPS_SCRIPT_URL + '?sheet=LostFound')
+  fetch(APPS_SCRIPT_URL + '?sheet=Lost%20and%20Found')
     .then(function(res) {
       if (!res.ok) throw new Error('HTTP ' + res.status);
       return res.json();
