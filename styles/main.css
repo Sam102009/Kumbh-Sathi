@@ -1261,3 +1261,14 @@ body.dark-mode .cb-input:focus {
 body.dark-mode .cb-input::placeholder {
   color: #6e6e6e !important;
 }
+
+/* ============================================================
+   LOST & FOUND — Success modal animation
+   ============================================================ */
+@keyframes lfModalIn {
+  from { opacity: 0; transform: scale(0.88) translateY(20px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);    }
+}
+body.dark-mode #lf-success-modal > div {
+  background: #1e1e1e !important;
+}
