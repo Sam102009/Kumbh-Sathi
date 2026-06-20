@@ -134,11 +134,20 @@ function renderReports() {
 
   fetch(APPS_SCRIPT_URL + '?sheet=Lost%20and%20Found')
     .then(function(res) {
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      return res.json();
+      return res.text();
     })
-    .then(function(reports) {
-      if (!Array.isArray(reports)) { _lfShowError(container); return; }
+    .then(function(text) {
+      var reports;
+      try {
+        reports = JSON.parse(text);
+      } catch (parseErr) {
+        throw new Error('JSON parse failed. Raw response: ' + text.slice(0, 150));
+      }
+
+      if (!Array.isArray(reports)) {
+        if (reports && reports.error) throw new Error(reports.error);
+        throw new Error('Expected array, got: ' + JSON.stringify(reports).slice(0, 100));
+      }
 
       var approved = reports.filter(_lfIsApproved);
 
@@ -150,7 +159,12 @@ function renderReports() {
     })
     .catch(function(err) {
       console.error('[KumbhSathi] Load reports failed:', err);
-      _lfShowError(container);
+      container.innerHTML =
+        '<div class="empty-state" style="color:#b71c1c;">' +
+        '<i class="fa-solid fa-triangle-exclamation" style="font-size:28px;"></i>' +
+        '<p style="margin-top:10px;font-size:12px;word-break:break-word;">Error: ' + (err.message || err) + '</p>' +
+        '<button onclick="renderReports()" style="margin-top:12px;padding:8px 20px;background:var(--saffron);color:#fff;border:none;border-radius:20px;font-size:13px;cursor:pointer;">Retry</button>' +
+        '</div>';
     });
 }
 
