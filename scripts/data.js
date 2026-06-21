@@ -147,8 +147,10 @@ const EVENTS_DATA = [
   },
 ];
 
-/* ===== STAY LISTINGS ===== */
-const STAY_DATA = [
+/* STAY_DATA removed — Stay page now loads live from Google Sheet */
+const _STAY_DATA_REMOVED = true; // placeholder so references fail loudly
+
+if (false) { const __unused = [
   {
     id: 'st1',
     name: 'Hotel Sai Heritage',
@@ -303,7 +305,7 @@ const STAY_DATA = [
     facilities: ['AC', 'Pool', 'Restaurant', 'Gym', 'Spa', 'WiFi'],
     image: 'https://picsum.photos/seed/hotel5/300/180',
   },
-];
+]; } // end if(false) — STAY_DATA removed
 
 /* ===== NEWS DATA ===== */
 const NEWS_DATA = [

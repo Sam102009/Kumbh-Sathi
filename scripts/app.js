@@ -201,31 +201,85 @@ function initSchedule() {
   fetchAndRenderSchedule();
 }
 
-/* ===== STAY PAGE ===== */
+/* ── STAY PAGE ──────────────────────────────────────────
+   Real data only. No hardcoded fallback.
+   Root bug fixed: GAS returns Phone as a NUMBER — always
+   coerce to String before calling .replace() on it.
+   ───────────────────────────────────────────────────── */
 var activeStayFilter = 'all';
 window._stayCache = null;
 
-/* ── 1. mapStayCategory ──────────────────────────────── */
-function mapStayCategory(typeStr) {
-  var val = (typeStr || '').toLowerCase().trim();
-  if (!val) return 'hotel';
-  if (val === 'dharamshala') return 'dharam';
-  return val; // hotel / budget / camping pass through unchanged
+function _stayPhoneStr(raw) {
+  /* GAS may send Phone as number or string — always return a string */
+  return String(raw == null ? '' : raw).replace(/[^0-9+]/g, '');
 }
 
-/* ── 2. renderStay ───────────────────────────────────── */
+function _stayCategoryFromType(typeStr) {
+  var v = String(typeStr || '').toLowerCase().trim();
+  if (!v) return 'hotel';
+  if (v === 'dharamshala') return 'dharam';
+  return v; /* hotel / budget / camping unchanged */
+}
+
+function _stayCard(s) {
+  var rating = isNaN(s.rating) ? 3.5 : Number(s.rating);
+  var full   = Math.floor(rating);
+  var stars  = '★'.repeat(full) + ((rating - full) >= 0.5 ? '½' : '');
+  var phone  = _stayPhoneStr(s.phone);
+
+  return (
+    '<div class="listing-card' + (s.sponsored ? ' sponsored' : '') + ' reveal">' +
+      (s.image
+        ? '<div class="stay-card-image">' +
+            '<img src="' + s.image + '" alt="' + s.name + '" loading="lazy" onerror="this.style.display=\'none\'">' +
+            '<div class="stay-card-overlay"></div>' +
+            (s.sponsored
+              ? '<div class="stay-badges"><span class="listing-sponsored-badge">' +
+                  '<i class="fa-solid fa-star"></i> ' + t('sponsored_tag') +
+                '</span></div>'
+              : '') +
+          '</div>'
+        : '') +
+      '<div class="listing-card-header">' +
+        '<div>' +
+          '<div class="listing-name">' + s.name + '</div>' +
+          '<div class="listing-meta">' +
+            '<span><i class="fa-solid fa-hotel"></i> ' + (s.type || '') + '</span>' +
+            (s.address ? '<span><i class="fa-solid fa-map-marker-alt"></i> ' + s.address + '</span>' : '') +
+          '</div>' +
+          '<div class="stars">' + stars + '</div>' +
+        '</div>' +
+        '<div class="listing-price">' + (s.price || '') +
+          '<br><span style="font-size:10px;color:var(--light-brown);font-weight:400;">' + t('per_night') + '</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="listing-card-body">' +
+        '<p style="font-size:12px;color:var(--light-brown);line-height:1.6;margin-bottom:8px;">' + (s.description || '') + '</p>' +
+      '</div>' +
+      '<div class="listing-card-footer">' +
+        '<a href="tel:' + phone + '" class="btn btn-primary btn-sm" style="flex:1;">' +
+          '<i class="fa-solid fa-phone"></i> ' + t('book_contact') +
+        '</a>' +
+        (phone
+          ? '<a href="https://wa.me/' + phone + '" target="_blank" rel="noopener" class="btn btn-whatsapp btn-sm">' +
+              '<i class="fa-brands fa-whatsapp"></i>' +
+            '</a>'
+          : '') +
+      '</div>' +
+    '</div>'
+  );
+}
+
 function renderStay(staysArray) {
   var container = document.getElementById('stay-container');
   if (!container) return;
 
-  var source = staysArray || window._stayCache || STAY_DATA;
+  var source = staysArray || window._stayCache || [];
 
-  /* filter by active chip */
   var filtered = (activeStayFilter === 'all')
     ? source.slice()
     : source.filter(function(s) { return s.category === activeStayFilter; });
 
-  /* sponsored rows always sort first */
   filtered.sort(function(a, b) { return (b.sponsored ? 1 : 0) - (a.sponsored ? 1 : 0); });
 
   if (!filtered.length) {
@@ -236,119 +290,58 @@ function renderStay(staysArray) {
     return;
   }
 
-  container.innerHTML = filtered.map(function(s) {
-    var rating  = (typeof s.rating === 'number' && !isNaN(s.rating)) ? s.rating : 3.5;
-    var full    = Math.floor(rating);
-    var half    = (rating - full) >= 0.5;
-    var stars   = '★'.repeat(full) + (half ? '½' : '');
-    var phone   = (s.phone || s.contact || '').replace(/[^0-9+]/g, '');
-    var address = s.address || s.distance || '';
-    var facilities = (s.facilities || []).map(function(f) {
-      return '<span style="font-size:10px;background:rgba(255,111,0,0.08);color:var(--saffron);' +
-             'padding:2px 7px;border-radius:8px;border:1px solid rgba(255,111,0,0.18);">' + f + '</span>';
-    }).join('');
-
-    return (
-      '<div class="listing-card' + (s.sponsored ? ' sponsored' : '') + ' reveal">' +
-        (s.image
-          ? '<div class="stay-card-image">' +
-              '<img src="' + s.image + '" alt="' + s.name + '" loading="lazy" onerror="this.style.display=\'none\'">' +
-              '<div class="stay-card-overlay"></div>' +
-              (s.sponsored
-                ? '<div class="stay-badges"><span class="listing-sponsored-badge"><i class="fa-solid fa-star"></i> ' + t('sponsored_tag') + '</span></div>'
-                : '') +
-            '</div>'
-          : '') +
-        '<div class="listing-card-header">' +
-          '<div>' +
-            '<div class="listing-name">' + s.name + '</div>' +
-            '<div class="listing-meta">' +
-              '<span><i class="fa-solid fa-hotel"></i> ' + (s.type || '') + '</span>' +
-              (address ? '<span><i class="fa-solid fa-map-marker-alt"></i> ' + address + '</span>' : '') +
-            '</div>' +
-            '<div class="stars">' + stars + '</div>' +
-          '</div>' +
-          '<div class="listing-price">' + (s.price || '') +
-            '<br><span style="font-size:10px;color:var(--light-brown);font-weight:400;">' + t('per_night') + '</span>' +
-          '</div>' +
-        '</div>' +
-        '<div class="listing-card-body">' +
-          '<p style="font-size:12px;color:var(--light-brown);line-height:1.6;margin-bottom:8px;">' + (s.description || '') + '</p>' +
-          (facilities ? '<div style="display:flex;flex-wrap:wrap;gap:4px;">' + facilities + '</div>' : '') +
-        '</div>' +
-        '<div class="listing-card-footer">' +
-          '<a href="tel:' + phone + '" class="btn btn-primary btn-sm" style="flex:1;">' +
-            '<i class="fa-solid fa-phone"></i> ' + t('book_contact') +
-          '</a>' +
-          (phone
-            ? '<a href="https://wa.me/' + phone + '" target="_blank" rel="noopener" class="btn btn-whatsapp btn-sm">' +
-                '<i class="fa-brands fa-whatsapp"></i>' +
-              '</a>'
-            : '') +
-        '</div>' +
-      '</div>'
-    );
-  }).join('');
+  try {
+    container.innerHTML = filtered.map(_stayCard).join('');
+  } catch (e) {
+    console.error('[KumbhSathi] renderStay error:', e);
+    container.innerHTML =
+      '<div style="text-align:center;padding:30px;color:#b71c1c;font-size:13px;">Render error: ' + e.message + '</div>';
+    return;
+  }
 
   if (typeof applyTranslations === 'function') applyTranslations();
 }
 
-/* ── 3. fetchAndRenderStay ───────────────────────────── */
 function fetchAndRenderStay() {
   var container = document.getElementById('stay-container');
   if (!container) return;
 
-  /* loading state — always replaced before function exits */
   container.innerHTML =
     '<div style="text-align:center;padding:40px;color:var(--saffron);">' +
-    '<i class="fa-solid fa-bed" style="font-size:28px;animation:pulse 1.2s infinite;"></i>' +
+    '<i class="fa-solid fa-bed" style="font-size:28px;"></i>' +
     '<p style="margin-top:10px;font-size:13px;">Loading accommodations…</p></div>';
 
   fetch(GAS_URL + '?sheet=Stay')
-    .then(function(res) {
-      return res.text(); /* read text unconditionally — GAS redirects break res.ok */
-    })
-    .then(function(text) {
-      var rows;
-      try { rows = JSON.parse(text); } catch (e) {
-        throw new Error('Parse error: ' + text.slice(0, 80));
-      }
+    .then(function(res) { return res.json(); })
+    .then(function(rows) {
+      console.log('[KumbhSathi Stay] GAS response:', rows); /* DEBUG — remove once confirmed */
 
-      /* GAS returned an error object */
       if (!Array.isArray(rows)) {
-        throw new Error(rows && rows.error ? rows.error : 'Unexpected response');
+        /* GAS returned an error object */
+        throw new Error('Not an array: ' + JSON.stringify(rows).slice(0, 120));
       }
 
-      /* Case (b): zero rows — show message, do not spin forever */
       if (rows.length === 0) {
         container.innerHTML =
           '<div style="text-align:center;padding:40px;color:var(--light-brown);">' +
           '<i class="fa-solid fa-bed" style="font-size:28px;opacity:0.4;"></i>' +
-          '<p style="margin-top:10px;">No accommodations listed yet.</p></div>';
+          '<p style="margin-top:10px;">No accommodations available yet. Check back soon.</p></div>';
         return;
       }
 
-      /* Case (a): valid data */
       var stays = rows.map(function(r, i) {
-        var rawRating = parseFloat(r['Rating']);
         return {
-          id:          's' + i,
-          name:        r['Name']        || '',
-          type:        (r['Type']       || '').trim(),
-          category:    mapStayCategory(r['Type']),
-          address:     r['Address']     || '',
-          price:       r['Price']       || '',
-          phone:       r['Phone']       || '',
-          rating:      isNaN(rawRating) ? 3.5 : rawRating,
-          description: r['Description'] || '',
-          image:       r['Image']       || '',
-          facilities:  [],
-          contact:     r['Phone']       || '',
-          distance:    r['Address']     || '',
-          sponsored:   (r['Sponsored'] === true  ||
-                        r['Sponsored'] === 'TRUE' ||
-                        r['Sponsored'] === 'true' ||
-                        r['Sponsored'] === '1'),
+          id:          'stay-' + i,
+          name:        String(r['Name']        || ''),
+          type:        String(r['Type']        || '').trim(),
+          category:    _stayCategoryFromType(r['Type']),
+          address:     String(r['Address']     || ''),
+          price:       String(r['Price']       || ''),
+          phone:       r['Phone'],                 /* kept raw — _stayPhoneStr handles number/string */
+          rating:      parseFloat(r['Rating'])  || 3.5,
+          description: String(r['Description'] || ''),
+          image:       String(r['Image']       || ''),
+          sponsored:   (r['Sponsored'] === true || r['Sponsored'] === 'TRUE' || r['Sponsored'] === 'true'),
         };
       });
 
@@ -356,14 +349,22 @@ function fetchAndRenderStay() {
       renderStay(stays);
     })
     .catch(function(err) {
-      /* Case (c): network / parse failure — show fallback data, log real error */
-      console.error('[KumbhSathi] fetchAndRenderStay failed:', err);
-      /* Use cached data if available, else built-in STAY_DATA */
-      renderStay(window._stayCache || null);
+      /* Network/parse failure — show error message, NEVER leave spinner */
+      console.error('[KumbhSathi Stay] fetch failed:', err);
+      container.innerHTML =
+        '<div style="text-align:center;padding:30px;color:#b71c1c;">' +
+        '<i class="fa-solid fa-triangle-exclamation" style="font-size:28px;"></i>' +
+        '<p style="margin-top:10px;font-size:12px;word-break:break-word;">' +
+          'Error loading accommodations: ' + (err.message || err) +
+        '</p>' +
+        '<button onclick="fetchAndRenderStay()" ' +
+          'style="margin-top:12px;padding:8px 20px;background:var(--saffron);color:#fff;' +
+                 'border:none;border-radius:20px;font-size:13px;cursor:pointer;">' +
+          'Try again' +
+        '</button></div>';
     });
 }
 
-/* ── 4. initStay ─────────────────────────────────────── */
 function initStay() {
   document.querySelectorAll('.stay-filter-chip').forEach(function(chip) {
     chip.addEventListener('click', function() {
