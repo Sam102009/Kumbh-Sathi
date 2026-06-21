@@ -202,127 +202,172 @@ function initSchedule() {
 }
 
 /* ===== STAY PAGE ===== */
-let activeStayFilter = 'all';
+var activeStayFilter = 'all';
 window._stayCache = null;
 
-/* Map sheet Type values to filter chip categories */
+/* ── 1. mapStayCategory ──────────────────────────────── */
 function mapStayCategory(typeStr) {
-  const val = (typeStr || '').toLowerCase().trim();
+  var val = (typeStr || '').toLowerCase().trim();
+  if (!val) return 'hotel';
   if (val === 'dharamshala') return 'dharam';
-  return val; // hotel, budget, camping map directly
+  return val; // hotel / budget / camping pass through unchanged
 }
 
+/* ── 2. renderStay ───────────────────────────────────── */
 function renderStay(staysArray) {
-  const container = document.getElementById('stay-container');
+  var container = document.getElementById('stay-container');
   if (!container) return;
 
-  const source = staysArray || window._stayCache || STAY_DATA;
-  let filtered = source;
-  if (activeStayFilter !== 'all') {
-    filtered = source.filter(s => s.category === activeStayFilter);
-  }
+  var source = staysArray || window._stayCache || STAY_DATA;
+
+  /* filter by active chip */
+  var filtered = (activeStayFilter === 'all')
+    ? source.slice()
+    : source.filter(function(s) { return s.category === activeStayFilter; });
+
+  /* sponsored rows always sort first */
+  filtered.sort(function(a, b) { return (b.sponsored ? 1 : 0) - (a.sponsored ? 1 : 0); });
 
   if (!filtered.length) {
-    container.innerHTML = '<div style="text-align:center;padding:30px;color:var(--light-brown);">' + t('no_results') + '</div>';
+    container.innerHTML =
+      '<div style="text-align:center;padding:40px;color:var(--light-brown);">' +
+      '<i class="fa-solid fa-bed" style="font-size:28px;opacity:0.4;"></i>' +
+      '<p style="margin-top:10px;">' + t('no_results') + '</p></div>';
     return;
   }
 
-  container.innerHTML = filtered.map(s => {
-    const stars = '★'.repeat(Math.floor(s.rating || 3)) + ((s.rating % 1) >= 0.5 ? '½' : '');
-    const facilities = (s.facilities || []).map(f =>
-      `<span style="font-size:10px;background:rgba(255,111,0,0.08);color:var(--saffron);
-                    padding:2px 7px;border-radius:8px;border:1px solid rgba(255,111,0,0.18);">${f}</span>`
-    ).join('');
+  container.innerHTML = filtered.map(function(s) {
+    var rating  = (typeof s.rating === 'number' && !isNaN(s.rating)) ? s.rating : 3.5;
+    var full    = Math.floor(rating);
+    var half    = (rating - full) >= 0.5;
+    var stars   = '★'.repeat(full) + (half ? '½' : '');
+    var phone   = (s.phone || s.contact || '').replace(/[^0-9+]/g, '');
+    var address = s.address || s.distance || '';
+    var facilities = (s.facilities || []).map(function(f) {
+      return '<span style="font-size:10px;background:rgba(255,111,0,0.08);color:var(--saffron);' +
+             'padding:2px 7px;border-radius:8px;border:1px solid rgba(255,111,0,0.18);">' + f + '</span>';
+    }).join('');
 
-    return `
-      <div class="listing-card${s.sponsored ? ' sponsored' : ''} reveal">
-        ${s.image ? `
-        <div class="stay-card-image">
-          <img src="${s.image}" alt="${s.name}" loading="lazy" onerror="this.style.display='none'">
-          <div class="stay-card-overlay"></div>
-          ${s.sponsored ? `<div class="stay-badges"><span class="sponsored-badge"><i class="fa-solid fa-star"></i> ${t('sponsored_tag')}</span></div>` : ''}
-        </div>` : ''}
-        <div class="listing-card-header">
-          <div>
-            <div class="listing-name">${s.name}</div>
-            <div class="listing-meta">
-              <span><i class="fa-solid fa-hotel"></i> ${s.type || ''}</span>
-              <span><i class="fa-solid fa-map-marker-alt"></i> ${s.address || s.distance || ''}</span>
-            </div>
-            <div class="stars">${stars}</div>
-          </div>
-          <div class="listing-price">${s.price}<br><span style="font-size:10px;color:var(--light-brown);font-weight:400;">${t('per_night')}</span></div>
-        </div>
-        <div class="listing-card-body">
-          <p style="font-size:12px;color:var(--light-brown);line-height:1.6;margin-bottom:8px;">${s.description || ''}</p>
-          ${facilities ? `<div style="display:flex;flex-wrap:wrap;gap:4px;">${facilities}</div>` : ''}
-        </div>
-        <div class="listing-card-footer">
-          <a href="tel:${(s.phone || s.contact || '').replace(/[^0-9]/g,'')}" class="btn btn-primary btn-sm" style="flex:1;">
-            <i class="fa-solid fa-phone"></i> ${t('book_contact')}
-          </a>
-          ${(s.phone || s.contact) ? `
-          <a href="https://wa.me/${(s.phone || s.contact || '').replace(/[^0-9]/g,'')}" target="_blank" rel="noopener"
-             class="btn btn-whatsapp btn-sm">
-            <i class="fa-brands fa-whatsapp"></i>
-          </a>` : ''}
-        </div>
-      </div>
-    `;
+    return (
+      '<div class="listing-card' + (s.sponsored ? ' sponsored' : '') + ' reveal">' +
+        (s.image
+          ? '<div class="stay-card-image">' +
+              '<img src="' + s.image + '" alt="' + s.name + '" loading="lazy" onerror="this.style.display=\'none\'">' +
+              '<div class="stay-card-overlay"></div>' +
+              (s.sponsored
+                ? '<div class="stay-badges"><span class="listing-sponsored-badge"><i class="fa-solid fa-star"></i> ' + t('sponsored_tag') + '</span></div>'
+                : '') +
+            '</div>'
+          : '') +
+        '<div class="listing-card-header">' +
+          '<div>' +
+            '<div class="listing-name">' + s.name + '</div>' +
+            '<div class="listing-meta">' +
+              '<span><i class="fa-solid fa-hotel"></i> ' + (s.type || '') + '</span>' +
+              (address ? '<span><i class="fa-solid fa-map-marker-alt"></i> ' + address + '</span>' : '') +
+            '</div>' +
+            '<div class="stars">' + stars + '</div>' +
+          '</div>' +
+          '<div class="listing-price">' + (s.price || '') +
+            '<br><span style="font-size:10px;color:var(--light-brown);font-weight:400;">' + t('per_night') + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="listing-card-body">' +
+          '<p style="font-size:12px;color:var(--light-brown);line-height:1.6;margin-bottom:8px;">' + (s.description || '') + '</p>' +
+          (facilities ? '<div style="display:flex;flex-wrap:wrap;gap:4px;">' + facilities + '</div>' : '') +
+        '</div>' +
+        '<div class="listing-card-footer">' +
+          '<a href="tel:' + phone + '" class="btn btn-primary btn-sm" style="flex:1;">' +
+            '<i class="fa-solid fa-phone"></i> ' + t('book_contact') +
+          '</a>' +
+          (phone
+            ? '<a href="https://wa.me/' + phone + '" target="_blank" rel="noopener" class="btn btn-whatsapp btn-sm">' +
+                '<i class="fa-brands fa-whatsapp"></i>' +
+              '</a>'
+            : '') +
+        '</div>' +
+      '</div>'
+    );
   }).join('');
+
   if (typeof applyTranslations === 'function') applyTranslations();
 }
 
+/* ── 3. fetchAndRenderStay ───────────────────────────── */
 function fetchAndRenderStay() {
-  const container = document.getElementById('stay-container');
+  var container = document.getElementById('stay-container');
   if (!container) return;
-  container.innerHTML = '<div style="text-align:center;padding:40px;color:#FF6F00;">🏨 Loading accommodations...</div>';
 
-  /* 8-second timeout fallback — if GAS takes too long, show hardcoded data */
-  var fallbackTimer = setTimeout(function() { renderStay(); }, 8000);
+  /* loading state — always replaced before function exits */
+  container.innerHTML =
+    '<div style="text-align:center;padding:40px;color:var(--saffron);">' +
+    '<i class="fa-solid fa-bed" style="font-size:28px;animation:pulse 1.2s infinite;"></i>' +
+    '<p style="margin-top:10px;font-size:13px;">Loading accommodations…</p></div>';
 
   fetch(GAS_URL + '?sheet=Stay')
-    .then(function(r) {
-      if (!r.ok) throw new Error('Network response not ok');
-      return r.json();
+    .then(function(res) {
+      return res.text(); /* read text unconditionally — GAS redirects break res.ok */
     })
-    .then(function(rows) {
-      clearTimeout(fallbackTimer);
-      if (!rows || !Array.isArray(rows) || rows.length === 0) {
-        renderStay();
+    .then(function(text) {
+      var rows;
+      try { rows = JSON.parse(text); } catch (e) {
+        throw new Error('Parse error: ' + text.slice(0, 80));
+      }
+
+      /* GAS returned an error object */
+      if (!Array.isArray(rows)) {
+        throw new Error(rows && rows.error ? rows.error : 'Unexpected response');
+      }
+
+      /* Case (b): zero rows — show message, do not spin forever */
+      if (rows.length === 0) {
+        container.innerHTML =
+          '<div style="text-align:center;padding:40px;color:var(--light-brown);">' +
+          '<i class="fa-solid fa-bed" style="font-size:28px;opacity:0.4;"></i>' +
+          '<p style="margin-top:10px;">No accommodations listed yet.</p></div>';
         return;
       }
+
+      /* Case (a): valid data */
       var stays = rows.map(function(r, i) {
+        var rawRating = parseFloat(r['Rating']);
         return {
-          id: 's' + i,
-          name: r['Name'] || '',
-          type: r['Type'] || '',
-          category: mapStayCategory(r['Type']),
-          address: r['Address'] || '',
-          price: r['Price'] || '',
-          phone: r['Phone'] || '',
-          rating: parseFloat(r['Rating']) || 3.5,
+          id:          's' + i,
+          name:        r['Name']        || '',
+          type:        (r['Type']       || '').trim(),
+          category:    mapStayCategory(r['Type']),
+          address:     r['Address']     || '',
+          price:       r['Price']       || '',
+          phone:       r['Phone']       || '',
+          rating:      isNaN(rawRating) ? 3.5 : rawRating,
           description: r['Description'] || '',
-          image: r['Image'] || '',
-          facilities: [],
-          contact: r['Phone'] || '',
-          distance: r['Address'] || '',
-          sponsored: (r['Sponsored'] === true || r['Sponsored'] === 'TRUE' || r['Sponsored'] === 'true' || r['Sponsored'] === '1'),
+          image:       r['Image']       || '',
+          facilities:  [],
+          contact:     r['Phone']       || '',
+          distance:    r['Address']     || '',
+          sponsored:   (r['Sponsored'] === true  ||
+                        r['Sponsored'] === 'TRUE' ||
+                        r['Sponsored'] === 'true' ||
+                        r['Sponsored'] === '1'),
         };
       });
+
       window._stayCache = stays;
       renderStay(stays);
     })
-    .catch(function() {
-      clearTimeout(fallbackTimer);
-      renderStay();
+    .catch(function(err) {
+      /* Case (c): network / parse failure — show fallback data, log real error */
+      console.error('[KumbhSathi] fetchAndRenderStay failed:', err);
+      /* Use cached data if available, else built-in STAY_DATA */
+      renderStay(window._stayCache || null);
     });
 }
 
+/* ── 4. initStay ─────────────────────────────────────── */
 function initStay() {
-  document.querySelectorAll('.stay-filter-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      document.querySelectorAll('.stay-filter-chip').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.stay-filter-chip').forEach(function(chip) {
+    chip.addEventListener('click', function() {
+      document.querySelectorAll('.stay-filter-chip').forEach(function(c) { c.classList.remove('active'); });
       chip.classList.add('active');
       activeStayFilter = chip.dataset.filter;
       renderStay(window._stayCache || null);
