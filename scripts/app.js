@@ -38,7 +38,6 @@ window._scheduleCache = null;
 /* Convert Google Sheets time value (fraction or string) to readable format */
 function parseSheetTime(val) {
   if (!val && val !== 0) return '';
-  if (typeof val === 'string') return val;
   if (typeof val === 'number') {
     const totalMins = Math.round(val * 24 * 60);
     const h = Math.floor(totalMins / 60);
@@ -47,15 +46,43 @@ function parseSheetTime(val) {
     const h12 = h % 12 || 12;
     return h12 + ':' + String(m).padStart(2, '0') + ' ' + ampm;
   }
+  if (typeof val === 'string') {
+    const isoMatch = val.match(/^(1899-12-(29|30|31)|1900-01-0[01])T(\d{2}):(\d{2}):(\d{2})/);
+    if (isoMatch) {
+      let h = parseInt(isoMatch[3], 10);
+      const m = isoMatch[4];
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      const h12 = h % 12 || 12;
+      return h12 + ':' + m + ' ' + ampm;
+    }
+    const fullIsoMatch = val.match(/^\d{4}-\d{2}-\d{2}T(\d{2}):(\d{2}):(\d{2})/);
+    if (fullIsoMatch) {
+      let h = parseInt(fullIsoMatch[1], 10);
+      const m = fullIsoMatch[2];
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      const h12 = h % 12 || 12;
+      return h12 + ':' + m + ' ' + ampm;
+    }
+    return val;
+  }
   return String(val);
 }
 
 function getShortMonth(dateStr) {
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   if (!dateStr) return '';
-  const parts = String(dateStr).split('-');
+  const datePart = String(dateStr).split('T')[0];
+  const parts = datePart.split('-');
   if (parts.length >= 2) return months[parseInt(parts[1]) - 1] || '';
   return '';
+}
+
+function getSheetDay(dateStr) {
+  if (!dateStr) return '';
+  const datePart = String(dateStr).split('T')[0];
+  const parts = datePart.split('-');
+  if (parts.length >= 3) return parseInt(parts[2], 10) || '';
+  return datePart;
 }
 
 function renderSchedule() {
@@ -128,7 +155,7 @@ function renderSheetSchedule(rows) {
     const typeClass = cat === 'shahi' ? 'type-shahi' : cat === 'cultural' ? 'type-cultural' : 'type-religious';
     const typeLabel = cat === 'shahi' ? '⭐ Shahi Snan' : cat === 'cultural' ? '🎭 Cultural' : '🕉️ Religious';
     const dateStr = String(r['Date'] || '');
-    const dayNum = dateStr.includes('-') ? (dateStr.split('-')[2] || '') : dateStr;
+    const dayNum = getSheetDay(dateStr);
     const timeVal = parseSheetTime(r['Time']);
     return `
       <div class="event-card ${typeClass} reveal">
