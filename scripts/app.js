@@ -47,21 +47,17 @@ function parseSheetTime(val) {
     return h12 + ':' + String(m).padStart(2, '0') + ' ' + ampm;
   }
   if (typeof val === 'string') {
-    const isoMatch = val.match(/^(1899-12-(29|30|31)|1900-01-0[01])T(\d{2}):(\d{2}):(\d{2})/);
-    if (isoMatch) {
-      let h = parseInt(isoMatch[3], 10);
-      const m = isoMatch[4];
-      const ampm = h >= 12 ? 'PM' : 'AM';
-      const h12 = h % 12 || 12;
-      return h12 + ':' + m + ' ' + ampm;
-    }
-    const fullIsoMatch = val.match(/^\d{4}-\d{2}-\d{2}T(\d{2}):(\d{2}):(\d{2})/);
-    if (fullIsoMatch) {
-      let h = parseInt(fullIsoMatch[1], 10);
-      const m = fullIsoMatch[2];
-      const ampm = h >= 12 ? 'PM' : 'AM';
-      const h12 = h % 12 || 12;
-      return h12 + ':' + m + ' ' + ampm;
+    const anyIsoMatch = val.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
+    if (anyIsoMatch) {
+      const d = new Date(val);
+      if (!isNaN(d.getTime())) {
+        const ist = new Date(d.getTime() + (5.5 * 60 * 60 * 1000));
+        let h = ist.getUTCHours();
+        const m = String(ist.getUTCMinutes()).padStart(2, '0');
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const h12 = h % 12 || 12;
+        return h12 + ':' + m + ' ' + ampm;
+      }
     }
     return val;
   }
@@ -74,7 +70,8 @@ function parseSheetDateParts(dateStr) {
   if (str.includes('T') && str.includes('Z')) {
     const d = new Date(str);
     if (!isNaN(d.getTime())) {
-      return { day: d.getUTCDate(), month: d.getUTCMonth() + 1, year: d.getUTCFullYear() };
+      const ist = new Date(d.getTime() + (5.5 * 60 * 60 * 1000));
+      return { day: ist.getUTCDate(), month: ist.getUTCMonth() + 1, year: ist.getUTCFullYear() };
     }
   }
   const datePart = str.split('T')[0];
