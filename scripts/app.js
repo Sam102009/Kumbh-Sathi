@@ -68,21 +68,34 @@ function parseSheetTime(val) {
   return String(val);
 }
 
+function parseSheetDateParts(dateStr) {
+  if (!dateStr) return null;
+  const str = String(dateStr);
+  if (str.includes('T') && str.includes('Z')) {
+    const d = new Date(str);
+    if (!isNaN(d.getTime())) {
+      return { day: d.getUTCDate(), month: d.getUTCMonth() + 1, year: d.getUTCFullYear() };
+    }
+  }
+  const datePart = str.split('T')[0];
+  const parts = datePart.split('-');
+  if (parts.length >= 3) {
+    return { day: parseInt(parts[2], 10), month: parseInt(parts[1], 10), year: parseInt(parts[0], 10) };
+  }
+  return null;
+}
+
 function getShortMonth(dateStr) {
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  if (!dateStr) return '';
-  const datePart = String(dateStr).split('T')[0];
-  const parts = datePart.split('-');
-  if (parts.length >= 2) return months[parseInt(parts[1]) - 1] || '';
-  return '';
+  const parts = parseSheetDateParts(dateStr);
+  if (!parts) return '';
+  return months[parts.month - 1] || '';
 }
 
 function getSheetDay(dateStr) {
-  if (!dateStr) return '';
-  const datePart = String(dateStr).split('T')[0];
-  const parts = datePart.split('-');
-  if (parts.length >= 3) return parseInt(parts[2], 10) || '';
-  return datePart;
+  const parts = parseSheetDateParts(dateStr);
+  if (!parts) return String(dateStr || '');
+  return parts.day;
 }
 
 function renderSchedule() {
