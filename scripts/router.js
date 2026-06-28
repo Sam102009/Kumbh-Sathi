@@ -17,6 +17,7 @@ const ROUTES = {
   'sponsor':   { page: 'page-sponsor',   nav: null,         more: 'sponsor' },
   'crowd':     { page: 'page-crowd',     nav: null,         more: 'crowd' },
   'groups':    { page: 'page-groups',    nav: null,         more: 'groups' },
+  'pilgrim':   { page: 'page-pilgrim',   nav: null,         more: 'pilgrim' },
 };
 
 let currentRoute = 'home';
@@ -83,6 +84,9 @@ function onRouteChange(route) {
   }
   if (route === 'lostfound') {
     if (typeof renderReports === 'function') renderReports();
+  }
+  if (route === 'pilgrim') {
+    if (typeof initPilgrim === 'function') initPilgrim();
   }
 }
 

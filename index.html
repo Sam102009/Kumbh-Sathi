@@ -155,6 +155,10 @@
           <div class="card-icon bg-red"><i class="fa-solid fa-people-group"></i></div>
           <div class="card-label" data-t="crowd_title">भीड़ घनत्व</div>
         </div>
+        <div class="quick-card tap-bounce nav-link" data-nav="pilgrim">
+          <div class="card-icon bg-saffron"><i class="fa-solid fa-id-card"></i></div>
+          <div class="card-label" data-t="more_pilgrim">यात्री पंजीकरण</div>
+        </div>
         <div class="quick-card tap-bounce nav-link" data-nav="groups">
           <div class="card-icon bg-indigo"><i class="fa-solid fa-people-group"></i></div>
           <div class="card-label" data-t="card_group">ग्रुप</div>
@@ -680,6 +684,91 @@
     </section>
 
     <!-- ================================================
+         PAGE: PILGRIM QR REGISTRATION
+         ================================================ -->
+    <section class="page" id="page-pilgrim">
+      <div class="page-hero" style="background:linear-gradient(135deg,#e65100,#FF6F00);">
+        <h1 data-t="more_pilgrim">यात्री पंजीकरण</h1>
+        <p data-t="pilgrim_subtitle">वरिष्ठ यात्रियों के लिए QR कार्ड बनाएं</p>
+        <i class="fa-solid fa-id-card hero-icon"></i>
+      </div>
+      <!-- Tabs -->
+      <div style="display:flex;border-bottom:2px solid var(--saffron);margin:0 16px;">
+        <button id="pilgrim-tab-register" onclick="switchPilgrimTab('register')"
+          style="flex:1;padding:12px;border:none;background:none;font-weight:700;color:var(--saffron);border-bottom:3px solid var(--saffron);cursor:pointer;font-size:14px;">
+          ➕ <span data-t="register_pilgrim">पंजीकरण</span>
+        </button>
+        <button id="pilgrim-tab-list" onclick="switchPilgrimTab('list')"
+          style="flex:1;padding:12px;border:none;background:none;font-weight:700;color:var(--light-brown);cursor:pointer;font-size:14px;">
+          🪪 <span data-t="my_pilgrims">मेरे यात्री</span>
+        </button>
+      </div>
+      <!-- Register Tab -->
+      <div id="pilgrim-register-tab" style="padding:16px;">
+        <div style="background:rgba(255,111,0,0.08);border-radius:12px;padding:12px;margin-bottom:16px;border-left:4px solid var(--saffron);">
+          <p style="font-size:12px;color:var(--dark-brown);margin:0;line-height:1.6;">
+            🙏 वरिष्ठ यात्रियों के लिए QR कार्ड बनाएं। यह कार्ड उनके कपड़े या कलाई पर लगाएं। 
+            खोने पर कोई भी स्वयंसेवक QR स्कैन करके परिवार से संपर्क कर सकता है।
+          </p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div>
+            <label style="font-size:13px;font-weight:700;color:var(--dark-brown);display:block;margin-bottom:6px;">👤 <span data-t="pilgrim_name">पूरा नाम</span> *</label>
+            <input id="p-name" type="text" placeholder="यात्री का पूरा नाम" style="width:100%;padding:14px;border:2px solid #e0d5c5;border-radius:10px;font-size:16px;box-sizing:border-box;">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div>
+              <label style="font-size:13px;font-weight:700;color:var(--dark-brown);display:block;margin-bottom:6px;">🎂 <span data-t="pilgrim_age">आयु</span> *</label>
+              <input id="p-age" type="number" placeholder="आयु" style="width:100%;padding:14px;border:2px solid #e0d5c5;border-radius:10px;font-size:16px;box-sizing:border-box;">
+            </div>
+            <div>
+              <label style="font-size:13px;font-weight:700;color:var(--dark-brown);display:block;margin-bottom:6px;">⚧ लिंग *</label>
+              <select id="p-gender" style="width:100%;padding:14px;border:2px solid #e0d5c5;border-radius:10px;font-size:16px;box-sizing:border-box;">
+                <option value="Male">पुरुष</option>
+                <option value="Female">महिला</option>
+                <option value="Other">अन्य</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:13px;font-weight:700;color:var(--dark-brown);display:block;margin-bottom:6px;">🏠 <span data-t="pilgrim_city">गृह नगर</span> *</label>
+            <input id="p-city" type="text" placeholder="शहर / गाँव का नाम" style="width:100%;padding:14px;border:2px solid #e0d5c5;border-radius:10px;font-size:16px;box-sizing:border-box;">
+          </div>
+          <div>
+            <label style="font-size:13px;font-weight:700;color:var(--dark-brown);display:block;margin-bottom:6px;">📞 <span data-t="pilgrim_contact">परिवार संपर्क</span> *</label>
+            <input id="p-contact1" type="tel" placeholder="+91 XXXXX XXXXX" style="width:100%;padding:14px;border:2px solid #e0d5c5;border-radius:10px;font-size:16px;box-sizing:border-box;">
+          </div>
+          <div>
+            <label style="font-size:13px;font-weight:700;color:var(--dark-brown);display:block;margin-bottom:6px;">📞 वैकल्पिक संपर्क</label>
+            <input id="p-contact2" type="tel" placeholder="+91 XXXXX XXXXX (वैकल्पिक)" style="width:100%;padding:14px;border:2px solid #e0d5c5;border-radius:10px;font-size:16px;box-sizing:border-box;">
+          </div>
+          <div>
+            <label style="font-size:13px;font-weight:700;color:var(--dark-brown);display:block;margin-bottom:6px;">🏥 <span data-t="pilgrim_medical">चिकित्सा स्थिति</span></label>
+            <textarea id="p-medical" placeholder="जैसे: मधुमेह, रक्तचाप (वैकल्पिक)" rows="3" style="width:100%;padding:14px;border:2px solid #e0d5c5;border-radius:10px;font-size:14px;box-sizing:border-box;resize:none;"></textarea>
+          </div>
+          <div>
+            <label style="font-size:13px;font-weight:700;color:var(--dark-brown);display:block;margin-bottom:6px;">📷 फोटो (वैकल्पिक)</label>
+            <input id="p-photo" type="file" accept="image/*" style="width:100%;padding:10px;border:2px dashed #e0d5c5;border-radius:10px;font-size:13px;box-sizing:border-box;">
+          </div>
+          <button onclick="submitPilgrimRegistration()" id="pilgrim-submit-btn"
+            style="width:100%;padding:16px;background:linear-gradient(135deg,var(--saffron),var(--deep-orange));color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;">
+            🪪 <span data-t="generate_qr">QR कार्ड बनाएं</span>
+          </button>
+        </div>
+        <!-- QR Card Output -->
+        <div id="pilgrim-qr-output" style="display:none;margin-top:20px;"></div>
+      </div>
+      <!-- My Pilgrims Tab -->
+      <div id="pilgrim-list-tab" style="display:none;padding:16px;">
+        <div id="pilgrim-list-container">
+          <div style="text-align:center;padding:40px;color:var(--light-brown);">
+            <i class="fa-solid fa-id-card" style="font-size:40px;opacity:0.3;"></i>
+            <p style="margin-top:12px;">कोई पंजीकृत यात्री नहीं</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- ================================================
          PAGE: CROWD DENSITY
          ================================================ -->
     <section class="page" id="page-crowd">
@@ -788,6 +877,7 @@
     <div class="drawer-item" data-route="news"><i class="fa-solid fa-newspaper"></i><span data-t="more_news">समाचार</span></div>
     <div class="drawer-item" data-route="akharas"><i class="fa-solid fa-om"></i><span data-t="more_akharas">अखाड़े</span></div>
     <div class="drawer-item" data-route="about"><i class="fa-solid fa-book-open"></i><span data-t="more_about">परिचय</span></div>
+    <div class="drawer-item" data-route="pilgrim"><i class="fa-solid fa-id-card"></i><span data-t="more_pilgrim">यात्री पंजीकरण</span></div>
     <div class="drawer-item" data-route="sponsor"><i class="fa-solid fa-bullhorn"></i><span data-t="more_sponsor">विज्ञापन</span></div>
     <div class="drawer-item" onclick="shareAppWhatsApp()" style="cursor:pointer;"><i class="fa-brands fa-whatsapp" style="color:#25D366;"></i><span data-t="share_app">ऐप शेयर करें</span></div>
   </div>
@@ -803,11 +893,13 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css"/>
 <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="scripts/data.js"></script>
 <script src="scripts/translations.js"></script>
 <script src="scripts/crowd2.js"></script>
 <script src="scripts/map.js"></script>
 <script src="scripts/lostfound.js"></script>
+<script src="scripts/pilgrim.js"></script>
 <script src="scripts/news.js"></script>
 <script src="scripts/router.js"></script>
 <script src="scripts/groups.js"></script>
