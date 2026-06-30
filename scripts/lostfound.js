@@ -194,7 +194,8 @@ function initLostFound() {
         location:  fd.get('location'),
         desc:      fd.get('desc'),
         contact:   fd.get('contact'),
-        timestamp: new Date().toLocaleString('en-IN')
+        timestamp: new Date().toLocaleString('en-IN'),
+        token: 'kumbh2027secure'
       };
 
       var btn = form.querySelector('button[type="submit"]');
