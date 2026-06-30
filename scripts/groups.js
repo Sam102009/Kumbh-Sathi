@@ -87,7 +87,8 @@ function updateGroupLocation(isPanic) {
       lat: pos.coords.latitude,
       lng: pos.coords.longitude,
       timestamp: new Date().toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'}),
-      panic: isPanic
+      panic: isPanic,
+      token: 'kumbh2027secure'
     };
     fetch(GROUPS_URL, {
       method: 'POST',
