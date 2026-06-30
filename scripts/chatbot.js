@@ -137,10 +137,11 @@
     if (sendBtn) sendBtn.disabled = true;
 
     var payload = {
-      action: 'chat',
+      action: 'gemini',
       message: text,
       history: chatHistory.slice(0, -1),
-      systemPrompt: SYSTEM_PROMPT
+      systemPrompt: SYSTEM_PROMPT,
+      token: 'kumbh2027secure'
     };
 
     fetch(GAS_URL, {
