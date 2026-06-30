@@ -60,7 +60,8 @@ function submitPilgrimRegistration() {
       contact2: contact2,
       medical: medical,
       photo: photoBase64 || '',
-      timestamp: timestamp
+      timestamp: timestamp,
+      token: 'kumbh2027secure'
     };
 
     fetch(PILGRIM_GAS_URL, {
