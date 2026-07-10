@@ -61,7 +61,7 @@
       </div>
     </div>
   </header>
-<div id="offline-banner" style="display:block;position:fixed;top:60px;left:0;right:0;z-index:999;background:#b71c1c;color:#fff;text-align:center;padding:6px;font-size:12px;font-weight:600;">📡 You are offline</div>
+<div id="offline-banner" style="display:block;position:fixed;top:60px;left:0;right:0;z-index:999;background:#b71c1c;color:#fff;text-align:center;padding:6px;font-size:12px;font-weight:600;">📡 <span data-t="offline_msg">You are offline</span></div>
   <!-- ===== MAIN CONTENT ===== -->
   
 <main id="main-content">
@@ -270,22 +270,22 @@
         <i class="fa-solid fa-bed hero-icon"></i>
       </div>
       <div class="schedule-filter">
-        <button class="stay-filter-chip filter-chip active" data-filter="all" data-t="filter_all">सभी</button>
+        <button class="stay-filter-chip filter-chip active" data-filter="all" data-t="filter_all_stay">सभी</button>
         <button class="stay-filter-chip filter-chip" data-filter="hotel" data-t="filter_hotel">होटल</button>
         <button class="stay-filter-chip filter-chip" data-filter="dharam" data-t="filter_dharam">धर्मशाला</button>
         <button class="stay-filter-chip filter-chip" data-filter="budget" data-t="filter_budget">बजट</button>
         <button class="stay-filter-chip filter-chip" data-filter="camping" data-t="filter_camping">कैंप</button>
       </div>
       <div style="padding:4px 16px 8px;font-size:12px;color:var(--light-brown);">
-        <i class="fa-solid fa-circle-info"></i> ⭐ Sponsored listings appear first. Call directly to book.
+        <i class="fa-solid fa-circle-info"></i> <span data-t="stay_sponsored_info">⭐ Sponsored listings appear first. Call directly to book.</span>
       </div>
       <div id="stay-container" style="padding:0 16px;"></div>
       <div class="ad-slot" style="margin:4px 16px 16px;">
-        <span class="ad-label">Advertisement</span>
+        <span class="ad-label" data-t="stay_ad_label">Advertisement</span>
         <div class="ad-placeholder">
           <i class="fa-solid fa-rectangle-ad"></i>
-          <p>Mid-page Ad Slot — Stay Section</p>
-          <a class="nav-link" data-nav="sponsor">Advertise Here</a>
+          <p data-t="stay_ad_text">Mid-page Ad Slot — Stay Section</p>
+          <a class="nav-link" data-nav="sponsor" data-t="stay_advertise_here">Advertise Here</a>
         </div>
       </div>
       <div style="height:16px;"></div>
@@ -356,10 +356,10 @@
         <div style="background:rgba(255,111,0,0.08);border:1.5px solid rgba(255,111,0,0.2);border-radius:var(--radius-md);padding:14px;">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
             <i class="fa-solid fa-circle-exclamation" style="color:var(--saffron);"></i>
-            <strong style="font-size:13px;color:var(--dark-brown);">Important — Shahi Snan Days</strong>
+            <strong style="font-size:13px;color:var(--dark-brown);" data-t="shahi_notice_title">Important — Shahi Snan Days</strong>
           </div>
           <p style="font-size:12px;color:var(--light-brown);line-height:1.6;">
-            On Shahi Snan days (Aug 29, Sep 12, Sep 27), private vehicles are restricted within 5km of Ramkund. Use free government shuttle buses. Arrive 3-4 hours early.
+            <span data-t="shahi_notice_text">On Shahi Snan days (Aug 29, Sep 12, Sep 27), private vehicles are restricted within 5km of Ramkund. Use free government shuttle buses. Arrive 3-4 hours early.</span>
           </p>
         </div>
       </div>
@@ -529,7 +529,7 @@
       </div>
       <div style="background:rgba(255,111,0,0.08);border-bottom:1.5px solid rgba(255,111,0,0.15);padding:12px 16px;">
         <p style="font-size:12px;color:var(--dark-brown);line-height:1.6;">
-          🕉️ Akharas are ancient monastic orders that participate in Kumbh Mela. The Shahi Snan order follows strict historical precedence established centuries ago.
+          <span data-t="akharas_desc">🕉️ Akharas are ancient monastic orders that participate in Kumbh Mela. The Shahi Snan order follows strict historical precedence established centuries ago.</span>
         </p>
       </div>
       <div id="akharas-container" class="stagger-children" style="padding-top:4px;"></div>
@@ -597,7 +597,7 @@
           </div>
         </div>
       </div>
-      <div class="section-title">Available Ad Slots</div>
+      <div class="section-title" data-t="sponsor_available_slots">Available Ad Slots</div>
       <div style="padding:0 16px 8px;">
         <div style="background:#fff;border-radius:var(--radius-md);padding:14px;box-shadow:var(--shadow-sm);margin-bottom:12px;">
           <div style="font-size:13px;font-weight:700;color:var(--dark-brown);margin-bottom:8px;">📱 Ad Slot Locations</div>
@@ -707,8 +707,7 @@
       <div id="pilgrim-register-tab" style="padding:16px;">
         <div style="background:rgba(255,111,0,0.08);border-radius:12px;padding:12px;margin-bottom:16px;border-left:4px solid var(--saffron);">
           <p style="font-size:12px;color:var(--dark-brown);margin:0;line-height:1.6;">
-            🙏 वरिष्ठ यात्रियों के लिए QR कार्ड बनाएं। यह कार्ड उनके कपड़े या कलाई पर लगाएं। 
-            खोने पर कोई भी स्वयंसेवक QR स्कैन करके परिवार से संपर्क कर सकता है।
+            <span data-t="pilgrim_info">🙏 वरिष्ठ यात्रियों के लिए QR कार्ड बनाएं। यह कार्ड उनके कपड़े या कलाई पर लगाएं। खोने पर कोई भी स्वयंसेवक QR स्कैन करके परिवार से संपर्क कर सकता है।</span>
           </p>
         </div>
         <div style="display:flex;flex-direction:column;gap:14px;">
@@ -722,7 +721,7 @@
               <input id="p-age" type="number" placeholder="आयु" style="width:100%;padding:14px;border:2px solid #e0d5c5;border-radius:10px;font-size:16px;box-sizing:border-box;">
             </div>
             <div>
-              <label style="font-size:13px;font-weight:700;color:var(--dark-brown);display:block;margin-bottom:6px;">⚧ लिंग *</label>
+              <label style="font-size:13px;font-weight:700;color:var(--dark-brown);display:block;margin-bottom:6px;">⚧ <span data-t="pilgrim_gender">लिंग</span> *</label>
               <select id="p-gender" style="width:100%;padding:14px;border:2px solid #e0d5c5;border-radius:10px;font-size:16px;box-sizing:border-box;">
                 <option value="Male">पुरुष</option>
                 <option value="Female">महिला</option>
@@ -739,7 +738,7 @@
             <input id="p-contact1" type="tel" placeholder="+91 XXXXX XXXXX" style="width:100%;padding:14px;border:2px solid #e0d5c5;border-radius:10px;font-size:16px;box-sizing:border-box;">
           </div>
           <div>
-            <label style="font-size:13px;font-weight:700;color:var(--dark-brown);display:block;margin-bottom:6px;">📞 वैकल्पिक संपर्क</label>
+            <label style="font-size:13px;font-weight:700;color:var(--dark-brown);display:block;margin-bottom:6px;">📞 <span data-t="pilgrim_alt_contact">वैकल्पिक संपर्क</span></label>
             <input id="p-contact2" type="tel" placeholder="+91 XXXXX XXXXX (वैकल्पिक)" style="width:100%;padding:14px;border:2px solid #e0d5c5;border-radius:10px;font-size:16px;box-sizing:border-box;">
           </div>
           <div>
@@ -747,7 +746,7 @@
             <textarea id="p-medical" placeholder="जैसे: मधुमेह, रक्तचाप (वैकल्पिक)" rows="3" style="width:100%;padding:14px;border:2px solid #e0d5c5;border-radius:10px;font-size:14px;box-sizing:border-box;resize:none;"></textarea>
           </div>
           <div>
-            <label style="font-size:13px;font-weight:700;color:var(--dark-brown);display:block;margin-bottom:6px;">📷 फोटो (वैकल्पिक)</label>
+            <label style="font-size:13px;font-weight:700;color:var(--dark-brown);display:block;margin-bottom:6px;">📷 <span data-t="pilgrim_photo_label">फोटो (वैकल्पिक)</span></label>
             <input id="p-photo" type="file" accept="image/*" style="width:100%;padding:10px;border:2px dashed #e0d5c5;border-radius:10px;font-size:13px;box-sizing:border-box;">
           </div>
           <button onclick="submitPilgrimRegistration()" id="pilgrim-submit-btn"
@@ -763,7 +762,7 @@
         <div id="pilgrim-list-container">
           <div style="text-align:center;padding:40px;color:var(--light-brown);">
             <i class="fa-solid fa-id-card" style="font-size:40px;opacity:0.3;"></i>
-            <p style="margin-top:12px;">कोई पंजीकृत यात्री नहीं</p>
+            <p style="margin-top:12px;" data-t="pilgrim_no_registered">कोई पंजीकृत यात्री नहीं</p>
           </div>
         </div>
       </div>
@@ -783,7 +782,7 @@
       </div>
       <div id="crowd-shahi-alert" class="crowd-shahi-alert">
         <i class="fa-solid fa-triangle-exclamation"></i>
-        <p>आज शाही स्नान है! सभी घाटों पर अत्यधिक भीड़ की संभावना है।</p>
+        <p data-t="crowd_shahi_text">आज शाही स्नान है! सभी घाटों पर अत्यधिक भीड़ की संभावना है।</p>
       </div>
       <div class="crowd-legend">
         <div class="crowd-legend-item">🟢 <span data-t="crowd_low">कम</span></div>
@@ -798,7 +797,7 @@
     <section class="page" id="page-groups">
       <div class="page-hero">
         <h1 data-t="group_title">Group Tracking</h1>
-        <p>परिवार और दोस्तों के साथ लोकेशन शेयर करें</p>
+        <p data-t="group_subtitle">परिवार और दोस्तों के साथ लोकेशन शेयर करें</p>
         <i class="fa-solid fa-people-group hero-icon"></i>
       </div>
       <div style="padding:16px;" id="group-setup">
@@ -815,17 +814,17 @@
         <div class="card" style="padding:14px;margin-bottom:12px;background:linear-gradient(135deg,var(--dark-brown),var(--saffron));">
           <div style="color:rgba(255,255,255,0.8);font-size:11px;margin-bottom:4px;" data-t="group_code_label">ग्रुप कोड</div>
           <div style="color:#fff;font-size:28px;font-weight:800;letter-spacing:4px;" id="active-group-code"></div><span id="group-code-display" style="display:none;"></span>
-          <div style="color:rgba(255,255,255,0.8);font-size:12px;margin-top:4px;">सदस्य: <span id="active-member-name"></span></div>
+          <div style="color:rgba(255,255,255,0.8);font-size:12px;margin-top:4px;"><span data-t="group_member_label">सदस्य:</span> <span id="active-member-name"></span></div>
           <div style="display:flex;gap:8px;margin-top:10px;">
-            <button onclick="copyGroupCode()" class="btn btn-sm" style="background:rgba(255,255,255,0.2);color:#fff;flex:1;"><i class="fa-solid fa-copy"></i> कॉपी</button>
-            <button onclick="shareGroupWhatsApp()" class="btn btn-sm" style="background:#25D366;color:#fff;flex:1;"><i class="fa-brands fa-whatsapp"></i> शेयर</button>
+            <button onclick="copyGroupCode()" class="btn btn-sm" style="background:rgba(255,255,255,0.2);color:#fff;flex:1;"><i class="fa-solid fa-copy"></i> <span data-t="group_copy">कॉपी</span></button>
+            <button onclick="shareGroupWhatsApp()" class="btn btn-sm" style="background:#25D366;color:#fff;flex:1;"><i class="fa-brands fa-whatsapp"></i> <span data-t="group_share_btn">शेयर</span></button>
           </div>
         </div>
-        <button onclick="sendPanic()" class="btn btn-full" style="background:#b71c1c;color:#fff;padding:14px;font-size:16px;font-weight:700;margin-bottom:12px;border-radius:var(--radius-md);">🚨 SOS — मैं खो गया!</button>
+        <button onclick="sendPanic()" class="btn btn-full" style="background:#b71c1c;color:#fff;padding:14px;font-size:16px;font-weight:700;margin-bottom:12px;border-radius:var(--radius-md);">🚨 <span data-t="group_sos_btn">SOS — मैं खो गया!</span></button>
         <div class="section-title"><span data-t="group_members">सदस्यों की लोकेशन</span></div>
         <div id="group-map" style="height:220px;border-radius:var(--radius-md);overflow:hidden;margin:0 0 12px;"></div>
         <div id="group-members-list"></div>
-        <button onclick="leaveGroup()" class="btn btn-outline btn-full" style="margin-top:12px;color:#b71c1c;border-color:#b71c1c;"><i class="fa-solid fa-right-from-bracket"></i> ग्रुप छोड़ें</button>
+        <button onclick="leaveGroup()" class="btn btn-outline btn-full" style="margin-top:12px;color:#b71c1c;border-color:#b71c1c;"><i class="fa-solid fa-right-from-bracket"></i> <span data-t="group_leave">ग्रुप छोड़ें</span></button>
       </div>
       <div style="height:16px;"></div>
     </section>
@@ -835,11 +834,11 @@
   <!-- ================================================
        AI CHATBOT — Floating button + Chat window
        ================================================ -->
-  <button id="chatbot-btn" aria-label="Open KumbhSathi AI">
+  <button id="chatbot-btn" aria-label="Open KumbhSathi AI" style="display:none;">
     <span class="cb-btn-icon">💬</span>
   </button>
 
-  <div id="chatbot-window" role="dialog" aria-label="KumbhSathi AI Chat"></div>
+  <div id="chatbot-window" role="dialog" aria-label="KumbhSathi AI Chat" style="display:none;"></div>
 
   <nav id="bottom-nav">
     <div class="nav-item active" id="nav-home" data-route="home">

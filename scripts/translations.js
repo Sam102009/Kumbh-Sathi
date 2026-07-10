@@ -230,6 +230,42 @@ const T = {
     contact_whatsapp: 'WhatsApp Us',
     contact_email:    'Email Us',
     become_sponsor:   'Become a Sponsor',
+
+    /* --- Stay --- */
+    filter_all_stay:    'All',
+    stay_sponsored_info:'⭐ Sponsored listings appear first. Call directly to book.',
+    stay_ad_label:      'Advertisement',
+    stay_ad_text:       'Mid-page Ad Slot — Stay Section',
+    stay_advertise_here:'Advertise Here',
+
+    /* --- Transport --- */
+    shahi_notice_title: 'Important — Shahi Snan Days',
+    shahi_notice_text:  'On Shahi Snan days (Aug 29, Sep 12, Sep 27), private vehicles are restricted within 5km of Ramkund. Use free government shuttle buses. Arrive 3-4 hours early.',
+
+    /* --- Akharas --- */
+    akharas_desc: '🕉️ Akharas are ancient monastic orders that participate in Kumbh Mela. The Shahi Snan order follows strict historical precedence established centuries ago.',
+
+    /* --- Crowd --- */
+    crowd_shahi_text: 'Today is Shahi Snan! Extreme crowds expected at all ghats.',
+
+    /* --- Groups extra --- */
+    group_name_label:  'Enter your name',
+    group_code_label:  'Group Code',
+    group_copy:        'Copy',
+    group_share_btn:   'Share',
+    group_sos_btn:     'SOS — I am lost!',
+    group_member_label:'Member:',
+
+    /* --- Pilgrim extra --- */
+    pilgrim_gender:       'Gender',
+    pilgrim_alt_contact:  'Alternative Contact',
+    pilgrim_photo_label:  'Photo (Optional)',
+    pilgrim_no_registered:'No registered pilgrims',
+    pilgrim_info:         '🙏 Create QR cards for senior pilgrims. Attach these cards to their clothes or wrist. If lost, any volunteer can scan the QR to contact the family.',
+
+    /* --- Misc --- */
+    offline_msg:            'You are offline',
+    sponsor_available_slots:'Available Ad Slots',
   },
 
   hi: {
@@ -443,6 +479,42 @@ const T = {
     contact_whatsapp: 'WhatsApp करें',
     contact_email:    'ईमेल करें',
     become_sponsor:   'प्रायोजक बनें',
+
+    /* --- Stay --- */
+    filter_all_stay:    'सभी',
+    stay_sponsored_info:'⭐ प्रायोजित लिस्टिंग पहले दिखती हैं। बुकिंग के लिए सीधे कॉल करें।',
+    stay_ad_label:      'विज्ञापन',
+    stay_ad_text:       'मध्य-पृष्ठ विज्ञापन — ठहरने का अनुभाग',
+    stay_advertise_here:'यहाँ विज्ञापन करें',
+
+    /* --- Transport --- */
+    shahi_notice_title: 'महत्वपूर्ण — शाही स्नान के दिन',
+    shahi_notice_text:  'शाही स्नान के दिनों (29 अगस्त, 12 सितंबर, 27 सितंबर) में रामकुंड के 5 किमी के भीतर निजी वाहन प्रतिबंधित हैं। सरकारी मुफ्त शटल बसों का उपयोग करें। 3-4 घंटे पहले पहुँचें।',
+
+    /* --- Akharas --- */
+    akharas_desc: '🕉️ अखाड़े प्राचीन मठ परंपराएं हैं जो कुंभ मेले में भाग लेती हैं। शाही स्नान का क्रम सदियों पुरानी ऐतिहासिक परंपरा का पालन करता है।',
+
+    /* --- Crowd --- */
+    crowd_shahi_text: 'आज शाही स्नान है! सभी घाटों पर अत्यधिक भीड़ की संभावना है।',
+
+    /* --- Groups extra --- */
+    group_name_label:  'अपना नाम दर्ज करें',
+    group_code_label:  'ग्रुप कोड',
+    group_copy:        'कॉपी',
+    group_share_btn:   'शेयर',
+    group_sos_btn:     'SOS — मैं खो गया!',
+    group_member_label:'सदस्य:',
+
+    /* --- Pilgrim extra --- */
+    pilgrim_gender:       'लिंग',
+    pilgrim_alt_contact:  'वैकल्पिक संपर्क',
+    pilgrim_photo_label:  'फोटो (वैकल्पिक)',
+    pilgrim_no_registered:'कोई पंजीकृत यात्री नहीं',
+    pilgrim_info:         '🙏 वरिष्ठ यात्रियों के लिए QR कार्ड बनाएं। यह कार्ड उनके कपड़े या कलाई पर लगाएं। खोने पर कोई भी स्वयंसेवक QR स्कैन करके परिवार से संपर्क कर सकता है।',
+
+    /* --- Misc --- */
+    offline_msg:            'आप ऑफ़लाइन हैं',
+    sponsor_available_slots:'उपलब्ध विज्ञापन स्लॉट',
   },
 
   mr: {
@@ -656,6 +728,42 @@ const T = {
     contact_whatsapp: 'WhatsApp करा',
     contact_email:    'ईमेल करा',
     become_sponsor:   'प्रायोजक व्हा',
+
+    /* --- Stay --- */
+    filter_all_stay:    'सर्व',
+    stay_sponsored_info:'⭐ प्रायोजित यादी आधी दिसतात. थेट कॉल करून बुक करा.',
+    stay_ad_label:      'जाहिरात',
+    stay_ad_text:       'मध्य-पृष्ठ जाहिरात स्लॉट — निवास विभाग',
+    stay_advertise_here:'येथे जाहिरात करा',
+
+    /* --- Transport --- */
+    shahi_notice_title: 'महत्त्वाचे — शाही स्नानाचे दिवस',
+    shahi_notice_text:  'शाही स्नानाच्या दिवसांत (29 ऑगस्ट, 12 सप्टेंबर, 27 सप्टेंबर) रामकुंडाच्या 5 किमीच्या आत खाजगी वाहने प्रतिबंधित आहेत. मोफत सरकारी शटल बसेस वापरा. 3-4 तास आधी पोहोचा.',
+
+    /* --- Akharas --- */
+    akharas_desc: '🕉️ आखाडे हे प्राचीन मठ परंपरा आहेत जे कुंभ मेळ्यात सहभागी होतात. शाही स्नानाचा क्रम शतकांपूर्वी स्थापित ऐतिहासिक परंपरेचे पालन करतो.',
+
+    /* --- Crowd --- */
+    crowd_shahi_text: 'आज शाही स्नान आहे! सर्व घाटांवर अत्यधिक गर्दीची शक्यता आहे.',
+
+    /* --- Groups extra --- */
+    group_name_label:  'आपले नाव टाका',
+    group_code_label:  'ग्रुप कोड',
+    group_copy:        'कॉपी',
+    group_share_btn:   'शेअर',
+    group_sos_btn:     'SOS — मी हरवलो!',
+    group_member_label:'सदस्य:',
+
+    /* --- Pilgrim extra --- */
+    pilgrim_gender:       'लिंग',
+    pilgrim_alt_contact:  'पर्यायी संपर्क',
+    pilgrim_photo_label:  'फोटो (पर्यायी)',
+    pilgrim_no_registered:'कोणतेही नोंदणीकृत यात्री नाहीत',
+    pilgrim_info:         '🙏 ज्येष्ठ यात्रेकरूंसाठी QR कार्ड तयार करा. हे कार्ड त्यांच्या कपड्यांवर किंवा मनगटावर लावा. हरवल्यास कोणताही स्वयंसेवक QR स्कॅन करून कुटुंबाशी संपर्क करू शकतो.',
+
+    /* --- Misc --- */
+    offline_msg:            'तुम्ही ऑफलाइन आहात',
+    sponsor_available_slots:'उपलब्ध जाहिरात स्लॉट',
   }
 };
 

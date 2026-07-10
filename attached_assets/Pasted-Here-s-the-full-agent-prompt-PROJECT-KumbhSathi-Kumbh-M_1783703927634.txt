@@ -1,0 +1,134 @@
+Here's the full agent prompt:
+
+---
+
+**PROJECT: KumbhSathi — Kumbh Mela Nashik 2027 PWA**
+
+**App URL:** https://Sam102009.github.io/Kumbh-Sathi/
+**Repo:** https://github.com/Sam102009/Kumbh-Sathi
+**Tech:** Pure HTML, CSS, vanilla JavaScript (no frameworks)
+**Backend:** Google Apps Script (GAS)
+**GAS URL:** https://script.google.com/macros/s/AKfycbyp_E-2tqiBfAtswJIxIeeq2iH6gwMjjlPZwlxxijqU6RdfZW8UOlcM83Gd9Yay7ZbufQ/exec
+
+**IMPORTANT FILE RULES:**
+- Always edit ROOT `scripts/` — NOT `public/scripts/`
+- Always edit ROOT `index.html` — NOT `public/index.html`
+- Crowd page logic is in `scripts/crowd2.js` — NOT `crowd.js` (old/broken)
+
+---
+
+**WHAT HAS BEEN DONE — DO NOT REDO OR BREAK THESE:**
+- ✅ Home page (weather, countdown, breaking news ticker) — working
+- ✅ News page — fetches from Google Sheet "News" tab — working
+- ✅ Stay page — fully rewritten and verified working
+- ✅ Schedule page — fetches from Sheet, IST date/time conversion working
+- ✅ Akharas page — fetches from Sheet — working
+- ✅ Lost & Found — approval system working, submission confirmation working
+- ✅ Crowd density page (crowd2.js) — working
+- ✅ Groups feature (location sharing) — working
+- ✅ Map with Leaflet.js — working
+- ✅ Emergency page — working
+- ✅ Transport page — working
+- ✅ Sponsors section on About page — working
+- ✅ Dark mode toggle (🌙/☀️) in header — working
+- ✅ Language switcher (Hindi/Marathi/English) — switcher works but translations incomplete
+- ✅ Share app via WhatsApp button — working
+- ✅ Android back button navigation — working
+- ✅ Pilgrim QR Registration (scripts/pilgrim.js) — working
+- ✅ GAS doPost authentication with SECRET_TOKEN — working
+- ✅ Chatbot switched from Gemini to Groq (llama-3.3-70b) — built but HIDDEN for now
+
+**CHATBOT — HIDE IT:**
+- Find the chatbot nav button in `index.html` and add `style="display:none"` to it
+- Find the chatbot page/section in `index.html` and add `style="display:none"` to it
+- DO NOT delete any chatbot code — just hide it visually
+- Commit: "Hide chatbot feature until fixed"
+
+---
+
+**YOUR MAIN TASK: FULL MULTILINGUAL SWEEP**
+
+The app supports 3 languages: **English, Hindi, Marathi**
+The language switcher works but most UI elements are still hardcoded in Hindi or English and do not change when the user switches language.
+
+**How translations work in this app:**
+- `scripts/translations.js` contains all translation keys for all 3 languages
+- Elements use `data-t="key"` attribute to get translated
+- `applyTranslations()` function in `scripts/translations.js` applies translations to all `data-t` elements
+- Problem: many elements are missing `data-t` attributes, many keys are missing from `translations.js`, and `applyTranslations()` is not being called after dynamic content renders
+
+**What you must do — step by step:**
+
+**STEP 1 — Audit every page in all 3 languages:**
+Open the live app at https://Sam102009.github.io/Kumbh-Sathi/ and go through EVERY page:
+- Home, News, Stay, Schedule, Akharas, Lost & Found, Crowd, Groups, Map, Emergency, Transport, About/More, Pilgrim Registration
+- Switch to English → note every element still showing in Hindi
+- Switch to Marathi → note every element still showing in Hindi or English
+- Write down ALL elements that are not translating
+
+**STEP 2 — Fix translations.js:**
+- Open `scripts/translations.js`
+- For every untranslated element found in Step 1, add a translation key in all 3 languages (en, hi, mr)
+- Be careful with Hindi and Marathi — use correct script, do not guess translations
+
+**STEP 3 — Fix index.html:**
+- Add `data-t="key"` attributes to all static text elements that are missing them
+- Buttons, labels, placeholders, headings, section titles, tab names, error messages — everything
+
+**STEP 4 — Fix dynamic content:**
+- Many pages fetch data from Google Sheets and render HTML dynamically (News, Stay, Schedule, Akharas, Lost & Found, Crowd)
+- After each dynamic render function completes, make sure `applyTranslations()` is called
+- UI labels around dynamic content (column headers, status labels, filter buttons, empty state messages) must also be translated
+
+**STEP 5 — Fix forms:**
+- Go through every form in the app: Lost & Found submission form, Pilgrim Registration form, Groups join/create form
+- All form labels, placeholders, button text, validation messages, success/error messages must be translated
+- Actually submit each form and check that confirmation messages also translate correctly
+
+**STEP 6 — Fix page-specific issues:**
+Check these specifically:
+- **Lost & Found** — filter tabs (Lost/Found), form labels, submission confirmation message, "No reports" empty state
+- **Schedule** — date labels, filter buttons, "No events" empty state
+- **Crowd** — density labels (Low/Medium/High), ghat names, last updated text
+- **Groups** — all button labels, member list labels, panic button text, join/create form
+- **Emergency** — all emergency contact labels, first aid instructions
+- **Transport** — all transport option labels
+- **Pilgrim Registration** — all form labels, gender options, success message with QR code
+- **About/More** — all section headings, sponsor labels, app version text
+- **Header/Nav** — all nav item labels, dark mode tooltip, language switcher label
+
+**STEP 7 — Final verification:**
+- Do a complete walkthrough in English — everything should be in English
+- Do a complete walkthrough in Hindi — everything should be in Hindi
+- Do a complete walkthrough in Marathi — everything should be in Marathi
+- Check dark mode in all 3 languages
+- Submit Lost & Found form in all 3 languages — confirm messages translate
+- No element should be hardcoded in any single language
+
+---
+
+**TECHNICAL NOTES FOR AGENT:**
+- `applyTranslations()` must be called after every `innerHTML` assignment that renders page content
+- For dropdowns/selects, option text also needs translation
+- Placeholders on inputs need `data-placeholder="key"` and corresponding handling in `applyTranslations()`
+- The language is stored in `localStorage` as `lang` with values `en`, `hi`, `mr`
+- Current language can be read with `localStorage.getItem('lang') || 'hi'`
+- After fixing, do: `git add . && git commit -m "Full multilingual sweep" && git push origin main`
+- Test on the live URL after GitHub Pages deploys (usually takes 1-2 minutes)
+
+---
+
+**DO NOT:**
+- Add any new features
+- Change any working backend logic
+- Modify GAS code
+- Delete chatbot code (only hide it)
+- Break Stay, Schedule, Lost & Found, or Crowd pages — they are verified working
+- Change the IST date/time conversion logic in Schedule page
+
+**AFTER THIS TASK IS DONE:**
+Report back with:
+1. List of all elements that were fixed
+2. List of any elements that could not be translated (with reason)
+3. Confirmation that all 3 languages were tested on every page
+4. Confirmation that form submissions were tested
