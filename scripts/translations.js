@@ -230,6 +230,8 @@ const T = {
     contact_whatsapp: 'WhatsApp Us',
     contact_email:    'Email Us',
     become_sponsor:   'Become a Sponsor',
+    privacy_policy:   'Privacy Policy',
+    terms_of_service: 'Terms of Service',
 
     /* --- Stay --- */
     filter_all_stay:    'All',
@@ -596,6 +598,9 @@ const T = {
     lf_desc_placeholder:     'कपड़े, रंग-रूप, पहचान विवरण...',
     lf_gender_select:        'लिंग चुनें',
 
+    privacy_policy:   'गोपनीयता नीति',
+    terms_of_service: 'सेवा की शर्तें',
+
     /* --- Misc --- */
     offline_msg:            'आप ऑफ़लाइन हैं',
     sponsor_available_slots:'उपलब्ध विज्ञापन स्लॉट',
@@ -886,6 +891,9 @@ const T = {
     lf_location_placeholder: 'उदा. रामकुंड घाट, गेट 3',
     lf_desc_placeholder:     'कपडे, रूप, ओळखीचे तपशील...',
     lf_gender_select:        'लिंग निवडा',
+
+    privacy_policy:   'गोपनीयता धोरण',
+    terms_of_service: 'सेवा अटी',
 
     /* --- Misc --- */
     offline_msg:            'तुम्ही ऑफलाइन आहात',
