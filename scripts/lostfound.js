@@ -23,14 +23,6 @@ function _lfShowSpinner(container) {
     '</div>';
 }
 
-function _lfShowError(container) {
-  container.innerHTML =
-    '<div class="empty-state" style="color:#b71c1c;">' +
-    '<i class="fa-solid fa-triangle-exclamation" style="font-size:28px;"></i>' +
-    '<p style="margin-top:10px;">Could not connect. Please try again.</p>' +
-    '</div>';
-}
-
 function _lfShowEmpty(container) {
   container.innerHTML =
     '<div class="empty-state">' +
@@ -48,6 +40,20 @@ function _lfCard(r) {
   var contact  = r.contact  || r.Contact  || '';
   var timestamp= r.timestamp|| r.Timestamp|| '';
   var type     = (r.type    || r.Type     || 'lost').toLowerCase();
+  var photo    = r.photo    || r.Photo    || '';
+  var reportId = r.id       || r.ID       || (name + age).replace(/\s/g,'');
+
+  /* Photo */
+  var photoHtml = photo
+    ? '<img src="' + photo + '" style="width:100%;max-height:180px;object-fit:cover;border-radius:8px;margin-bottom:10px;">'
+    : '';
+
+  /* Contact / Verify button */
+  var verifications = [];
+  try { verifications = JSON.parse(localStorage.getItem('kumbh_verifications') || '[]'); } catch(e) {}
+  var approved = verifications.find(function(v) {
+    return v.ReportID === reportId && (v.Status === 'Approved' || v.Status === 'approved');
+  });
 
   var waText = encodeURIComponent(
     '\uD83D\uDD0D *KumbhSathi \u2014 ' + (type === 'lost' ? 'LOST PERSON' : 'FOUND PERSON') + '*\n\n' +
@@ -57,8 +63,13 @@ function _lfCard(r) {
   );
   var phone = String(contact).replace(/[^0-9]/g, '');
 
+  var contactHtml = approved
+    ? '<a href="tel:' + phone + '" class="btn btn-primary btn-sm"><i class="fa-solid fa-phone"></i> ' + contact + '</a>'
+    : '<button onclick="KumbhVerifyUI.startVerification(\'' + reportId.replace(/'/g,"\'") + '\')" style="padding:8px 14px;background:var(--saffron);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700;">🔍 I know this person</button>';
+
   return (
     '<div class="report-card ' + type + '">' +
+      photoHtml +
       '<span class="report-type-badge ' + type + '">' + type.toUpperCase() + '</span>' +
       '<div style="font-size:15px;font-weight:700;color:var(--dark-brown);margin-bottom:4px;">' + name + '</div>' +
       '<div style="font-size:12px;color:var(--light-brown);margin-bottom:4px;">' +
@@ -66,13 +77,11 @@ function _lfCard(r) {
         ' &nbsp;|&nbsp; <i class="fa-solid fa-location-dot"></i> ' + location +
       '</div>' +
       '<div style="font-size:12px;color:var(--light-brown);margin-bottom:8px;">' + (desc || '') + '</div>' +
-      '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">' +
         '<a href="https://wa.me/?text=' + waText + '" target="_blank" rel="noopener" class="btn btn-whatsapp btn-sm">' +
           '<i class="fa-brands fa-whatsapp"></i> WhatsApp' +
         '</a>' +
-        (phone ? '<a href="tel:' + phone + '" class="btn btn-primary btn-sm">' +
-          '<i class="fa-solid fa-phone"></i> ' + contact +
-        '</a>' : '') +
+        contactHtml +
       '</div>' +
       '<div style="font-size:10px;color:var(--light-brown);margin-top:8px;">' +
         '<i class="fa-solid fa-clock"></i> ' + timestamp +
@@ -96,7 +105,7 @@ function _lfShowSuccessModal() {
   var box = document.createElement('div');
   box.style.cssText =
     'background:#fff;border-radius:18px;padding:28px 24px;max-width:340px;width:100%;' +
-    'text-align:center;box-shadow:0 8px 40px rgba(0,0,0,0.25);animation:lfModalIn 0.3s ease;';
+    'text-align:center;box-shadow:0 8px 40px rgba(0,0,0,0.25);';
 
   var title = (typeof t === 'function') ? t('report_submitted_title') : 'Report Submitted! ✅';
   var msg   = (typeof t === 'function') ? t('report_submitted_msg')   :
@@ -111,12 +120,6 @@ function _lfShowSuccessModal() {
       'OK 🙏' +
     '</button>';
 
-  if (document.body.classList.contains('dark-mode')) {
-    box.style.background = '#1e1e1e';
-    box.querySelector('div:nth-child(2)').style.color = '#66bb6a';
-    box.querySelector('div:nth-child(3)').style.color = '#9E9E9E';
-  }
-
   overlay.appendChild(box);
   document.body.appendChild(overlay);
 
@@ -125,7 +128,7 @@ function _lfShowSuccessModal() {
   overlay.addEventListener('click', function(e) { if (e.target === overlay) closeModal(); });
 }
 
-/* ---------- core functions ---------- */
+/* ---------- core: render reports ---------- */
 
 function renderReports() {
   var container = document.getElementById('reports-container');
@@ -133,28 +136,18 @@ function renderReports() {
   _lfShowSpinner(container);
 
   fetch(APPS_SCRIPT_URL + '?sheet=Lost%20and%20Found')
-    .then(function(res) {
-      return res.text();
-    })
+    .then(function(res) { return res.text(); })
     .then(function(text) {
       var reports;
-      try {
-        reports = JSON.parse(text);
-      } catch (parseErr) {
-        throw new Error('JSON parse failed. Raw response: ' + text.slice(0, 150));
+      try { reports = JSON.parse(text); } catch(e) {
+        throw new Error('JSON parse failed: ' + text.slice(0, 100));
       }
-
       if (!Array.isArray(reports)) {
         if (reports && reports.error) throw new Error(reports.error);
-        throw new Error('Expected array, got: ' + JSON.stringify(reports).slice(0, 100));
+        throw new Error('Expected array');
       }
-
       var approved = reports.filter(_lfIsApproved);
-
-      if (approved.length === 0) {
-        _lfShowEmpty(container);
-        return;
-      }
+      if (approved.length === 0) { _lfShowEmpty(container); return; }
       container.innerHTML = approved.map(_lfCard).join('');
     })
     .catch(function(err) {
@@ -168,12 +161,36 @@ function renderReports() {
     });
 }
 
+/* ---------- core: submit report ---------- */
+
+function submitLostFoundReport(report, btn) {
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify(report)
+  })
+    .then(function(res) { return res.text(); })
+    .then(function() {
+      document.getElementById('lf-form').reset();
+      _lfShowSuccessModal();
+    })
+    .catch(function(err) {
+      console.error('[KumbhSathi] Submit failed:', err);
+      if (typeof showToast === 'function') showToast('❌ Could not connect. Please try again.');
+    })
+    .finally(function() {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span data-t="submit_report">रिपोर्ट सबमिट करें</span>';
+      }
+    });
+}
+
+/* ---------- init ---------- */
+
 function initLostFound() {
   document.querySelectorAll('.form-tab').forEach(function(tab) {
     tab.addEventListener('click', function() {
-      document.querySelectorAll('.form-tab').forEach(function(t) {
-        t.classList.remove('active');
-      });
+      document.querySelectorAll('.form-tab').forEach(function(t) { t.classList.remove('active'); });
       tab.classList.add('active');
       activeReportType = tab.dataset.type;
     });
@@ -195,36 +212,24 @@ function initLostFound() {
         desc:      fd.get('desc'),
         contact:   fd.get('contact'),
         timestamp: new Date().toLocaleString('en-IN'),
-        token: 'kumbh2027secure'
+        token:     'kumbh2027secure'
       };
 
       var btn = form.querySelector('button[type="submit"]');
       if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
 
-      fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify(report)
-      })
-        .then(function(res) {
-          if (!res.ok) throw new Error('HTTP ' + res.status);
-          return res.json();
-        })
-        .then(function() {
-          e.target.reset();
-          _lfShowSuccessModal();
-        })
-        .catch(function(err) {
-          console.error('[KumbhSathi] Submit failed:', err);
-          if (typeof showToast === 'function') {
-            showToast('❌ Could not connect. Please try again.');
-          }
-        })
-        .finally(function() {
-          if (btn) {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span data-t="submit_report">रिपोर्ट सबमिट करें</span>';
-          }
-        });
+      var photoFile = document.getElementById('lf-photo') && document.getElementById('lf-photo').files[0];
+      if (photoFile) {
+        var reader = new FileReader();
+        reader.onload = function(e2) {
+          report.photo = e2.target.result;
+          submitLostFoundReport(report, btn);
+        };
+        reader.readAsDataURL(photoFile);
+      } else {
+        report.photo = '';
+        submitLostFoundReport(report, btn);
+      }
     });
   }
 }

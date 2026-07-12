@@ -1,0 +1,346 @@
+Project: KumbhSathi — Lost & Found verification feature
+Repo: https://github.com/Sam102009/Kumbh-Sathi
+Tech: Pure HTML, CSS, vanilla JavaScript (no frameworks)
+Backend: Google Apps Script (GAS)
+GAS URL: https://script.google.com/macros/s/AKfycbyp_E-2tqiBfAtswJIxIeeq2iH6gwMjjlPZwlxxijqU6RdfZW8UOlcM83Gd9Yay7ZbufQ/exec
+Google OAuth Client ID: 145095692060-i0ln8i31gh44dqtrdtpfoida506qk2li.apps.googleusercontent.com
+IMPORTANT FILE RULES:
+
+Always edit ROOT scripts/ NOT public/scripts/
+Always edit ROOT index.html NOT public/index.html
+Never break existing working features
+After every change: git add . && git commit -m "message" && git push origin main
+
+
+GOOGLE SHEET STRUCTURE (already updated manually):
+Lost and Found columns:
+Type, Name, Age, Gender, Location, Desc, Contact, Photo, Timestamp, Approved
+Verifications columns:
+VerificationID, ReportID, UserName, UserEmail, DocumentPhoto, Status, Timestamp
+
+TASK 1 — Update GAS Code
+Open GAS editor and update doPost to handle two new actions. Keep all existing actions intact. Add after existing actions:
+javascript// SUBMIT VERIFICATION
+if (data.action == 'submitVerification') {
+  var vSheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName('Verifications');
+  var vId = 'VER' + new Date().getTime();
+  vSheet.appendRow([
+    vId,
+    data.reportId,
+    data.userName,
+    data.userEmail,
+    data.documentPhoto,
+    'Pending',
+    new Date().toLocaleString('en-IN')
+  ]);
+  return ContentService.createTextOutput(JSON.stringify({status:'ok', verificationId: vId}))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+// CHECK VERIFICATION STATUS
+if (data.action == 'checkVerification') {
+  var vSheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName('Verifications');
+  var vRows = vSheet.getDataRange().getValues();
+  var vHeaders = vRows[0];
+  var results = [];
+  for (var i = 1; i < vRows.length; i++) {
+    if (vRows[i][3] == data.userEmail) {
+      var obj = {};
+      vHeaders.forEach(function(h, j) { obj[h] = vRows[i][j]; });
+      results.push(obj);
+    }
+  }
+  return ContentService.createTextOutput(JSON.stringify(results))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+Also update the Lost & Found submission at the bottom of doPost to include photo:
+javascript// LOST & FOUND API
+var sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName('Lost and Found');
+sheet.appendRow([data.type, data.name, data.age, data.gender, data.location, data.desc, data.contact, data.photo || '', data.timestamp, 'FALSE']);
+return ContentService.createTextOutput(JSON.stringify({status:'ok'}))
+  .setMimeType(ContentService.MimeType.JSON);
+Save and deploy as new version.
+
+TASK 2 — Create scripts/auth.js
+Create a new file scripts/auth.js with Google Sign In handling:
+javascript// Google Auth Manager
+var KumbhAuth = {
+  clientId: '145095692060-i0ln8i31gh44dqtrdtpfoida506qk2li.apps.googleusercontent.com',
+  user: null,
+
+  init: function() {
+    var saved = localStorage.getItem('kumbh_user');
+    if (saved) {
+      try { this.user = JSON.parse(saved); } catch(e) { this.user = null; }
+    }
+  },
+
+  isSignedIn: function() {
+    return this.user !== null;
+  },
+
+  getUser: function() {
+    return this.user;
+  },
+
+  signIn: function(callback) {
+    if (this.isSignedIn()) {
+      callback(this.user);
+      return;
+    }
+    google.accounts.id.initialize({
+      client_id: this.clientId,
+      callback: function(response) {
+        var payload = KumbhAuth._parseJwt(response.credential);
+        KumbhAuth.user = {
+          name: payload.name,
+          email: payload.email,
+          picture: payload.picture
+        };
+        localStorage.setItem('kumbh_user', JSON.stringify(KumbhAuth.user));
+        callback(KumbhAuth.user);
+      }
+    });
+    google.accounts.id.prompt(function(notification) {
+      if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+        // Fallback to popup
+        google.accounts.id.renderButton(
+          document.getElementById('kumbh-signin-btn'),
+          { theme: 'outline', size: 'large', width: 280 }
+        );
+        document.getElementById('kumbh-signin-modal').style.display = 'flex';
+      }
+    });
+  },
+
+  signOut: function() {
+    this.user = null;
+    localStorage.removeItem('kumbh_user');
+    google.accounts.id.disableAutoSelect();
+  },
+
+  _parseJwt: function(token) {
+    var base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    var json = decodeURIComponent(atob(base64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    return JSON.parse(json);
+  }
+};
+
+KumbhAuth.init();
+
+TASK 3 — Create scripts/verify.js
+Create scripts/verify.js:
+javascriptvar KumbhVerify = {
+  GAS_URL: 'https://script.google.com/macros/s/AKfycbyp_E-2tqiBfAtswJIxIeeq2iH6gwMjjlPZwlxxijqU6RdfZW8UOlcM83Gd9Yay7ZbufQ/exec',
+  TOKEN: 'kumbh2027secure',
+
+  submit: function(reportId, documentPhoto, callback) {
+    var user = KumbhAuth.getUser();
+    if (!user) { callback({error: 'Not signed in'}); return; }
+    fetch(this.GAS_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'submitVerification',
+        token: this.TOKEN,
+        reportId: reportId,
+        userName: user.name,
+        userEmail: user.email,
+        documentPhoto: documentPhoto
+      })
+    }).then(function(r) { return r.json(); }).then(callback).catch(function() {
+      callback({error: 'Failed to submit'});
+    });
+  },
+
+  checkStatus: function(callback) {
+    var user = KumbhAuth.getUser();
+    if (!user) { callback([]); return; }
+    fetch(this.GAS_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'checkVerification',
+        token: this.TOKEN,
+        userEmail: user.email
+      })
+    }).then(function(r) { return r.json(); }).then(callback).catch(function() {
+      callback([]);
+    });
+  }
+};
+
+TASK 4 — Update index.html
+4a — Add Google Identity Services script in <head>:
+html<script src="https://accounts.google.com/gsi/client" async defer></script>
+4b — Add auth.js and verify.js before closing </body>:
+html<script src="scripts/auth.js"></script>
+<script src="scripts/verify.js"></script>
+4c — Add Sign In modal (before closing </body>):
+html<div id="kumbh-signin-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; justify-content:center; align-items:center;">
+  <div style="background:var(--card-bg); border-radius:16px; padding:24px; width:90%; max-width:340px; text-align:center;">
+    <h3 style="margin-bottom:8px;">🔐 Sign In Required</h3>
+    <p style="font-size:14px; color:var(--text-secondary); margin-bottom:20px;">Sign in with Google to verify your identity and view contact details</p>
+    <div id="kumbh-signin-btn"></div>
+    <button onclick="document.getElementById('kumbh-signin-modal').style.display='none'" style="margin-top:16px; background:none; border:none; color:var(--text-secondary); cursor:pointer;">Cancel</button>
+  </div>
+</div>
+4d — Add Verification modal (before closing </body>):
+html<div id="kumbh-verify-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; justify-content:center; align-items:center;">
+  <div style="background:var(--card-bg); border-radius:16px; padding:24px; width:90%; max-width:340px;">
+    <h3 style="margin-bottom:8px;">📄 Verify Identity</h3>
+    <p style="font-size:13px; color:var(--text-secondary); margin-bottom:16px;">Upload any ID proof (Aadhaar, PAN, Voter ID) to verify your relation to this person. We will review and respond within 24 hours.</p>
+    <input type="file" id="verify-doc-input" accept="image/*" style="width:100%; margin-bottom:16px;">
+    <input type="hidden" id="verify-report-id">
+    <button id="verify-submit-btn" onclick="KumbhVerifyUI.submitVerification()" style="width:100%; padding:12px; background:var(--accent); color:white; border:none; border-radius:8px; font-size:15px; cursor:pointer;">Submit for Verification</button>
+    <button onclick="document.getElementById('kumbh-verify-modal').style.display='none'" style="width:100%; margin-top:8px; padding:10px; background:none; border:1px solid var(--border); border-radius:8px; cursor:pointer;">Cancel</button>
+    <div id="verify-status-msg" style="margin-top:12px; font-size:13px; text-align:center;"></div>
+  </div>
+</div>
+
+TASK 5 — Update scripts/lostfound.js
+5a — Add photo upload to submission form:
+Find the Lost & Found submission form and add an optional photo field:
+html<div class="form-group">
+  <label>📷 Photo (optional)</label>
+  <input type="file" id="lf-photo" accept="image/*">
+</div>
+5b — Include photo in submission:
+When building the report object before fetch, add:
+javascript// Convert photo to base64 if provided
+var photoFile = document.getElementById('lf-photo').files[0];
+if (photoFile) {
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    report.photo = e.target.result;
+    submitLostFoundReport(report);
+  };
+  reader.readAsDataURL(photoFile);
+} else {
+  report.photo = '';
+  submitLostFoundReport(report);
+}
+Wrap the existing fetch call in a submitLostFoundReport(report) function.
+5c — Update report card rendering:
+When rendering each report card, change the contact display to:
+javascript// Show photo if available
+var photoHtml = item.Photo ? '<img src="' + item.Photo + '" style="width:100%; max-height:200px; object-fit:cover; border-radius:8px; margin-bottom:12px;">' : '';
+
+// Check if user already has approved verification for this report
+var verifications = JSON.parse(localStorage.getItem('kumbh_verifications') || '[]');
+var approved = verifications.find(function(v) { return v.ReportID === item.id && v.Status === 'Approved'; });
+
+var contactHtml = approved
+  ? '<p>📞 ' + item.Contact + '</p>'
+  : '<button onclick="KumbhVerifyUI.startVerification(\'' + item.id + '\')" style="padding:8px 16px; background:var(--accent); color:white; border:none; border-radius:8px; cursor:pointer;">🔍 I know this person</button>';
+
+TASK 6 — Add KumbhVerifyUI to scripts/verify.js
+Add this UI controller at the bottom of scripts/verify.js:
+javascriptvar KumbhVerifyUI = {
+  pendingReportId: null,
+
+  startVerification: function(reportId) {
+    this.pendingReportId = reportId;
+    if (!KumbhAuth.isSignedIn()) {
+      KumbhAuth.signIn(function(user) {
+        document.getElementById('kumbh-signin-modal').style.display = 'none';
+        KumbhVerifyUI.showVerifyModal(reportId);
+      });
+    } else {
+      this.showVerifyModal(reportId);
+    }
+  },
+
+  showVerifyModal: function(reportId) {
+    document.getElementById('verify-report-id').value = reportId;
+    document.getElementById('verify-status-msg').textContent = '';
+    document.getElementById('kumbh-verify-modal').style.display = 'flex';
+  },
+
+  submitVerification: function() {
+    var reportId = document.getElementById('verify-report-id').value;
+    var fileInput = document.getElementById('verify-doc-input');
+    var btn = document.getElementById('verify-submit-btn');
+    var statusMsg = document.getElementById('verify-status-msg');
+
+    if (!fileInput.files[0]) {
+      statusMsg.textContent = 'Please upload an ID document.';
+      statusMsg.style.color = 'red';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      KumbhVerify.submit(reportId, e.target.result, function(result) {
+        if (result.error) {
+          statusMsg.textContent = 'Failed. Please try again.';
+          statusMsg.style.color = 'red';
+          btn.disabled = false;
+          btn.textContent = 'Submit for Verification';
+        } else {
+          statusMsg.textContent = '✅ Submitted! We will review within 24 hours.';
+          statusMsg.style.color = 'green';
+          btn.textContent = 'Submitted';
+          setTimeout(function() {
+            document.getElementById('kumbh-verify-modal').style.display = 'none';
+          }, 2000);
+        }
+      });
+    };
+    reader.readAsDataURL(fileInput.files[0]);
+  },
+
+  checkAndUpdateStatus: function() {
+    KumbhVerify.checkStatus(function(results) {
+      localStorage.setItem('kumbh_verifications', JSON.stringify(results));
+    });
+  }
+};
+
+// Check verification status on load if user is signed in
+if (KumbhAuth.isSignedIn()) {
+  KumbhVerifyUI.checkAndUpdateStatus();
+}
+
+TASK 7 — Add sign out option in More/About page
+Find the More/About page in index.html and add:
+html<div id="auth-status-section" style="margin:16px 0; padding:16px; background:var(--card-bg); border-radius:12px;">
+  <div id="signed-out-view">
+    <p style="font-size:14px; color:var(--text-secondary);">Sign in to verify identity for Lost & Found</p>
+  </div>
+  <div id="signed-in-view" style="display:none;">
+    <p style="font-size:14px;">👤 Signed in as <span id="auth-user-name"></span></p>
+    <button onclick="KumbhAuth.signOut(); location.reload();" style="margin-top:8px; padding:8px 16px; background:none; border:1px solid var(--border); border-radius:8px; cursor:pointer;">Sign Out</button>
+  </div>
+</div>
+And add this script to update the auth UI:
+javascript// Update auth UI
+function updateAuthUI() {
+  if (KumbhAuth.isSignedIn()) {
+    var user = KumbhAuth.getUser();
+    document.getElementById('signed-out-view').style.display = 'none';
+    document.getElementById('signed-in-view').style.display = 'block';
+    document.getElementById('auth-user-name').textContent = user.name;
+  }
+}
+updateAuthUI();
+
+TASK 8 — Final checks:
+
+Make sure crowd2.js loads before router.js in script order
+Make sure auth.js loads before verify.js
+Make sure auth.js and verify.js load before lostfound.js
+Test in browser: submit a Lost & Found report with photo, view it, click "I know this person", sign in, upload document, confirm submission appears in Verifications sheet
+Test in all 3 languages
+Commit: git add . && git commit -m "Add Lost & Found photo upload and identity verification system" && git push origin main
+
+
+DO NOT:
+
+Break existing Lost & Found approval system
+Change GAS authentication (SECRET_TOKEN stays)
+Modify Schedule, Stay, News, Akharas, Crowd pages
+Delete chatbot code (it's hidden, leave it)
