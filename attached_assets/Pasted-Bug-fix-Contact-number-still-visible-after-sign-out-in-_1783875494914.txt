@@ -1,0 +1,27 @@
+Bug fix: Contact number still visible after sign out in Lost & Found
+File to edit: scripts/lostfound.js
+Problem: When user signs out, contact numbers remain visible. The card rendering logic checks verification status once on load but doesn't re-render when auth state changes.
+Fix:
+Find the function that renders Lost & Found report cards. Find where it decides to show the contact number or the "I know this person" button. The condition currently checks localStorage for verifications — but it also needs to check if the user is still signed in.
+Change the contact visibility logic to:
+javascript// Only show contact if user is signed in AND has approved verification for this report
+var isSignedIn = KumbhAuth.isSignedIn();
+var verifications = JSON.parse(localStorage.getItem('kumbh_verifications') || '[]');
+var approved = isSignedIn && verifications.find(function(v) { 
+  return v.ReportID === item.ReportID && v.Status === 'Approved'; 
+});
+
+var contactHtml = approved
+  ? '<p style="margin:4px 0;">📞 ' + item.Contact + '</p>'
+  : '<button onclick="KumbhVerifyUI.startVerification(\'' + item.ReportID + '\')" style="padding:8px 16px; background:var(--accent); color:white; border:none; border-radius:8px; cursor:pointer; font-size:13px;">🔍 I know this person</button>';
+Also make sure KumbhAuthUI.signOut() in auth.js calls the Lost & Found reload function after signing out:
+javascriptsignOut: function() {
+  KumbhAuth.signOut();
+  localStorage.removeItem('kumbh_verifications');
+  this.updateHeader();
+  document.getElementById('auth-panel').style.display = 'none';
+  if (typeof loadLostFound === 'function') loadLostFound();
+}
+Note the added localStorage.removeItem('kumbh_verifications') — this clears cached verification status on sign out so contacts immediately hide.
+After fix: git add . && git commit -m "Fix contact number hiding after sign out in Lost and Found" && git push origin main
+Test: Sign in → get approved verification → contact visible → sign out → contact immediately hides → sign in again → contact visible again.

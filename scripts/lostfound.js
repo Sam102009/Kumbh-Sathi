@@ -48,10 +48,11 @@ function _lfCard(r) {
     ? '<img src="' + photo + '" style="width:100%;max-height:180px;object-fit:cover;border-radius:8px;margin-bottom:10px;">'
     : '';
 
-  /* Contact / Verify button */
+  /* Contact / Verify button — only show contact if signed in AND approved */
+  var isSignedIn = (typeof KumbhAuth !== 'undefined') && KumbhAuth.isSignedIn();
   var verifications = [];
   try { verifications = JSON.parse(localStorage.getItem('kumbh_verifications') || '[]'); } catch(e) {}
-  var approved = verifications.find(function(v) {
+  var approved = isSignedIn && verifications.find(function(v) {
     return v.ReportID === reportId && (v.Status === 'Approved' || v.Status === 'approved');
   });
 
