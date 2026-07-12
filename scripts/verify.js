@@ -20,9 +20,7 @@ var KumbhVerify = {
     .then(function(text) {
       try { callback(JSON.parse(text)); } catch(e) { callback({error: 'Parse error'}); }
     })
-    .catch(function() {
-      callback({error: 'Failed to submit'});
-    });
+    .catch(function() { callback({error: 'Failed to submit'}); });
   },
 
   checkStatus: function(callback) {
@@ -38,11 +36,12 @@ var KumbhVerify = {
     })
     .then(function(r) { return r.text(); })
     .then(function(text) {
-      try { callback(JSON.parse(text)); } catch(e) { callback([]); }
+      try {
+        var results = JSON.parse(text);
+        callback(Array.isArray(results) ? results : []);
+      } catch(e) { callback([]); }
     })
-    .catch(function() {
-      callback([]);
-    });
+    .catch(function() { callback([]); });
   }
 };
 
@@ -55,7 +54,7 @@ var KumbhVerifyUI = {
       KumbhAuth.signIn(function(user) {
         document.getElementById('kumbh-signin-modal').style.display = 'none';
         KumbhVerifyUI.showVerifyModal(reportId);
-        updateAuthUI();
+        if (typeof KumbhAuthUI !== 'undefined') KumbhAuthUI.updateHeader();
       });
     } else {
       this.showVerifyModal(reportId);
@@ -98,26 +97,13 @@ var KumbhVerifyUI = {
           statusMsg.textContent = '✅ Submitted! We will review within 24 hours.';
           statusMsg.style.color = 'green';
           btn.textContent = 'Submitted';
-          KumbhVerifyUI.checkAndUpdateStatus();
           setTimeout(function() {
             document.getElementById('kumbh-verify-modal').style.display = 'none';
+            if (typeof loadLostFound === 'function') loadLostFound();
           }, 2000);
         }
       });
     };
     reader.readAsDataURL(fileInput.files[0]);
-  },
-
-  checkAndUpdateStatus: function() {
-    KumbhVerify.checkStatus(function(results) {
-      if (Array.isArray(results)) {
-        localStorage.setItem('kumbh_verifications', JSON.stringify(results));
-      }
-    });
   }
 };
-
-// Check verification status on load if user is signed in
-if (KumbhAuth.isSignedIn()) {
-  KumbhVerifyUI.checkAndUpdateStatus();
-}

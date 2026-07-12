@@ -1,0 +1,101 @@
+Bug fix: Lost & Found contact visibility uses stale cache
+Files to edit: scripts/verify.js and scripts/lostfound.js
+Problem: Verification status is cached in localStorage as kumbh_verifications. The app reads from this cache instead of checking live from the sheet. So if status changes in the sheet (Approved → Pending), the app still shows the old cached status and contact remains visible.
+Fix — always fetch live status, never trust cache:
+In scripts/verify.js, update checkStatus to return a Promise and never use localStorage for status:
+javascriptvar KumbhVerify = {
+  GAS_URL: 'https://script.google.com/macros/s/AKfycbyp_E-2tqiBfAtswJIxIeeq2iH6gwMjjlPZwlxxijqU6RdfZW8UOlcM83Gd9Yay7ZbufQ/exec',
+  TOKEN: 'kumbh2027secure',
+
+  submit: function(reportId, documentPhoto, callback) {
+    var user = KumbhAuth.getUser();
+    if (!user) { callback({error: 'Not signed in'}); return; }
+    fetch(this.GAS_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'submitVerification',
+        token: this.TOKEN,
+        reportId: reportId,
+        userName: user.name,
+        userEmail: user.email,
+        documentPhoto: documentPhoto
+      })
+    }).then(function(r) { return r.json(); }).then(callback).catch(function() {
+      callback({error: 'Failed to submit'});
+    });
+  },
+
+  checkStatus: function(callback) {
+    var user = KumbhAuth.getUser();
+    if (!user) { callback([]); return; }
+    fetch(this.GAS_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'checkVerification',
+        token: this.TOKEN,
+        userEmail: user.email
+      })
+    }).then(function(r) { return r.json(); })
+      .then(function(results) {
+        // Never cache — always use live results
+        callback(Array.isArray(results) ? results : []);
+      })
+      .catch(function() { callback([]); });
+  }
+};
+In scripts/lostfound.js, update card rendering to always fetch live status before rendering:
+Find the main function that loads and renders Lost & Found cards. Change it so it:
+
+First fetches reports from GAS
+Then fetches live verification status for the signed-in user
+Then renders cards using live status
+
+javascriptfunction loadLostFound() {
+  // Step 1: fetch reports
+  fetch(GAS_URL + '?sheet=Lost%20and%20Found')
+    .then(function(r) { return r.json(); })
+    .then(function(reports) {
+      // Step 2: fetch live verification status
+      KumbhVerify.checkStatus(function(verifications) {
+        // Step 3: render cards with live status
+        renderLostFoundCards(reports, verifications);
+      });
+    })
+    .catch(function() {
+      renderLostFoundCards([], []);
+    });
+}
+
+function renderLostFoundCards(reports, verifications) {
+  var isSignedIn = KumbhAuth.isSignedIn();
+  // filter approved reports only (Approved column = TRUE)
+  var approved_reports = reports.filter(function(r) { return r.Approved == 'TRUE' || r.Approved === true; });
+  
+  // render each card
+  approved_reports.forEach(function(item) {
+    var approvedVerification = isSignedIn && verifications.find(function(v) {
+      return v.ReportID === item.ReportID && v.Status === 'Approved';
+    });
+
+    var contactHtml = approvedVerification
+      ? '<p style="margin:4px 0;">📞 ' + item.Contact + '</p>'
+      : '<button onclick="KumbhVerifyUI.startVerification(\'' + item.ReportID + '\')" style="padding:8px 16px; background:var(--accent); color:white; border:none; border-radius:8px; cursor:pointer; font-size:13px;">🔍 I know this person</button>';
+
+    // rest of card rendering...
+  });
+}
+Also remove ALL localStorage usage for verifications — search for kumbh_verifications in all files and remove every localStorage.getItem, localStorage.setItem, localStorage.removeItem related to it.
+Also update KumbhAuthUI.signOut() — just reload lost and found, no need to clear cache since we no longer cache:
+javascriptsignOut: function() {
+  KumbhAuth.signOut();
+  this.updateHeader();
+  document.getElementById('auth-panel').style.display = 'none';
+  if (typeof loadLostFound === 'function') loadLostFound();
+}
+After fix: git add . && git commit -m "Fix: always fetch live verification status, remove stale cache" && git push origin main
+Test:
+
+Sign in → verification approved in sheet → contact visible ✅
+Change sheet status to Pending → refresh app → contact hidden ✅
+Sign out → contact hidden immediately ✅
+Sign in again → status still Pending → contact still hidden ✅

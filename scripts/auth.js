@@ -136,11 +136,10 @@ var KumbhAuthUI = {
 
   signOut: function() {
     KumbhAuth.signOut();
-    localStorage.removeItem('kumbh_verifications');
     this.updateHeader();
     var panel = document.getElementById('auth-panel');
     if (panel) panel.style.display = 'none';
-    if (typeof renderReports === 'function') renderReports();
+    if (typeof loadLostFound === 'function') loadLostFound();
   }
 };
 
