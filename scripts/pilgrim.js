@@ -38,13 +38,13 @@ function submitPilgrimRegistration() {
   var photoFile = document.getElementById('p-photo').files[0];
 
   if (!name || !age || !city || !contact1) {
-    alert('कृपया सभी आवश्यक फ़ील्ड भरें (नाम, आयु, शहर, संपर्क)');
+    alert(t('pilgrim_fill_required'));
     return;
   }
 
   var btn = document.getElementById('pilgrim-submit-btn');
   btn.disabled = true;
-  btn.innerHTML = '⏳ कार्ड बन रहा है...';
+  btn.innerHTML = t('pilgrim_generating');
 
   function processAndSubmit(photoBase64) {
     var pilgrimId = generatePilgrimId();
@@ -74,13 +74,13 @@ function submitPilgrimRegistration() {
       savePilgrimLocally({ id: pilgrimId, name: name, age: age, gender: gender, city: city, contact1: contact1, contact2: contact2, medical: medical, photo: photoBase64 || '', timestamp: timestamp });
       showQRCard({ id: pilgrimId, name: name, age: age, gender: gender, city: city, contact1: contact1, contact2: contact2, medical: medical, photo: photoBase64 || '' });
       btn.disabled = false;
-      btn.innerHTML = '🪪 QR कार्ड बनाएं';
+      btn.innerHTML = '🪪 ' + t('generate_qr');
     })
     .catch(function() {
       savePilgrimLocally({ id: pilgrimId, name: name, age: age, gender: gender, city: city, contact1: contact1, contact2: contact2, medical: medical, photo: photoBase64 || '', timestamp: timestamp });
       showQRCard({ id: pilgrimId, name: name, age: age, gender: gender, city: city, contact1: contact1, contact2: contact2, medical: medical, photo: photoBase64 || '' });
       btn.disabled = false;
-      btn.innerHTML = '🪪 QR कार्ड बनाएं';
+      btn.innerHTML = '🪪 ' + t('generate_qr');
     });
   }
 
@@ -120,7 +120,7 @@ function showQRCard(pilgrim) {
         photoHtml +
         '<div style="flex:1;">' +
           '<div style="font-size:18px;font-weight:800;color:var(--dark-brown);">' + pilgrim.name + '</div>' +
-          '<div style="font-size:13px;color:var(--light-brown);">आयु: ' + pilgrim.age + ' | ' + pilgrim.gender + '</div>' +
+          '<div style="font-size:13px;color:var(--light-brown);">' + t('pilgrim_age_label') + pilgrim.age + ' | ' + pilgrim.gender + '</div>' +
           '<div style="font-size:13px;color:var(--light-brown);">🏠 ' + pilgrim.city + '</div>' +
           medicalHtml +
         '</div>' +
@@ -130,14 +130,14 @@ function showQRCard(pilgrim) {
         '<div style="font-size:10px;color:var(--light-brown);margin-top:4px;">ID: ' + pilgrim.id + '</div>' +
       '</div>' +
       '<div style="background:#fff3e0;border-radius:8px;padding:10px;margin-bottom:12px;">' +
-        '<div style="font-size:12px;font-weight:700;color:var(--dark-brown);margin-bottom:6px;">📞 आपातकालीन संपर्क</div>' +
+        '<div style="font-size:12px;font-weight:700;color:var(--dark-brown);margin-bottom:6px;">' + t('pilgrim_emergency_contact') + '</div>' +
         '<div style="font-size:14px;font-weight:700;color:var(--saffron);">📱 ' + pilgrim.contact1 + '</div>' +
         contact2Html +
       '</div>' +
-      '<div style="text-align:center;font-size:10px;color:var(--light-brown);margin-bottom:14px;">QR कोड स्कैन करें और परिवार से संपर्क करें</div>' +
+      '<div style="text-align:center;font-size:10px;color:var(--light-brown);margin-bottom:14px;">' + t('pilgrim_scan_qr') + '</div>' +
       '<div style="display:flex;gap:8px;">' +
         '<button onclick="window.print()" style="flex:1;padding:12px;background:var(--saffron);color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;">🖨️ Print</button>' +
-        '<button onclick="registerAnotherPilgrim()" style="flex:1;padding:12px;background:#f5f0e8;color:var(--dark-brown);border:none;border-radius:8px;font-weight:700;cursor:pointer;">➕ नया यात्री</button>' +
+        '<button onclick="registerAnotherPilgrim()" style="flex:1;padding:12px;background:#f5f0e8;color:var(--dark-brown);border:none;border-radius:8px;font-weight:700;cursor:pointer;">' + t('pilgrim_add_another') + '</button>' +
       '</div>' +
     '</div>';
 
@@ -179,7 +179,7 @@ function loadPilgrimList() {
   var container = document.getElementById('pilgrim-list-container');
   var pilgrims = JSON.parse(localStorage.getItem('kumbh_pilgrims') || '[]');
   if (!pilgrims.length) {
-    container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--light-brown);"><i class="fa-solid fa-id-card" style="font-size:40px;opacity:0.3;"></i><p style="margin-top:12px;">कोई पंजीकृत यात्री नहीं</p></div>';
+    container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--light-brown);"><i class="fa-solid fa-id-card" style="font-size:40px;opacity:0.3;"></i><p style="margin-top:12px;">' + t('pilgrim_no_registered') + '</p></div>';
     return;
   }
   container.innerHTML = pilgrims.map(function(p, i) {
@@ -191,19 +191,19 @@ function loadPilgrimList() {
       photoHtml +
       '<div style="flex:1;">' +
         '<div style="font-weight:700;color:var(--dark-brown);">' + p.name + '</div>' +
-        '<div style="font-size:12px;color:var(--light-brown);">आयु ' + p.age + ' | ' + p.city + '</div>' +
+        '<div style="font-size:12px;color:var(--light-brown);">' + t('pilgrim_age_short') + p.age + ' | ' + p.city + '</div>' +
         '<div style="font-size:10px;color:var(--light-brown);">ID: ' + p.id + '</div>' +
       '</div>' +
       '<div style="display:flex;flex-direction:column;gap:6px;">' +
-        '<button onclick=\'showQRCard(' + pStr + ')\' style="padding:6px 10px;background:var(--saffron);color:#fff;border:none;border-radius:6px;font-size:11px;cursor:pointer;">QR देखें</button>' +
-        '<button onclick="deletePilgrim(' + i + ')" style="padding:6px 10px;background:#ffebee;color:#c62828;border:none;border-radius:6px;font-size:11px;cursor:pointer;">हटाएं</button>' +
+        '<button onclick=\'showQRCard(' + pStr + ')\' style="padding:6px 10px;background:var(--saffron);color:#fff;border:none;border-radius:6px;font-size:11px;cursor:pointer;">' + t('pilgrim_view_qr') + '</button>' +
+        '<button onclick="deletePilgrim(' + i + ')" style="padding:6px 10px;background:#ffebee;color:#c62828;border:none;border-radius:6px;font-size:11px;cursor:pointer;">' + t('pilgrim_delete') + '</button>' +
       '</div>' +
     '</div>';
   }).join('');
 }
 
 function deletePilgrim(index) {
-  if (!confirm('इस यात्री को हटाएं?')) return;
+  if (!confirm(t('pilgrim_delete_confirm'))) return;
   var pilgrims = JSON.parse(localStorage.getItem('kumbh_pilgrims') || '[]');
   pilgrims.splice(index, 1);
   localStorage.setItem('kumbh_pilgrims', JSON.stringify(pilgrims));
@@ -239,22 +239,22 @@ function showPilgrimDetails(p) {
     ? '<div style="background:#ffebee;border-radius:8px;padding:8px;margin-bottom:12px;font-size:12px;color:#c62828;">🏥 ' + p.medical + '</div>'
     : '';
   var contact2Html = p.contact2
-    ? '<a href="tel:' + p.contact2 + '" style="display:block;padding:12px;background:#fff;color:var(--saffron);border:2px solid var(--saffron);border-radius:10px;font-weight:700;font-size:14px;text-decoration:none;margin-bottom:8px;">📞 वैकल्पिक: ' + p.contact2 + '</a>'
+    ? '<a href="tel:' + p.contact2 + '" style="display:block;padding:12px;background:#fff;color:var(--saffron);border:2px solid var(--saffron);border-radius:10px;font-weight:700;font-size:14px;text-decoration:none;margin-bottom:8px;">' + t('pilgrim_alt_label') + p.contact2 + '</a>'
     : '';
   var phone = p.contact1.replace(/[^0-9]/g, '');
   output.style.display = 'block';
   output.innerHTML =
     '<div style="background:#fff3e0;border-radius:16px;padding:20px;border:3px solid var(--saffron);text-align:center;">' +
       '<div style="font-size:24px;margin-bottom:8px;">🚨</div>' +
-      '<div style="font-size:16px;font-weight:800;color:#c62828;margin-bottom:12px;">यह व्यक्ति खो गया हो सकता है</div>' +
+      '<div style="font-size:16px;font-weight:800;color:#c62828;margin-bottom:12px;">' + t('pilgrim_lost_person') + '</div>' +
       photoHtml +
       '<div style="font-size:20px;font-weight:800;color:var(--dark-brown);">' + p.name + '</div>' +
-      '<div style="font-size:14px;color:var(--light-brown);margin-bottom:4px;">आयु: ' + p.age + ' | ' + p.gender + '</div>' +
+      '<div style="font-size:14px;color:var(--light-brown);margin-bottom:4px;">' + t('pilgrim_age_label') + p.age + ' | ' + p.gender + '</div>' +
       '<div style="font-size:14px;color:var(--light-brown);margin-bottom:12px;">🏠 ' + p.city + '</div>' +
       medicalHtml +
-      '<a href="tel:' + p.contact1 + '" style="display:block;padding:14px;background:var(--saffron);color:#fff;border-radius:10px;font-weight:700;font-size:16px;text-decoration:none;margin-bottom:8px;">📞 परिवार को कॉल करें: ' + p.contact1 + '</a>' +
+      '<a href="tel:' + p.contact1 + '" style="display:block;padding:14px;background:var(--saffron);color:#fff;border-radius:10px;font-weight:700;font-size:16px;text-decoration:none;margin-bottom:8px;">' + t('pilgrim_call_family') + p.contact1 + '</a>' +
       contact2Html +
-      '<a href="https://wa.me/' + phone + '" target="_blank" style="display:block;padding:12px;background:#25D366;color:#fff;border-radius:10px;font-weight:700;font-size:14px;text-decoration:none;">💬 WhatsApp करें</a>' +
+      '<a href="https://wa.me/' + phone + '" target="_blank" style="display:block;padding:12px;background:#25D366;color:#fff;border-radius:10px;font-weight:700;font-size:14px;text-decoration:none;">💬 WhatsApp</a>' +
     '</div>';
   output.scrollIntoView({ behavior: 'smooth' });
 }

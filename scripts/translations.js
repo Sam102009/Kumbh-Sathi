@@ -251,10 +251,24 @@ const T = {
     /* --- Groups extra --- */
     group_name_label:  'Enter your name',
     group_code_label:  'Group Code',
+    group_or_divider:  '— OR —',
     group_copy:        'Copy',
     group_share_btn:   'Share',
     group_sos_btn:     'SOS — I am lost!',
     group_member_label:'Member:',
+    group_created_toast:'Group created! Share code: ',
+    group_joined_toast: 'Joined group! Code: ',
+    group_left_toast:   'Left the group',
+    group_copied_toast: 'Code copied: ',
+    group_enter_name:   'Please enter your name',
+    group_enter_code:   'Please enter a valid group code',
+    group_location_perm:'Please allow location access',
+    group_sos_sent:     '🚨 SOS sent! All group members notified.',
+    group_no_members:   'No members yet',
+    group_you:          '(You)',
+    group_updated:      'Updated: ',
+    group_sos_sent_label:'🚨 SOS sent!',
+    group_share_text:   'Join my group on KumbhSathi! Code: ',
 
     /* --- Pilgrim extra --- */
     pilgrim_gender:       'Gender',
@@ -262,6 +276,34 @@ const T = {
     pilgrim_photo_label:  'Photo (Optional)',
     pilgrim_no_registered:'No registered pilgrims',
     pilgrim_info:         '🙏 Create QR cards for senior pilgrims. Attach these cards to their clothes or wrist. If lost, any volunteer can scan the QR to contact the family.',
+    pilgrim_fill_required:'Please fill all required fields (Name, Age, City, Contact)',
+    pilgrim_generating:   '⏳ Generating card...',
+    pilgrim_age_label:    'Age: ',
+    pilgrim_emergency_contact: '📞 Emergency Contact',
+    pilgrim_scan_qr:      'Scan QR code to contact the family',
+    pilgrim_add_another:  '➕ Add Another',
+    pilgrim_view_qr:      'View QR',
+    pilgrim_delete:       'Delete',
+    pilgrim_delete_confirm:'Delete this pilgrim?',
+    pilgrim_age_short:    'Age ',
+    pilgrim_lost_person:  'This person may be lost',
+    pilgrim_call_family:  '📞 Call Family: ',
+    pilgrim_alt_label:    '📞 Alt: ',
+    pilgrim_delete_toast: 'Deleted',
+
+    /* --- Pilgrim placeholders --- */
+    p_name_placeholder:     'Pilgrim\'s full name',
+    p_age_placeholder:      'Age',
+    p_city_placeholder:     'City / Village name',
+    p_contact2_placeholder: '+91 XXXXX XXXXX (Optional)',
+    p_medical_placeholder:  'e.g. Diabetes, Blood Pressure (optional)',
+
+    /* --- Lost & Found placeholders --- */
+    lf_name_placeholder:     'Full Name',
+    lf_age_placeholder:      'Age',
+    lf_location_placeholder: 'E.g. Ramkund Ghat, Gate 3',
+    lf_desc_placeholder:     'Clothing, appearance, identifying details...',
+    lf_gender_select:        'Select Gender',
 
     /* --- Misc --- */
     offline_msg:            'You are offline',
@@ -512,6 +554,48 @@ const T = {
     pilgrim_no_registered:'कोई पंजीकृत यात्री नहीं',
     pilgrim_info:         '🙏 वरिष्ठ यात्रियों के लिए QR कार्ड बनाएं। यह कार्ड उनके कपड़े या कलाई पर लगाएं। खोने पर कोई भी स्वयंसेवक QR स्कैन करके परिवार से संपर्क कर सकता है।',
 
+    group_or_divider:  '— या —',
+    group_created_toast:'ग्रुप बनाया गया! कोड शेयर करें: ',
+    group_joined_toast: 'ग्रुप से जुड़ गए! कोड: ',
+    group_left_toast:   'ग्रुप छोड़ दिया',
+    group_copied_toast: 'कोड कॉपी हो गया: ',
+    group_enter_name:   'कृपया अपना नाम दर्ज करें',
+    group_enter_code:   'कृपया सही ग्रुप कोड दर्ज करें',
+    group_location_perm:'लोकेशन एक्सेस दें',
+    group_sos_sent:     '🚨 SOS भेजा गया! ग्रुप के सभी सदस्यों को सूचित किया गया।',
+    group_no_members:   'अभी कोई सदस्य नहीं',
+    group_you:          '(आप)',
+    group_updated:      'अपडेट: ',
+    group_sos_sent_label:'🚨 SOS भेजा!',
+    group_share_text:   'KumbhSathi पर मेरे ग्रुप से जुड़ें! ग्रुप कोड: ',
+
+    pilgrim_fill_required:'कृपया सभी आवश्यक फ़ील्ड भरें (नाम, आयु, शहर, संपर्क)',
+    pilgrim_generating:   '⏳ कार्ड बन रहा है...',
+    pilgrim_age_label:    'आयु: ',
+    pilgrim_emergency_contact: '📞 आपातकालीन संपर्क',
+    pilgrim_scan_qr:      'QR कोड स्कैन करें और परिवार से संपर्क करें',
+    pilgrim_add_another:  '➕ नया यात्री',
+    pilgrim_view_qr:      'QR देखें',
+    pilgrim_delete:       'हटाएं',
+    pilgrim_delete_confirm:'इस यात्री को हटाएं?',
+    pilgrim_age_short:    'आयु ',
+    pilgrim_lost_person:  'यह व्यक्ति खो गया हो सकता है',
+    pilgrim_call_family:  '📞 परिवार को कॉल करें: ',
+    pilgrim_alt_label:    '📞 वैकल्पिक: ',
+    pilgrim_delete_toast: 'हटा दिया',
+
+    p_name_placeholder:     'यात्री का पूरा नाम',
+    p_age_placeholder:      'आयु',
+    p_city_placeholder:     'शहर / गाँव का नाम',
+    p_contact2_placeholder: '+91 XXXXX XXXXX (वैकल्पिक)',
+    p_medical_placeholder:  'जैसे: मधुमेह, रक्तचाप (वैकल्पिक)',
+
+    lf_name_placeholder:     'पूरा नाम',
+    lf_age_placeholder:      'आयु',
+    lf_location_placeholder: 'जैसे: रामकुंड घाट, गेट 3',
+    lf_desc_placeholder:     'कपड़े, रंग-रूप, पहचान विवरण...',
+    lf_gender_select:        'लिंग चुनें',
+
     /* --- Misc --- */
     offline_msg:            'आप ऑफ़लाइन हैं',
     sponsor_available_slots:'उपलब्ध विज्ञापन स्लॉट',
@@ -761,6 +845,48 @@ const T = {
     pilgrim_no_registered:'कोणतेही नोंदणीकृत यात्री नाहीत',
     pilgrim_info:         '🙏 ज्येष्ठ यात्रेकरूंसाठी QR कार्ड तयार करा. हे कार्ड त्यांच्या कपड्यांवर किंवा मनगटावर लावा. हरवल्यास कोणताही स्वयंसेवक QR स्कॅन करून कुटुंबाशी संपर्क करू शकतो.',
 
+    group_or_divider:  '— किंवा —',
+    group_created_toast:'ग्रुप तयार झाला! कोड शेअर करा: ',
+    group_joined_toast: 'ग्रुपमध्ये सामील झालो! कोड: ',
+    group_left_toast:   'ग्रुप सोडला',
+    group_copied_toast: 'कोड कॉपी झाला: ',
+    group_enter_name:   'कृपया आपले नाव टाका',
+    group_enter_code:   'कृपया योग्य ग्रुप कोड टाका',
+    group_location_perm:'कृपया स्थान प्रवेश द्या',
+    group_sos_sent:     '🚨 SOS पाठवला! ग्रुपच्या सर्व सदस्यांना सूचित केले.',
+    group_no_members:   'अद्याप कोणताही सदस्य नाही',
+    group_you:          '(तुम्ही)',
+    group_updated:      'अपडेट: ',
+    group_sos_sent_label:'🚨 SOS पाठवला!',
+    group_share_text:   'KumbhSathi वर माझ्या ग्रुपमध्ये सामील व्हा! ग्रुप कोड: ',
+
+    pilgrim_fill_required:'कृपया सर्व आवश्यक माहिती भरा (नाव, वय, शहर, संपर्क)',
+    pilgrim_generating:   '⏳ कार्ड तयार होत आहे...',
+    pilgrim_age_label:    'वय: ',
+    pilgrim_emergency_contact: '📞 आणीबाणी संपर्क',
+    pilgrim_scan_qr:      'QR कोड स्कॅन करा आणि कुटुंबाशी संपर्क करा',
+    pilgrim_add_another:  '➕ आणखी यात्री',
+    pilgrim_view_qr:      'QR पहा',
+    pilgrim_delete:       'हटवा',
+    pilgrim_delete_confirm:'हा यात्री हटवायचा?',
+    pilgrim_age_short:    'वय ',
+    pilgrim_lost_person:  'ही व्यक्ती हरवली असण्याची शक्यता आहे',
+    pilgrim_call_family:  '📞 कुटुंबाला कॉल करा: ',
+    pilgrim_alt_label:    '📞 पर्यायी: ',
+    pilgrim_delete_toast: 'हटवले',
+
+    p_name_placeholder:     'यात्रीचे पूर्ण नाव',
+    p_age_placeholder:      'वय',
+    p_city_placeholder:     'शहर / गाव',
+    p_contact2_placeholder: '+91 XXXXX XXXXX (पर्यायी)',
+    p_medical_placeholder:  'उदा. मधुमेह, रक्तदाब (पर्यायी)',
+
+    lf_name_placeholder:     'पूर्ण नाव',
+    lf_age_placeholder:      'वय',
+    lf_location_placeholder: 'उदा. रामकुंड घाट, गेट 3',
+    lf_desc_placeholder:     'कपडे, रूप, ओळखीचे तपशील...',
+    lf_gender_select:        'लिंग निवडा',
+
     /* --- Misc --- */
     offline_msg:            'तुम्ही ऑफलाइन आहात',
     sponsor_available_slots:'उपलब्ध जाहिरात स्लॉट',
@@ -808,6 +934,9 @@ function applyTranslations() {
   });
   document.querySelectorAll('[data-t-title]').forEach(el => {
     el.title = t(el.dataset.tTitle);
+  });
+  document.querySelectorAll('[data-t-placeholder]').forEach(el => {
+    el.placeholder = t(el.dataset.tPlaceholder);
   });
 }
 

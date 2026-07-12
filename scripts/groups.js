@@ -34,7 +34,7 @@ function loadGroupInfo() {
 /* Create new group */
 function createGroup() {
   var name = document.getElementById('group-member-name').value.trim();
-  if (!name) { showToast('कृपया अपना नाम दर्ज करें'); return; }
+  if (!name) { showToast(t('group_enter_name')); return; }
   var code = generateGroupCode();
   currentGroup = code;
   currentMember = name;
@@ -45,15 +45,15 @@ function createGroup() {
   document.getElementById('active-group-code').textContent = code;
   document.getElementById('active-member-name').textContent = name;
   startGroupTracking();
-  showToast('ग्रुप बनाया गया! कोड शेयर करें: ' + code);
+  showToast(t('group_created_toast') + code);
 }
 
 /* Join existing group */
 function joinGroup() {
   var name = document.getElementById('group-member-name').value.trim();
   var code = document.getElementById('group-join-code').value.trim().toUpperCase();
-  if (!name) { showToast('कृपया अपना नाम दर्ज करें'); return; }
-  if (!code || code.length < 4) { showToast('कृपया सही ग्रुप कोड दर्ज करें'); return; }
+  if (!name) { showToast(t('group_enter_name')); return; }
+  if (!code || code.length < 4) { showToast(t('group_enter_code')); return; }
   currentGroup = code;
   currentMember = name;
   saveGroupInfo(code, name);
@@ -63,7 +63,7 @@ function joinGroup() {
   document.getElementById('active-group-code').textContent = code;
   document.getElementById('active-member-name').textContent = name;
   startGroupTracking();
-  showToast('ग्रुप से जुड़ गए! कोड: ' + code);
+  showToast(t('group_joined_toast') + code);
 }
 
 /* Start location tracking */
@@ -97,14 +97,14 @@ function updateGroupLocation(isPanic) {
       loadGroupMembers();
     }).catch(function() {});
   }, function() {
-    showToast('लोकेशन एक्सेस दें');
+    showToast(t('group_location_perm'));
   });
 }
 
 /* Send panic alert */
 function sendPanic() {
   updateGroupLocation(true);
-  showToast('🚨 SOS भेजा गया! ग्रुप के सभी सदस्यों को सूचित किया गया।');
+  showToast(t('group_sos_sent'));
 }
 
 /* Load group members */
@@ -124,7 +124,7 @@ function renderGroupMembers(members) {
   var container = document.getElementById('group-members-list');
   if (!container) return;
   if (!members || members.length === 0) {
-    container.innerHTML = '<div style="text-align:center;color:var(--light-brown);font-size:12px;padding:10px;">अभी कोई सदस्य नहीं</div>';
+    container.innerHTML = '<div style="text-align:center;color:var(--light-brown);font-size:12px;padding:10px;">' + t('group_no_members') + '</div>';
     return;
   }
   container.innerHTML = members.map(function(m) {
@@ -134,9 +134,9 @@ function renderGroupMembers(members) {
       '<div class="member-avatar" style="background:' + (isPanic ? '#b71c1c' : isMe ? 'var(--saffron)' : '#1565c0') + ';">' +
       m.memberName.charAt(0).toUpperCase() + '</div>' +
       '<div class="member-info">' +
-      '<div class="member-name">' + m.memberName + (isMe ? ' (आप)' : '') + '</div>' +
-      '<div class="member-time">अपडेट: ' + (m.timestamp || 'अज्ञात') + '</div>' +
-      (isPanic ? '<div class="member-panic">🚨 SOS भेजा!</div>' : '') +
+      '<div class="member-name">' + m.memberName + (isMe ? ' ' + t('group_you') : '') + '</div>' +
+      '<div class="member-time">' + t('group_updated') + (m.timestamp || '—') + '</div>' +
+      (isPanic ? '<div class="member-panic">' + t('group_sos_sent_label') + '</div>' : '') +
       '</div>' +
       '<div class="member-status" style="color:' + (isPanic ? '#b71c1c' : '#2e7d32') + ';">' +
       (isPanic ? '🚨' : '✓') + '</div>' +
@@ -179,16 +179,16 @@ function copyGroupCode() {
   var code = currentGroup;
   if (navigator.clipboard) {
     navigator.clipboard.writeText(code).then(function() {
-      showToast('कोड कॉपी हो गया: ' + code);
+      showToast(t('group_copied_toast') + code);
     });
   } else {
-    showToast('कोड: ' + code);
+    showToast(t('group_copied_toast') + code);
   }
 }
 
 /* Share group code via WhatsApp */
 function shareGroupWhatsApp() {
-  var text = 'KumbhSathi पर मेरे ग्रुप से जुड़ें! ग्रुप कोड: ' + currentGroup + '\nApp: https://Sam102009.github.io/Kumbh-Sathi/';
+  var text = t('group_share_text') + currentGroup + '\nApp: https://Sam102009.github.io/Kumbh-Sathi/';
   window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
 }
 
@@ -201,7 +201,7 @@ function leaveGroup() {
   document.getElementById('group-setup').style.display = 'block';
   document.getElementById('group-active').style.display = 'none';
   if (groupMap) { groupMap.remove(); groupMap = null; groupMarkers = {}; }
-  showToast('ग्रुप छोड़ दिया');
+  showToast(t('group_left_toast'));
 }
 
 /* Init groups page */
