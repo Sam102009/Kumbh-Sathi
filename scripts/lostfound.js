@@ -78,9 +78,6 @@ function _lfCard(r) {
       '</div>' +
       '<div style="font-size:12px;color:var(--light-brown);margin-bottom:8px;">' + (desc || '') + '</div>' +
       '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">' +
-        '<a href="https://wa.me/?text=' + waText + '" target="_blank" rel="noopener" class="btn btn-whatsapp btn-sm">' +
-          '<i class="fa-brands fa-whatsapp"></i> WhatsApp' +
-        '</a>' +
         contactHtml +
       '</div>' +
       '<div style="font-size:10px;color:var(--light-brown);margin-top:8px;">' +

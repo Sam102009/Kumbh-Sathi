@@ -60,8 +60,28 @@
         <button class="lang-btn" data-lang="mr">म</button>
         <button class="lang-btn" data-lang="en">EN</button>
       </div>
+      <button id="auth-avatar-btn" onclick="KumbhAuthUI.togglePanel()" style="width:36px;height:36px;border-radius:50%;border:2px solid var(--saffron);background:var(--card-bg, #fff);cursor:pointer;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:0;margin-left:6px;">
+        <img id="auth-avatar-img" src="" style="width:100%;height:100%;object-fit:cover;display:none;">
+        <span id="auth-avatar-icon" style="font-size:20px;">👤</span>
+      </button>
     </div>
   </header>
+  <div id="auth-panel" style="display:none;position:fixed;top:60px;right:12px;background:#fff;border-radius:12px;padding:16px;width:240px;box-shadow:0 4px 20px rgba(0,0,0,0.3);z-index:1000;">
+    <div id="auth-panel-signedout">
+      <p style="font-size:13px;color:#888;margin:0 0 12px;">Sign in to verify identity for Lost &amp; Found</p>
+      <div id="auth-panel-signin-btn"></div>
+    </div>
+    <div id="auth-panel-signedin" style="display:none;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+        <img id="auth-panel-avatar" src="" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
+        <div>
+          <p id="auth-panel-name" style="font-size:14px;font-weight:600;margin:0;"></p>
+          <p id="auth-panel-email" style="font-size:11px;color:#888;margin:0;"></p>
+        </div>
+      </div>
+      <button onclick="KumbhAuthUI.signOut()" style="width:100%;padding:8px;background:none;border:1px solid #ddd;border-radius:8px;cursor:pointer;font-size:13px;">Sign Out</button>
+    </div>
+  </div>
 <div id="offline-banner" style="display:block;position:fixed;top:60px;left:0;right:0;z-index:999;background:#b71c1c;color:#fff;text-align:center;padding:6px;font-size:12px;font-weight:600;">📡 <span data-t="offline_msg">You are offline</span></div>
   <!-- ===== MAIN CONTENT ===== -->
   

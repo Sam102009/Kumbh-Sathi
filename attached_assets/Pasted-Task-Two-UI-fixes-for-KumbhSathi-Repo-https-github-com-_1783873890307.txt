@@ -1,0 +1,127 @@
+Task: Two UI fixes for KumbhSathi
+Repo: https://github.com/Sam102009/Kumbh-Sathi
+Files to edit: ROOT index.html and ROOT scripts/lostfound.js
+
+FIX 1 — Remove WhatsApp button from Lost & Found report cards
+In scripts/lostfound.js, find where report cards are rendered. There is a WhatsApp share button on each card that opens wa.me with the contact number — this defeats the purpose of the verification system since anyone can see the number via WhatsApp.
+Find and remove that button completely from the card HTML. Do not replace it with anything — the contact number is already handled by the verification system ("I know this person" button).
+
+FIX 2 — Add user avatar button in header
+In index.html, find the header. It has the dark mode toggle (🌙/☀️) and language switcher (हि/म/EN).
+Add a user avatar button on the right side of the header, after the language switcher:
+html<button id="auth-avatar-btn" onclick="KumbhAuthUI.togglePanel()" style="width:36px; height:36px; border-radius:50%; border:2px solid var(--accent); background:var(--card-bg); cursor:pointer; overflow:hidden; display:flex; align-items:center; justify-content:center; padding:0; margin-left:6px;">
+  <img id="auth-avatar-img" src="" style="width:100%; height:100%; object-fit:cover; display:none;">
+  <span id="auth-avatar-icon" style="font-size:20px;">👤</span>
+</button>
+Add dropdown panel just after the header closing tag:
+html<div id="auth-panel" style="display:none; position:fixed; top:60px; right:12px; background:var(--card-bg); border-radius:12px; padding:16px; width:240px; box-shadow:0 4px 20px rgba(0,0,0,0.3); z-index:1000;">
+  <div id="auth-panel-signedout">
+    <p style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">Sign in to verify identity for Lost & Found</p>
+    <div id="auth-panel-signin-btn"></div>
+  </div>
+  <div id="auth-panel-signedin" style="display:none;">
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+      <img id="auth-panel-avatar" src="" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
+      <div>
+        <p id="auth-panel-name" style="font-size:14px; font-weight:600; margin:0;"></p>
+        <p id="auth-panel-email" style="font-size:11px; color:var(--text-secondary); margin:0;"></p>
+      </div>
+    </div>
+    <button onclick="KumbhAuthUI.signOut()" style="width:100%; padding:8px; background:none; border:1px solid var(--border); border-radius:8px; cursor:pointer; font-size:13px;">Sign Out</button>
+  </div>
+</div>
+Add KumbhAuthUI object to scripts/auth.js:
+javascriptvar KumbhAuthUI = {
+  init: function() {
+    this.updateHeader();
+    document.addEventListener('click', function(e) {
+      var panel = document.getElementById('auth-panel');
+      var btn = document.getElementById('auth-avatar-btn');
+      if (panel && btn && !panel.contains(e.target) && !btn.contains(e.target)) {
+        panel.style.display = 'none';
+      }
+    });
+    if (typeof google !== 'undefined') {
+      google.accounts.id.initialize({
+        client_id: KumbhAuth.clientId,
+        callback: function(response) {
+          var payload = KumbhAuth._parseJwt(response.credential);
+          KumbhAuth.user = {
+            name: payload.name,
+            email: payload.email,
+            picture: payload.picture
+          };
+          localStorage.setItem('kumbh_user', JSON.stringify(KumbhAuth.user));
+          KumbhAuthUI.updateHeader();
+          document.getElementById('auth-panel').style.display = 'none';
+          if (KumbhAuth.pendingCallback) {
+            KumbhAuth.pendingCallback(KumbhAuth.user);
+            KumbhAuth.pendingCallback = null;
+          }
+        }
+      });
+      google.accounts.id.renderButton(
+        document.getElementById('auth-panel-signin-btn'),
+        { theme: 'outline', size: 'large', width: 210 }
+      );
+    }
+  },
+
+  updateHeader: function() {
+    var user = KumbhAuth.getUser();
+    var avatarImg = document.getElementById('auth-avatar-img');
+    var avatarIcon = document.getElementById('auth-avatar-icon');
+    var signedIn = document.getElementById('auth-panel-signedin');
+    var signedOut = document.getElementById('auth-panel-signedout');
+    if (user) {
+      if (avatarImg) { avatarImg.src = user.picture; avatarImg.style.display = 'block'; }
+      if (avatarIcon) avatarIcon.style.display = 'none';
+      if (signedIn) signedIn.style.display = 'block';
+      if (signedOut) signedOut.style.display = 'none';
+      var nameEl = document.getElementById('auth-panel-name');
+      var emailEl = document.getElementById('auth-panel-email');
+      var panelAvatar = document.getElementById('auth-panel-avatar');
+      if (nameEl) nameEl.textContent = user.name;
+      if (emailEl) emailEl.textContent = user.email;
+      if (panelAvatar) panelAvatar.src = user.picture;
+    } else {
+      if (avatarImg) avatarImg.style.display = 'none';
+      if (avatarIcon) avatarIcon.style.display = 'block';
+      if (signedIn) signedIn.style.display = 'none';
+      if (signedOut) signedOut.style.display = 'block';
+    }
+  },
+
+  togglePanel: function() {
+    var panel = document.getElementById('auth-panel');
+    if (panel) panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+  },
+
+  signOut: function() {
+    KumbhAuth.signOut();
+    this.updateHeader();
+    document.getElementById('auth-panel').style.display = 'none';
+    if (typeof loadLostFound === 'function') loadLostFound();
+  }
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+  KumbhAuthUI.init();
+});
+Also update KumbhAuth.signIn in auth.js:
+javascriptsignIn: function(callback) {
+  if (this.isSignedIn()) { callback(this.user); return; }
+  this.pendingCallback = callback;
+  google.accounts.id.prompt(function(notification) {
+    if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+      document.getElementById('auth-panel').style.display = 'block';
+    }
+  });
+},
+
+IMPORTANT:
+
+Remove the existing sign in/out section from the About/More page if it was added previously — the header avatar replaces it
+Test: sign in → avatar shows Google profile picture → click → panel shows name, email, sign out
+Test: sign out → avatar returns to 👤
+After changes: git add . && git commit -m "Remove WhatsApp button from Lost and Found, add user avatar in header" && git push origin main
