@@ -143,6 +143,12 @@ var KumbhAuthUI = {
   }
 };
 
-document.addEventListener('DOMContentLoaded', function() {
+function initKumbhAuth() {
+  if (typeof google === 'undefined' || !google.accounts) {
+    setTimeout(initKumbhAuth, 300);
+    return;
+  }
   KumbhAuthUI.init();
-});
+}
+
+document.addEventListener('DOMContentLoaded', initKumbhAuth);
