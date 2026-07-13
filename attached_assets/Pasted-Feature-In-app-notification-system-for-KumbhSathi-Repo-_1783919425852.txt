@@ -1,0 +1,272 @@
+Feature: In-app notification system for KumbhSathi
+Repo: https://github.com/Sam102009/Kumbh-Sathi
+Files to edit: index.html, scripts/auth.js, scripts/verify.js
+New file to create: scripts/notifications.js
+
+STEP 1 — Create Notifications sheet in Google Sheets
+This is already done manually. The sheet is called Notifications with columns:
+
+A: Title
+B: Message
+C: Timestamp
+
+
+STEP 2 — Create scripts/notifications.js
+javascriptvar KumbhNotifications = {
+  GAS_URL: 'https://script.google.com/macros/s/AKfycbyp_E-2tqiBfAtswJIxIeeq2iH6gwMjjlPZwlxxijqU6RdfZW8UOlcM83Gd9Yay7ZbufQ/exec',
+  TOKEN: 'kumbh2027secure',
+
+  // Fetch broadcast notifications from Notifications sheet
+  fetchBroadcast: function(callback) {
+    fetch(this.GAS_URL + '?sheet=Notifications')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        callback(Array.isArray(data) ? data : []);
+      })
+      .catch(function() { callback([]); });
+  },
+
+  // Get IDs of notifications already seen by user
+  getSeenBroadcast: function() {
+    try {
+      return JSON.parse(localStorage.getItem('seen_broadcasts') || '[]');
+    } catch(e) { return []; }
+  },
+
+  // Mark broadcast notifications as seen
+  markBroadcastSeen: function(notifications) {
+    var ids = notifications.map(function(n) { return n.Timestamp; });
+    localStorage.setItem('seen_broadcasts', JSON.stringify(ids));
+  },
+
+  // Check if there are unseen broadcast notifications
+  hasUnseenBroadcast: function(notifications) {
+    var seen = this.getSeenBroadcast();
+    return notifications.some(function(n) {
+      return seen.indexOf(n.Timestamp) === -1;
+    });
+  },
+
+  // Get unseen broadcast notifications
+  getUnseenBroadcast: function(notifications) {
+    var seen = this.getSeenBroadcast();
+    return notifications.filter(function(n) {
+      return seen.indexOf(n.Timestamp) === -1;
+    });
+  },
+
+  // Get last seen verification status from localStorage
+  getLastSeenVerifStatus: function(verificationId) {
+    try {
+      var statuses = JSON.parse(localStorage.getItem('seen_verif_statuses') || '{}');
+      return statuses[verificationId] || null;
+    } catch(e) { return null; }
+  },
+
+  // Mark verification status as seen
+  markVerifStatusSeen: function(verificationId, status) {
+    try {
+      var statuses = JSON.parse(localStorage.getItem('seen_verif_statuses') || '{}');
+      statuses[verificationId] = status;
+      localStorage.setItem('seen_verif_statuses', JSON.stringify(statuses));
+    } catch(e) {}
+  },
+
+  // Check if any verification has a new status change
+  hasUnseenVerifUpdate: function(verifications) {
+    var self = this;
+    return verifications.some(function(v) {
+      var lastSeen = self.getLastSeenVerifStatus(v.VerificationID);
+      return (v.Status === 'Approved' || v.Status === 'Rejected') && lastSeen !== v.Status;
+    });
+  },
+
+  // Get unseen verification updates
+  getUnseenVerifUpdates: function(verifications) {
+    var self = this;
+    return verifications.filter(function(v) {
+      var lastSeen = self.getLastSeenVerifStatus(v.VerificationID);
+      return (v.Status === 'Approved' || v.Status === 'Rejected') && lastSeen !== v.Status;
+    });
+  },
+
+  // Main check — updates the red dot on avatar
+  checkAll: function() {
+    var self = this;
+    var isSignedIn = KumbhAuth.isSignedIn();
+
+    // Always check broadcast notifications
+    self.fetchBroadcast(function(broadcasts) {
+      var hasNewBroadcast = self.hasUnseenBroadcast(broadcasts);
+
+      if (!isSignedIn) {
+        // Only broadcast notifications for signed-out users
+        KumbhNotifications._updateBadge(hasNewBroadcast);
+        KumbhNotifications._storeData(broadcasts, []);
+        return;
+      }
+
+      // Also check verification updates for signed-in users
+      KumbhVerify.checkStatus(function(verifications) {
+        var hasNewVerif = self.hasUnseenVerifUpdate(verifications);
+        KumbhNotifications._updateBadge(hasNewBroadcast || hasNewVerif);
+        KumbhNotifications._storeData(broadcasts, verifications);
+      });
+    });
+  },
+
+  // Store latest data in memory for panel rendering
+  _latestBroadcasts: [],
+  _latestVerifications: [],
+
+  _storeData: function(broadcasts, verifications) {
+    this._latestBroadcasts = broadcasts;
+    this._latestVerifications = verifications;
+  },
+
+  // Update red dot badge on avatar button
+  _updateBadge: function(show) {
+    var badge = document.getElementById('notif-badge');
+    if (badge) badge.style.display = show ? 'block' : 'none';
+  }
+};
+
+STEP 3 — Update avatar button in index.html to show red dot badge
+Find the avatar button and update it to include a badge:
+html<button id="auth-avatar-btn" onclick="KumbhAuthUI.togglePanel()" style="position:relative; width:32px; height:32px; border-radius:50%; border:2px solid var(--accent); background:var(--card-bg); cursor:pointer; overflow:visible; display:flex; align-items:center; justify-content:center; padding:0; margin-left:4px;">
+  <img id="auth-avatar-img" src="" style="width:100%; height:100%; object-fit:cover; border-radius:50%; display:none;">
+  <span id="auth-avatar-icon" style="font-size:18px;">👤</span>
+  <span id="notif-badge" style="display:none; position:absolute; top:-2px; right:-2px; width:10px; height:10px; background:red; border-radius:50%; border:2px solid var(--bg);"></span>
+</button>
+
+STEP 4 — Add notifications panel inside auth panel in index.html
+Find auth-panel div. Add a notifications section at the TOP of the panel, before the signed-out/signed-in views:
+html<div id="notif-section" style="margin-bottom:12px; display:none;">
+  <h4 style="font-size:13px; font-weight:700; margin:0 0 8px 0;">🔔 Notifications</h4>
+  <div id="notif-list" style="max-height:200px; overflow-y:auto;"></div>
+  <button onclick="KumbhNotifUI.markAllSeen()" style="width:100%; margin-top:8px; padding:6px; background:none; border:1px solid var(--border); border-radius:8px; cursor:pointer; font-size:12px; color:var(--text-secondary);">Mark all as read</button>
+</div>
+<hr id="notif-divider" style="display:none; border:none; border-top:1px solid var(--border); margin:0 0 12px 0;">
+
+STEP 5 — Add KumbhNotifUI to scripts/notifications.js
+Add at the bottom of notifications.js:
+javascriptvar KumbhNotifUI = {
+  render: function() {
+    var broadcasts = KumbhNotifications._latestBroadcasts;
+    var verifications = KumbhNotifications._latestVerifications;
+    var isSignedIn = KumbhAuth.isSignedIn();
+
+    var unseenBroadcasts = KumbhNotifications.getUnseenBroadcast(broadcasts);
+    var unseenVerifs = isSignedIn ? KumbhNotifications.getUnseenVerifUpdates(verifications) : [];
+    var allUnseen = unseenBroadcasts.concat(unseenVerifs);
+
+    var notifSection = document.getElementById('notif-section');
+    var notifDivider = document.getElementById('notif-divider');
+    var notifList = document.getElementById('notif-list');
+
+    if (allUnseen.length === 0) {
+      if (notifSection) notifSection.style.display = 'none';
+      if (notifDivider) notifDivider.style.display = 'none';
+      return;
+    }
+
+    if (notifSection) notifSection.style.display = 'block';
+    if (notifDivider) notifDivider.style.display = 'block';
+
+    var html = '';
+    unseenBroadcasts.forEach(function(n) {
+      html += '<div style="padding:8px; background:var(--bg); border-radius:8px; margin-bottom:6px;">' +
+        '<p style="font-size:13px; font-weight:600; margin:0 0 2px 0;">📢 ' + n.Title + '</p>' +
+        '<p style="font-size:12px; color:var(--text-secondary); margin:0;">' + n.Message + '</p>' +
+        '</div>';
+    });
+
+    unseenVerifs.forEach(function(v) {
+      var icon = v.Status === 'Approved' ? '✅' : '❌';
+      var msg = v.Status === 'Approved'
+        ? 'Your identity verification was approved. You can now view the contact number.'
+        : 'Your identity verification was rejected. Please try again with a clearer document.';
+      html += '<div style="padding:8px; background:var(--bg); border-radius:8px; margin-bottom:6px;">' +
+        '<p style="font-size:13px; font-weight:600; margin:0 0 2px 0;">' + icon + ' Verification ' + v.Status + '</p>' +
+        '<p style="font-size:12px; color:var(--text-secondary); margin:0;">' + msg + '</p>' +
+        '</div>';
+    });
+
+    if (notifList) notifList.innerHTML = html;
+  },
+
+  markAllSeen: function() {
+    var broadcasts = KumbhNotifications._latestBroadcasts;
+    var verifications = KumbhNotifications._latestVerifications;
+
+    KumbhNotifications.markBroadcastSeen(broadcasts);
+    verifications.forEach(function(v) {
+      KumbhNotifications.markVerifStatusSeen(v.VerificationID, v.Status);
+    });
+
+    KumbhNotifications._updateBadge(false);
+    var notifSection = document.getElementById('notif-section');
+    var notifDivider = document.getElementById('notif-divider');
+    if (notifSection) notifSection.style.display = 'none';
+    if (notifDivider) notifDivider.style.display = 'none';
+  }
+};
+
+STEP 6 — Update KumbhAuthUI.togglePanel() in scripts/auth.js
+When panel opens, render notifications:
+javascripttogglePanel: function() {
+  var panel = document.getElementById('auth-panel');
+  if (panel) {
+    var isVisible = panel.style.display === 'block';
+    panel.style.display = isVisible ? 'none' : 'block';
+    if (!isVisible) {
+      KumbhNotifUI.render();
+    }
+  }
+},
+
+STEP 7 — Call KumbhNotifications.checkAll() on app load
+In index.html or scripts/app.js, add after all scripts load:
+javascript// Check notifications on every app load
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    KumbhNotifications.checkAll();
+  }, 2000); // Wait 2s for Google auth to initialize first
+});
+
+STEP 8 — Load order in index.html
+Make sure scripts load in this exact order before </body>:
+html<script src="scripts/auth.js"></script>
+<script src="scripts/verify.js"></script>
+<script src="scripts/notifications.js"></script>
+
+STEP 9 — Create Notifications sheet
+Go to Google Sheets → add a new tab called exactly Notifications with headers in row 1:
+
+A1: Title
+B1: Message
+C1: Timestamp
+
+Test by adding a row:
+
+A2: Test Notification
+B2: This is a test message
+C2: 2027-01-01
+
+
+After all changes:
+git add . && git commit -m "Add in-app notification system with red badge on avatar" && git push origin main
+Test:
+
+Open app → if Notifications sheet has rows → red dot appears on avatar ✅
+Click avatar → panel shows notifications at top ✅
+Click "Mark all as read" → red dot disappears ✅
+Sign in → change a verification to Approved in sheet → reload app → red dot appears ✅
+Open panel → see "✅ Verification Approved" message ✅
+Mark as read → dot disappears ✅
+
+DO NOT break:
+
+Existing auth flow
+Lost & Found verification system
+Any other existing features

@@ -131,7 +131,12 @@ var KumbhAuthUI = {
 
   togglePanel: function() {
     var panel = document.getElementById('auth-panel');
-    if (panel) panel.style.display = (panel.style.display === 'none' || panel.style.display === '') ? 'block' : 'none';
+    if (!panel) return;
+    var isVisible = panel.style.display === 'block';
+    panel.style.display = isVisible ? 'none' : 'block';
+    if (!isVisible && typeof KumbhNotifUI !== 'undefined') {
+      KumbhNotifUI.render();
+    }
   },
 
   signOut: function() {
