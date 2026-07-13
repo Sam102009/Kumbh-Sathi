@@ -143,7 +143,7 @@ body::before {
 }
 
 .header-logo .logo-text {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   color: #fff;
   letter-spacing: 0.5px;
@@ -154,7 +154,7 @@ body::before {
 }
 
 .header-logo .logo-year {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--gold);
   font-weight: 500;
 }
@@ -162,7 +162,7 @@ body::before {
 .header-right {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   flex-shrink: 0;
 }
 
@@ -178,7 +178,7 @@ body::before {
 }
 
 .lang-btn {
-  padding: 3px 8px;
+  padding: 3px 5px;
   border-radius: 16px;
   font-size: 11px;
   font-weight: 600;
@@ -570,8 +570,8 @@ body::before {
   background: rgba(255,255,255,0.15);
   border: 1px solid rgba(255,255,255,0.3);
   border-radius: 20px;
-  padding: 4px 8px;
-  font-size: 14px;
+  padding: 4px 6px;
+  font-size: 16px;
   cursor: pointer;
   color: #fff;
   line-height: 1;
