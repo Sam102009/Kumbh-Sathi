@@ -125,6 +125,9 @@ body::before {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .header-logo .logo-icon {
@@ -145,6 +148,9 @@ body::before {
   color: #fff;
   letter-spacing: 0.5px;
   text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .header-logo .logo-year {
@@ -156,7 +162,8 @@ body::before {
 .header-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
 /* Language Switcher */
