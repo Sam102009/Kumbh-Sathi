@@ -1,0 +1,57 @@
+Task: Connect Schedule page to Google Sheets — replace hardcoded data
+Repo: https://github.com/Sam102009/Kumbh-Sathi
+File to edit: scripts/app.js or wherever the schedule page logic is — check for the file that contains the hardcoded schedule data
+Problem: Schedule page currently shows hardcoded events. We need it to fetch live from Google Sheets "Schedule" tab instead, while keeping the exact same card UI design.
+Google Sheet columns (in this exact order):
+Date | Event | Time | Location | Description | Category | Image
+GAS URL: https://script.google.com/macros/s/AKfycbyp_E-2tqiBfAtswJIxIeeq2iH6gwMjjlPZwlxxijqU6RdfZW8UOlcM83Gd9Yay7ZbufQ/exec
+What to do:
+
+Find where the schedule data is hardcoded — it will be a JavaScript array of event objects
+Replace it with a fetch call to GAS:
+
+javascriptfetch(GAS_URL + '?sheet=Schedule')
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    renderSchedule(data);
+  })
+  .catch(function() {
+    // show error state
+  });
+
+Map the sheet columns to the existing card renderer:
+
+
+Date → date box (day, month, year) — parse using IST conversion:
+
+javascriptfunction parseISTDate(dateStr) {
+  var d = new Date(dateStr);
+  var ist = new Date(d.getTime() + 5.5 * 60 * 60 * 1000);
+  return {
+    day: ist.getUTCDate(),
+    month: ist.toLocaleString('en-IN', {month: 'short', timeZone: 'UTC'}),
+    year: ist.getUTCFullYear()
+  };
+}
+
+Event → event title (bold)
+Time → time display
+Location → location with 📍 icon
+Description → description text
+Category → category badge (Shahi Snan / Religious / Cultural / Administrative)
+Image → ignore, not used in UI
+
+
+Keep the existing filter buttons working (All Events, Shahi Snan, Cultural, Religious) — filter by Category column value
+Keep the "Add to Calendar" button working — use Date, Event, Time, Location from sheet data
+Show a loading spinner while fetching
+Show a friendly error message if fetch fails
+
+IMPORTANT:
+
+Do NOT change the card UI design at all — it already looks correct
+Do NOT break the IST date conversion — this was previously fixed and verified
+Keep category filter buttons working
+After changes: git add . && git commit -m "Connect schedule page to Google Sheets" && git push origin main
+
+Test: Add a row to the Schedule sheet and confirm it appears in the app without any code change.

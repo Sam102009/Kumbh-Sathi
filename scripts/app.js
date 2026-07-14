@@ -186,12 +186,16 @@ function renderSheetSchedule(rows) {
               </div>
             </div>
           </div>
-          <div style="margin-top:10px;">
+          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
             <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:12px;
                          background:${cat==='shahi'?'rgba(255,215,0,0.15)':cat==='cultural'?'rgba(123,31,162,0.12)':'rgba(21,101,192,0.12)'};
                          color:${cat==='shahi'?'#e65100':cat==='cultural'?'#6a1b9a':'#1565c0'};">
               ${typeLabel}
             </span>
+            <a href="${makeSheetCalendarUrl(r)}" class="btn btn-outline btn-sm" style="padding:4px 12px;font-size:11px;" target="_blank" rel="noopener">
+              <i class="fa-solid fa-calendar-plus"></i>
+              <span data-t="add_to_calendar">${t('add_to_calendar')}</span>
+            </a>
           </div>
         </div>
       </div>
@@ -200,18 +204,38 @@ function renderSheetSchedule(rows) {
   if (typeof applyTranslations === 'function') applyTranslations();
 }
 
+function makeSheetCalendarUrl(r) {
+  const dateStr = String(r['Date'] || '').split('T')[0].replace(/-/g, '');
+  const title   = encodeURIComponent((r['Event'] || '') + ' — Kumbh Nashik 2027');
+  const details = encodeURIComponent(r['Description'] || '');
+  const loc     = encodeURIComponent(r['Location'] || '');
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dateStr}/${dateStr}&details=${details}&location=${loc}`;
+}
+
 function fetchAndRenderSchedule() {
   const container = document.getElementById('events-container');
   if (!container) return;
   container.innerHTML = '<div style="text-align:center;padding:40px;color:#FF6F00;">📅 ' + t('loading') + '</div>';
   fetch(GAS_URL + '?sheet=Schedule')
-    .then(r => r.json())
-    .then(rows => {
-      if (!rows || rows.length === 0) { renderSchedule(); return; }
+    .then(r => r.text())
+    .then(text => {
+      let rows;
+      try { rows = JSON.parse(text); } catch(e) { throw new Error('JSON parse error'); }
+      if (!Array.isArray(rows) || rows.length === 0) {
+        container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--light-brown);">' + t('no_events') + '</div>';
+        return;
+      }
       window._scheduleCache = rows;
       renderSheetSchedule(rows);
     })
-    .catch(() => renderSchedule());
+    .catch(() => {
+      container.innerHTML =
+        '<div style="text-align:center;padding:40px;">' +
+        '<i class="fa-solid fa-triangle-exclamation" style="font-size:28px;color:#b71c1c;"></i>' +
+        '<p style="margin-top:10px;font-size:13px;color:#b71c1c;">Could not load schedule. Please check your connection.</p>' +
+        '<button onclick="fetchAndRenderSchedule()" style="margin-top:12px;padding:8px 20px;background:var(--saffron);color:#fff;border:none;border-radius:20px;font-size:13px;cursor:pointer;">Retry</button>' +
+        '</div>';
+    });
 }
 
 function makeCalendarUrl(ev) {
@@ -231,7 +255,7 @@ function initSchedule() {
       if (window._scheduleCache && window._scheduleCache.length > 0) {
         renderSheetSchedule(window._scheduleCache);
       } else {
-        renderSchedule();
+        fetchAndRenderSchedule();
       }
     });
   });
