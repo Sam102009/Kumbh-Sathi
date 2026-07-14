@@ -149,19 +149,33 @@ function renderSchedule() {
   if (typeof applyTranslations === 'function') applyTranslations();
 }
 
+// Maps any sheet Category value to the internal filter key used by data-filter chips
+function normalizeCat(raw) {
+  const v = String(raw || '').trim().toLowerCase();
+  if (v === 'shahi snan' || v === 'shahi') return 'shahi';
+  if (v === 'cultural')   return 'cultural';
+  if (v === 'religious')  return 'religious';
+  if (v === 'administrative') return 'religious'; // treat admin as religious for display
+  return 'religious';
+}
+
 function renderSheetSchedule(rows) {
   const container = document.getElementById('events-container');
   if (!container) return;
+
+  // Debug: log raw Category values from sheet
+  rows.forEach(r => console.log('Category value:', JSON.stringify(r['Category'])));
+
   let filtered = rows;
   if (activeScheduleFilter !== 'all') {
-    filtered = rows.filter(r => (r['Category'] || '').toLowerCase() === activeScheduleFilter);
+    filtered = rows.filter(r => normalizeCat(r['Category']) === activeScheduleFilter);
   }
   if (filtered.length === 0) {
     container.innerHTML = '<div style="text-align:center;padding:30px;color:var(--light-brown);">' + t('no_events') + '</div>';
     return;
   }
   container.innerHTML = filtered.map(r => {
-    const cat = (r['Category'] || 'religious').toLowerCase();
+    const cat = normalizeCat(r['Category']);
     const typeClass = cat === 'shahi' ? 'type-shahi' : cat === 'cultural' ? 'type-cultural' : 'type-religious';
     const typeLabel = cat === 'shahi' ? '⭐ Shahi Snan' : cat === 'cultural' ? '🎭 Cultural' : '🕉️ Religious';
     const dateStr = String(r['Date'] || '');
