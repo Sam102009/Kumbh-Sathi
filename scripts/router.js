@@ -66,6 +66,9 @@ function navigateTo(route, addToHistory) {
 }
 
 function onRouteChange(route) {
+  if (route === 'home') {
+    if (typeof loadHomeShahiSnan === 'function') loadHomeShahiSnan();
+  }
   if (route === 'map') {
     if (typeof initMap === 'function') initMap();
   }

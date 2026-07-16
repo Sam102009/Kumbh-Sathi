@@ -1,0 +1,57 @@
+Fix: Home page Shahi Snan section — fetch from Schedule sheet instead of hardcoding
+Files to edit: scripts/app.js or index.html — wherever the home page Shahi Snan cards are hardcoded
+Problem: Home page has hardcoded Shahi Snan events with wrong dates. Schedule page already fetches correct data from Google Sheets.
+Fix — replace hardcoded home page Shahi Snan with live data from Schedule sheet:
+Find the hardcoded Shahi Snan section on the home page. Replace it with a fetch:
+javascriptfunction loadHomeShaihSnan() {
+  fetch('https://script.google.com/macros/s/AKfycbyp_E-2tqiBfAtswJIxIeeq2iH6gwMjjlPZwlxxijqU6RdfZW8UOlcM83Gd9Yay7ZbufQ/exec?sheet=Schedule')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      // Filter only Shahi Snan events
+      var shahiEvents = data.filter(function(item) {
+        return item.Category && item.Category.trim().toLowerCase() === 'shahi snan';
+      });
+      renderHomeShahiSnan(shahiEvents);
+    })
+    .catch(function() {
+      // Keep existing hardcoded as fallback or show error
+    });
+}
+
+function renderHomeShahiSnan(events) {
+  var container = document.getElementById('home-shahi-snan-list');
+  if (!container) return;
+  
+  var html = '';
+  events.forEach(function(item) {
+    var d = new Date(item.Date);
+    var ist = new Date(d.getTime() + 5.5 * 60 * 60 * 1000);
+    var day = ist.getUTCDate();
+    var month = ist.toLocaleString('en-IN', {month: 'short', timeZone: 'UTC'});
+    var year = ist.getUTCFullYear();
+
+    html += '<div class="shahi-snan-card" onclick="navigateTo(\'schedule\')">' +
+      '<div class="shahi-date-box">' +
+        '<span class="shahi-day">' + day + '</span>' +
+        '<span class="shahi-month">' + month + '</span>' +
+        '<span class="shahi-year">' + year + '</span>' +
+      '</div>' +
+      '<div class="shahi-info">' +
+        '<div class="shahi-title">' + item.Event + '</div>' +
+        '<div class="shahi-location">📍 ' + item.Location + '</div>' +
+      '</div>' +
+      '<span class="shahi-arrow">›</span>' +
+    '</div>';
+  });
+  
+  container.innerHTML = html || '<p>No Shahi Snan events found.</p>';
+}
+Add id="home-shahi-snan-list" to the existing Shahi Snan container div on the home page.
+Call loadHomeShaihSnan() when home page loads.
+IMPORTANT:
+
+Use the same IST date conversion already used in the Schedule page
+Keep the same card design as currently shown — just fix the data source
+Do NOT touch the Schedule page — it already works correctly
+
+After fix: git add . && git commit -m "Fix home page Shahi Snan - fetch live from Schedule sheet" && git push origin main

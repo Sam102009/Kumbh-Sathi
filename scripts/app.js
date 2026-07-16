@@ -276,6 +276,69 @@ function initSchedule() {
   fetchAndRenderSchedule();
 }
 
+/* ── HOME PAGE — Shahi Snan live section ─────────────── */
+var _homeShahiLoaded = false;
+
+function loadHomeShahiSnan() {
+  if (_homeShahiLoaded) return; // only fetch once per session
+  var container = document.getElementById('home-shahi-snan-list');
+  if (!container) return;
+  fetch(GAS_URL + '?sheet=Schedule')
+    .then(function(r) { return r.text(); })
+    .then(function(text) {
+      var data;
+      try { data = JSON.parse(text); } catch(e) { throw new Error('parse'); }
+      var shahiEvents = (Array.isArray(data) ? data : []).filter(function(item) {
+        return normalizeCat(item['Category']) === 'shahi';
+      });
+      renderHomeShahiSnan(shahiEvents);
+      _homeShahiLoaded = true;
+    })
+    .catch(function() {
+      var container = document.getElementById('home-shahi-snan-list');
+      if (container) container.innerHTML =
+        '<div style="text-align:center;padding:16px;font-size:12px;color:var(--light-brown);">Could not load events.</div>';
+    });
+}
+
+var _shaihiGradients = [
+  'linear-gradient(135deg,var(--gold),#ff8f00)',
+  'linear-gradient(135deg,var(--saffron),var(--deep-orange))',
+  'linear-gradient(135deg,var(--dark-brown),var(--light-brown))'
+];
+
+function renderHomeShahiSnan(events) {
+  var container = document.getElementById('home-shahi-snan-list');
+  if (!container) return;
+  if (!events.length) {
+    container.innerHTML = '<div style="text-align:center;padding:16px;font-size:12px;color:var(--light-brown);">No Shahi Snan events found.</div>';
+    return;
+  }
+  container.innerHTML = events.map(function(item, i) {
+    var dateStr  = String(item['Date'] || '');
+    var day      = getSheetDay(dateStr);
+    var month    = getShortMonth(dateStr);
+    var parts    = parseSheetDateParts(dateStr);
+    var year     = parts ? parts.year : '2027';
+    var gradient = _shaihiGradients[i % _shaihiGradients.length];
+    return (
+      '<div class="card nav-link" style="padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer;" data-nav="schedule">' +
+        '<div style="width:50px;height:50px;background:' + gradient + ';border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">⭐</div>' +
+        '<div>' +
+          '<div style="font-weight:700;color:var(--dark-brown);font-size:14px;">' + (item['Event'] || '') + '</div>' +
+          '<div style="font-size:12px;color:var(--saffron);font-weight:600;">' + day + ' ' + month + ' ' + year + '</div>' +
+          '<div style="font-size:11px;color:var(--light-brown);">' + (item['Location'] || '') + '</div>' +
+        '</div>' +
+        '<i class="fa-solid fa-chevron-right" style="margin-left:auto;color:var(--light-brown);"></i>' +
+      '</div>'
+    );
+  }).join('');
+  // re-attach nav-link click handlers
+  container.querySelectorAll('.nav-link[data-nav]').forEach(function(el) {
+    el.addEventListener('click', function() { navigateTo(el.dataset.nav); });
+  });
+}
+
 /* ── STAY PAGE ──────────────────────────────────────────
    Real data only. No hardcoded fallback.
    Root bug fixed: GAS returns Phone as a NUMBER — always
@@ -947,6 +1010,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderAbout();
   fetchAndRenderAds();
   if (typeof initChatbot === 'function') initChatbot();
+  loadHomeShahiSnan();
 });
 
 /* Watch for crowd page activation */
