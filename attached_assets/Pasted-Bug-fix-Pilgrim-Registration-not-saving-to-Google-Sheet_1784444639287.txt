@@ -1,0 +1,79 @@
+Bug fix: Pilgrim Registration not saving to Google Sheet
+File to edit: scripts/pilgrim.js
+Problem: Pilgrim registration form submits but data is not appearing in the Google Sheet "Pilgrims" tab.
+Step 1 — Diagnose first, don't fix blindly:
+Check the following and report back before making any changes:
+
+Find the fetch/POST call in scripts/pilgrim.js — what URL is it posting to? Is it using PILGRIM_GAS_URL or GAS_URL or something else?
+Check if token: 'kumbh2027secure' is included in the POST body
+Check if action: 'registerPilgrim' is in the POST body
+Open browser DevTools console, submit the form, and report any errors
+Check what response comes back from GAS — add a temporary console.log(result) after the fetch and report what it prints
+
+Step 2 — Fix based on diagnosis:
+The most likely issues are:
+
+Wrong GAS URL being used
+Missing token: 'kumbh2027secure' in POST body (will get Unauthorized response)
+Missing action: 'registerPilgrim' in POST body
+
+Make sure the POST body includes ALL of these:
+javascript{
+  action: 'registerPilgrim',
+  token: 'kumbh2027secure',
+  id: pilgrimId,
+  name: name,
+  age: age,
+  gender: gender,
+  city: city,
+  contact1: contact1,
+  contact2: contact2 || '',
+  medical: medical || '',
+  photo: photoBase64 || '',
+  timestamp: timestamp
+}
+Step 3 — Add Google Sign In requirement:
+After confirming the sheet saving works, add auth check at the top of the registration form submit handler:
+javascript// Check if user is signed in before allowing registration
+if (!KumbhAuth.isSignedIn()) {
+  // Show sign in message instead of form
+  document.getElementById('pilgrim-form-container').style.display = 'none';
+  document.getElementById('pilgrim-signin-required').style.display = 'block';
+  return;
+}
+Add this HTML in the pilgrim registration page (in index.html) where the form is:
+html<div id="pilgrim-signin-required" style="display:none; text-align:center; padding:32px 16px;">
+  <p style="font-size:40px;">🪪</p>
+  <h3 style="margin-bottom:8px;">Sign In Required</h3>
+  <p style="color:var(--text-secondary); margin-bottom:20px;">Please sign in with Google to register a pilgrim and access your registered pilgrims.</p>
+  <button onclick="document.getElementById('auth-avatar-btn').click()" style="padding:12px 24px; background:var(--accent); color:white; border:none; border-radius:8px; font-size:15px; cursor:pointer;">Sign In with Google</button>
+</div>
+Also add the signed-in user's email to the pilgrim data so we can filter "My Pilgrims" by email:
+javascriptuserEmail: KumbhAuth.getUser().email
+Step 4 — Update GAS to save userEmail:
+In GAS doPost → registerPilgrim action, update the appendRow to also save userEmail. Add it as the last column:
+javascriptpSheet.appendRow([data.id, data.name, data.age, data.gender, data.city, data.contact1, data.contact2 || '', data.medical || '', data.photo || '', data.timestamp, data.userEmail || '']);
+Also add UserEmail as the last column header when creating the sheet:
+javascriptpSheet.appendRow(['ID','Name','Age','Gender','City','Contact1','Contact2','Medical','Photo','Timestamp','UserEmail']);
+Step 5 — Filter My Pilgrims by signed-in user:
+Find the "My Pilgrims" section rendering code. Update it to only show pilgrims where UserEmail matches the signed-in user's email:
+javascriptfunction loadMyPilgrims() {
+  if (!KumbhAuth.isSignedIn()) return;
+  var userEmail = KumbhAuth.getUser().email;
+  
+  var saved = JSON.parse(localStorage.getItem('myPilgrims') || '[]');
+  var myPilgrims = saved.filter(function(p) {
+    return p.userEmail === userEmail;
+  });
+  
+  renderMyPilgrims(myPilgrims);
+}
+Step 6 — Update Pilgrims sheet columns:
+Add UserEmail as column K in the Pilgrims sheet header row manually in Google Sheets.
+After all fixes: git add . && git commit -m "Fix pilgrim registration - add auth requirement and sheet saving" && git push origin main
+Test:
+
+Open Pilgrim Registration without signing in → sees sign in message ✅
+Sign in → form appears ✅
+Fill form and submit → data appears in Pilgrims sheet with correct email ✅
+My Pilgrims section shows only pilgrims registered by that user ✅
