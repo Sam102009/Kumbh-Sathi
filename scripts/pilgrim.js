@@ -94,7 +94,15 @@ function submitPilgrimRegistration() {
 
 function showQRCard(pilgrim) {
   var output = document.getElementById('pilgrim-qr-output');
-  var appUrl = 'https://Sam102009.github.io/Kumbh-Sathi/#pilgrim?id=' + pilgrim.id;
+  var qrData = 'KUMBHSATHI PILGRIM\n' +
+    'Name: ' + pilgrim.name + '\n' +
+    'Age: ' + pilgrim.age + ' | ' + pilgrim.gender + '\n' +
+    'City: ' + pilgrim.city + '\n' +
+    (pilgrim.medical ? 'Medical: ' + pilgrim.medical + '\n' : '') +
+    'Contact: ' + pilgrim.contact1 + '\n' +
+    (pilgrim.contact2 ? 'Alt Contact: ' + pilgrim.contact2 + '\n' : '') +
+    'ID: ' + pilgrim.id;
+  var appUrl = qrData;
 
   var photoHtml = pilgrim.photo
     ? '<img src="' + pilgrim.photo + '" style="width:70px;height:70px;border-radius:8px;object-fit:cover;border:2px solid var(--saffron);">'
