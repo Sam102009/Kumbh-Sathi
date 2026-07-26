@@ -36,6 +36,13 @@
   <link rel="stylesheet" href="styles/components.css">
   <link rel="stylesheet" href="styles/animations.css">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+@media print {
+  body * { visibility: hidden; }
+  #qr-card-printable, #qr-card-printable * { visibility: visible; }
+  #qr-card-printable { position: fixed; top: 0; left: 0; width: 100%; }
+}
+</style>
 </head>
 <body class="lang-hi">
 
