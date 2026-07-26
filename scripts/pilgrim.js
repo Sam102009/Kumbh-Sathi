@@ -224,13 +224,71 @@ function initPilgrim() {
 }
 
 function fetchPilgrimById(id) {
+  // Show scan view — hide normal tabs
+  var tabBtns = document.querySelector('.pilgrim-tabs');
+  var registerTab = document.getElementById('pilgrim-register-tab');
+  var listTab = document.getElementById('pilgrim-list-tab');
+  if (tabBtns) tabBtns.style.display = 'none';
+  if (registerTab) registerTab.style.display = 'none';
+  if (listTab) listTab.style.display = 'none';
+
+  // Show loading state
+  var scanDiv = document.getElementById('pilgrim-scan-view');
+  if (!scanDiv) {
+    scanDiv = document.createElement('div');
+    scanDiv.id = 'pilgrim-scan-view';
+    scanDiv.style.padding = '16px';
+    var page = document.getElementById('pilgrim-register-tab') || document.querySelector('[data-page="pilgrim"]');
+    if (page && page.parentNode) page.parentNode.appendChild(scanDiv);
+  }
+  scanDiv.style.display = 'block';
+  scanDiv.innerHTML = '<div style="text-align:center;padding:40px;">⏳ Loading pilgrim info...</div>';
+
+  // Try localStorage first
   var local = JSON.parse(localStorage.getItem('kumbh_pilgrims') || '[]');
   var found = local.find(function(p) { return p.id === id; });
-  if (found) { showPilgrimDetails(found); return; }
+  if (found) { showPilgrimScanCard(found, scanDiv); return; }
+
+  // Fetch from sheet
   fetch(PILGRIM_GAS_URL + '?sheet=Pilgrims&id=' + id)
     .then(function(r) { return r.json(); })
-    .then(function(data) { if (data && !data.error) showPilgrimDetails(data); })
-    .catch(function() {});
+    .then(function(data) {
+      if (data && !data.error) {
+        showPilgrimScanCard(data, scanDiv);
+      } else {
+        scanDiv.innerHTML = '<div style="text-align:center;padding:40px;color:#c62828;">❌ Pilgrim not found.<br><small>ID: ' + id + '</small></div>';
+      }
+    })
+    .catch(function() {
+      scanDiv.innerHTML = '<div style="text-align:center;padding:40px;color:#c62828;">❌ Could not load pilgrim info. Please check your connection.</div>';
+    });
+}
+
+function showPilgrimScanCard(p, container) {
+  var photoHtml = p.Photo || p.photo
+    ? '<img src="' + (p.Photo || p.photo) + '" style="width:90px;height:90px;border-radius:50%;object-fit:cover;border:3px solid #FF6F00;margin-bottom:12px;">'
+    : '<div style="width:90px;height:90px;border-radius:50%;background:#f5f0e8;border:3px solid #FF6F00;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 12px auto;">👤</div>';
+  var medicalHtml = (p.Medical || p.medical)
+    ? '<div style="background:#ffebee;border-radius:8px;padding:10px;margin:12px 0;font-size:13px;color:#c62828;text-align:left;">🏥 Medical: ' + (p.Medical || p.medical) + '</div>'
+    : '';
+  var contact1 = p.Contact1 || p.contact1 || '';
+  var contact2 = p.Contact2 || p.contact2 || '';
+  var contact2Html = contact2
+    ? '<a href="tel:' + contact2 + '" style="display:block;padding:12px;background:#fff;color:#FF6F00;border:2px solid #FF6F00;border-radius:10px;font-weight:700;font-size:15px;text-decoration:none;margin-top:8px;text-align:center;">📱 Alt: ' + contact2 + '</a>'
+    : '';
+
+  container.innerHTML =
+    '<div style="background:#fff3e0;border-radius:16px;padding:20px;border:3px solid #FF6F00;text-align:center;max-width:400px;margin:0 auto;">' +
+      '<div style="font-size:13px;font-weight:700;color:#FF6F00;margin-bottom:16px;letter-spacing:1px;">🙏 KUMBHSATHI — PILGRIM ID</div>' +
+      photoHtml +
+      '<div style="font-size:22px;font-weight:800;color:#333;margin-bottom:4px;">' + (p.Name || p.name) + '</div>' +
+      '<div style="font-size:14px;color:#666;margin-bottom:4px;">Age: ' + (p.Age || p.age) + ' | ' + (p.Gender || p.gender) + '</div>' +
+      '<div style="font-size:14px;color:#666;margin-bottom:12px;">🏠 ' + (p.City || p.city) + '</div>' +
+      medicalHtml +
+      '<div style="font-size:11px;color:#999;margin-bottom:16px;">ID: ' + (p.ID || p.id) + '</div>' +
+      '<a href="tel:' + contact1 + '" style="display:block;padding:14px;background:#FF6F00;color:#fff;border-radius:10px;font-weight:700;font-size:16px;text-decoration:none;text-align:center;">📞 Call Family: ' + contact1 + '</a>' +
+      contact2Html +
+    '</div>';
 }
 
 function showPilgrimDetails(p) {
