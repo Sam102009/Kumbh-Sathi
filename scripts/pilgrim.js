@@ -66,7 +66,6 @@ function submitPilgrimRegistration() {
 
     fetch(PILGRIM_GAS_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(pilgrimData)
     })
     .then(function(r) { return r.json(); })
