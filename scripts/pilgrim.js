@@ -194,11 +194,16 @@ function loadPilgrimList() {
         '<div style="font-size:10px;color:var(--light-brown);">ID: ' + p.id + '</div>' +
       '</div>' +
       '<div style="display:flex;flex-direction:column;gap:6px;">' +
-        '<button onclick=\'showQRCard(' + pStr + ')\' style="padding:6px 10px;background:var(--saffron);color:#fff;border:none;border-radius:6px;font-size:11px;cursor:pointer;">' + t('pilgrim_view_qr') + '</button>' +
+        '<button onclick="showQRCardByIndex(' + i + ')" style="padding:6px 10px;background:var(--saffron);color:#fff;border:none;border-radius:6px;font-size:11px;cursor:pointer;">' + t('pilgrim_view_qr') + '</button>' +
         '<button onclick="deletePilgrim(' + i + ')" style="padding:6px 10px;background:#ffebee;color:#c62828;border:none;border-radius:6px;font-size:11px;cursor:pointer;">' + t('pilgrim_delete') + '</button>' +
       '</div>' +
     '</div>';
   }).join('');
+}
+
+function showQRCardByIndex(index) {
+  var pilgrims = JSON.parse(localStorage.getItem('kumbh_pilgrims') || '[]');
+  if (pilgrims[index]) showQRCard(pilgrims[index]);
 }
 
 function deletePilgrim(index) {
