@@ -95,6 +95,11 @@ function getSheetDay(dateStr) {
   return parts.day;
 }
 
+function getSheetYear(dateStr) {
+  const parts = parseSheetDateParts(dateStr);
+  return parts ? parts.year : '';
+}
+
 function renderSchedule() {
   const container = document.getElementById('events-container');
   if (!container) return;
@@ -180,6 +185,7 @@ function renderSheetSchedule(rows) {
     const typeLabel = cat === 'shahi' ? '⭐ Shahi Snan' : cat === 'cultural' ? '🎭 Cultural' : '🕉️ Religious';
     const dateStr = String(r['Date'] || '');
     const dayNum = getSheetDay(dateStr);
+    const yearNum = getSheetYear(dateStr) || '2027';
     const timeVal = parseSheetTime(r['Time']);
     return `
       <div class="event-card ${typeClass} reveal">
@@ -189,7 +195,7 @@ function renderSheetSchedule(rows) {
             <div class="event-date-badge ${cat === 'shahi' ? 'shahi' : ''}">
               <span class="day">${dayNum}</span>
               <span class="month">${getShortMonth(dateStr)}</span>
-              <span class="year">2027</span>
+              <span class="year">${yearNum}</span>
             </div>
             <div style="flex:1;">
               <div class="event-title">${r['Event'] || ''}</div>
@@ -220,7 +226,8 @@ function renderSheetSchedule(rows) {
 
 function makeSheetCalendarUrl(r) {
   const dateStr = String(r['Date'] || '').split('T')[0].replace(/-/g, '');
-  const title   = encodeURIComponent((r['Event'] || '') + ' — Kumbh Nashik 2027');
+  const year    = getSheetYear(r['Date']) || '2027';
+  const title   = encodeURIComponent((r['Event'] || '') + ' — Kumbh Nashik ' + year);
   const details = encodeURIComponent(r['Description'] || '');
   const loc     = encodeURIComponent(r['Location'] || '');
   return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dateStr}/${dateStr}&details=${details}&location=${loc}`;
