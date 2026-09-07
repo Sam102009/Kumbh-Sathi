@@ -5,7 +5,7 @@
 
 let leafletMap = null;
 let mapLayers = {};
-let activeFilters = new Set(['ghats','temples','camps','hospitals','police','parking','transport','toilets']);
+let activeFilters = new Set(['ghats','temples','hospitals','parking','transport','accommodation','landmarks']);
 
 /* Color-coded marker icons per category */
 const CATEGORY_COLORS = {
@@ -13,10 +13,10 @@ const CATEGORY_COLORS = {
   temples:   '#FF6F00',  // Saffron
   camps:     '#6a1b9a',  // Purple
   hospitals: '#b71c1c',  // Red
-  police:    '#1b5e20',  // Dark Green
   parking:   '#e65100',  // Orange
   transport: '#004d40',  // Teal
-  toilets:   '#4e342e',  // Brown
+  accommodation: '#6a1b9a', // Purple
+  landmarks: '#795548',  // Brown
 };
 
 const CATEGORY_ICONS = {
@@ -24,10 +24,10 @@ const CATEGORY_ICONS = {
   temples:   '🕉️',
   camps:     '🏕️',
   hospitals: '🏥',
-  police:    '👮',
   parking:   '🅿️',
   transport: '🚌',
-  toilets:   '🚻',
+  accommodation: '🏕️',
+  landmarks: '📍',
 };
 
 /* Create a custom div icon for Leaflet */

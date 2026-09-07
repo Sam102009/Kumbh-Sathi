@@ -677,47 +677,46 @@ const FIRST_AID_DATA = [
 /* ===== MAP MARKERS ===== */
 const MAP_MARKERS = {
   ghats: [
-    { name: 'Ramkund Ghat', lat: 20.0026, lng: 73.7887, info: 'Most sacred ghat — main Shahi Snan location' },
-    { name: 'Kushavart Kund', lat: 19.9333, lng: 73.5289, info: 'Main ghat at Trimbakeshwar for Shahi Snan' },
-    { name: 'Someshwar Ghat', lat: 20.0088, lng: 73.7943, info: 'Popular ghat for daily ritual baths' },
-    { name: 'Holkar Bridge Ghat', lat: 19.9987, lng: 73.7923, info: 'Ghat near Holkar Bridge, Godavari river' },
+    { name: 'Ramkund Ghat, Panchavati, Nashik', lat: 20.007544, lng: 73.792541, info: 'Main bathing ghat for Kumbh Mela' },
+    { name: 'Kushavarta Kund, Trimbakeshwar', lat: 19.932886, lng: 73.529883, info: 'Sacred ghat at Trimbakeshwar' },
+    { name: 'Gandhi Talav, Nashik', lat: 20.006940, lng: 73.792400, info: 'Ghat near Ramkund' },
+    { name: 'Laxman Kund, Nashik', lat: 20.007600, lng: 73.792300, info: 'Sacred ghat near Ramkund' },
+    { name: 'Sita Sarovar, Nashik', lat: 20.008400, lng: 73.796100, info: 'Sacred water site near Panchavati' },
+    { name: 'Ahilyadevi Ghat, Nashik', lat: 20.007200, lng: 73.792600, info: 'Ghat on the Godavari river' },
   ],
   temples: [
-    { name: 'Trimbakeshwar Jyotirlinga', lat: 19.9330, lng: 73.5291, info: 'One of 12 Jyotirlingas — most sacred temple of Kumbh' },
-    { name: 'Kapaleshwar Temple', lat: 19.9990, lng: 73.7895, info: 'Ancient Shiva temple at Ramkund' },
-    { name: 'Sundernarayan Temple', lat: 20.0032, lng: 73.7882, info: 'Beautiful Vishnu temple near Ramkund' },
-    { name: 'Muktidhaam Temple', lat: 20.0210, lng: 73.8176, info: 'Marble replica of 12 Jyotirlingas' },
-  ],
-  camps: [
-    { name: 'Juna Akhara Camp', lat: 20.0015, lng: 73.7863, info: 'Camp of Juna Akhara — largest akhara at Kumbh' },
-    { name: 'Niranjani Akhara Camp', lat: 20.0045, lng: 73.7901, info: 'Camp of Niranjani Akhara' },
-    { name: 'Mahanirvani Akhara Camp', lat: 19.9998, lng: 73.7854, info: 'Camp of Mahanirvani Akhara' },
-    { name: 'Peshwai Ground', lat: 20.0065, lng: 73.7928, info: 'Main procession ground for Peshwai ceremonies' },
+    { name: 'Kalaram Temple, Panchavati, Nashik', lat: 20.006981, lng: 73.795092, info: 'Historic temple in Panchavati' },
+    { name: 'Trimbakeshwar Jyotirlinga Temple', lat: 19.935789, lng: 73.527086, info: 'One of 12 Jyotirlingas' },
+    { name: 'Sita Gufa, Nashik', lat: 20.008298, lng: 73.796333, info: 'Sacred cave in Panchavati' },
+    { name: 'Sundarnarayan Temple, Nashik', lat: 20.006322, lng: 73.791559, info: 'Historic Vishnu temple near Ramkund' },
+    { name: 'Kapaleshwar Temple, Nashik', lat: 20.007335, lng: 73.792881, info: 'Ancient Shiva temple near Ramkund' },
   ],
   hospitals: [
-    { name: 'Civil Hospital Nashik', lat: 20.0007, lng: 73.7811, info: '24/7 Emergency — 0253-2577000' },
-    { name: 'Kumbh Medical Camp (Main)', lat: 20.0022, lng: 73.7878, info: 'Free medical camp at Ramkund — 24/7' },
-    { name: 'Trimbak Medical Camp', lat: 19.9340, lng: 73.5295, info: 'Medical camp near Trimbakeshwar Temple' },
-  ],
-  police: [
-    { name: 'Ramkund Police Post', lat: 20.0028, lng: 73.7891, info: 'Kumbh security police post at Ramkund' },
-    { name: 'CBS Police Station', lat: 20.0012, lng: 73.7798, info: 'Central police station — 0253-XXXXXXX' },
-    { name: 'Trimbakeshwar Police', lat: 19.9325, lng: 73.5286, info: 'Police station at Trimbakeshwar' },
+    { name: 'Civil Hospital Nashik', lat: 20.004921, lng: 73.778841, info: 'Hospital and emergency care' },
+    { name: 'Apollo Hospital Nashik', lat: 20.004655, lng: 73.796115, info: 'Hospital and emergency care' },
+    { name: 'Wockhardt Hospital Nashik', lat: 19.967520, lng: 73.771148, info: 'Hospital and emergency care' },
+    { name: 'Trimbak Sub-District Hospital', lat: 19.936528, lng: 73.535805, info: 'Hospital and emergency care' },
+    { name: 'Nashik District Hospital', lat: 20.004921, lng: 73.778841, info: 'Hospital and emergency care' },
   ],
   parking: [
-    { name: 'Parking Zone A (Nashik)', lat: 20.0098, lng: 73.7834, info: 'Capacity: 5,000 vehicles. Shuttle available.' },
-    { name: 'Parking Zone B', lat: 19.9965, lng: 73.7945, info: 'Capacity: 3,000 vehicles. 2km from Ramkund.' },
-    { name: 'Trimbak Parking', lat: 19.9350, lng: 73.5310, info: 'Parking for Trimbakeshwar visitors.' },
+    { name: 'Main parking near Ramkund', lat: 20.006500, lng: 73.790500, info: 'Parking near Ramkund' },
+    { name: 'Parking near Trimbakeshwar Temple', lat: 19.936000, lng: 73.528500, info: 'Parking near Trimbakeshwar Temple' },
   ],
   transport: [
-    { name: 'Nashik Bus Stand (CBS)', lat: 20.0004, lng: 73.7802, info: 'Main MSRTC bus stand — Free Kumbh shuttle point' },
-    { name: 'Nashik Road Railway Station', lat: 20.0012, lng: 73.8256, info: 'Main railway station, 8km from Ramkund' },
-    { name: 'Nashik City Railway Station', lat: 19.9999, lng: 73.7934, info: 'City railway station closer to Ramkund' },
+    { name: 'Nashik Road Railway Station', lat: 19.951525, lng: 73.834720, info: 'Railway station serving Nashik' },
+    { name: 'Nashik City Railway Station', lat: 19.951525, lng: 73.834720, info: 'Railway station serving Nashik' },
+    { name: 'CBS Bus Stand Nashik (Central Bus Station)', lat: 19.997200, lng: 73.778300, info: 'Main central bus station' },
+    { name: 'Trimbakeshwar Bus Stand', lat: 19.936600, lng: 73.529800, info: 'Bus stand serving Trimbakeshwar' },
+    { name: 'Mumbai Naka Bus Stop Nashik', lat: 19.988000, lng: 73.785000, info: 'Major bus stop in Nashik' },
   ],
-  toilets: [
-    { name: 'Toilet Complex 1 (Ramkund)', lat: 20.0030, lng: 73.7898, info: 'Mobile toilet complex — 50 units' },
-    { name: 'Toilet Complex 2 (Panchavati)', lat: 20.0054, lng: 73.7912, info: 'Permanent toilet facility' },
-    { name: 'Toilet Complex 3 (Trimbakeshwar)', lat: 19.9328, lng: 73.5280, info: 'Toilet facility near Kushavart Kund' },
+  accommodation: [
+    { name: 'Sadhugram Tapovan (Tent City area)', lat: 20.007300, lng: 73.804200, info: 'Pilgrim accommodation area' },
+    { name: 'MTDC Resort Nashik', lat: 20.043500, lng: 73.682300, info: 'Accommodation near Nashik' },
+  ],
+  landmarks: [
+    { name: 'Panchavati area center point', lat: 20.007500, lng: 73.795000, info: 'Center point for Panchavati' },
+    { name: 'Tapovan, Nashik', lat: 20.004000, lng: 73.805500, info: 'Landmark in Nashik' },
+    { name: 'Nashik city center', lat: 19.997500, lng: 73.789800, info: 'Center of Nashik city' },
   ],
 };
 

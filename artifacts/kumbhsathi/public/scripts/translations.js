@@ -74,6 +74,8 @@ const T = {
     filter_parking:  'Parking',
     filter_transport:'Transport',
     filter_toilets:  'Toilets',
+    filter_accommodation: 'Accommodation',
+    filter_landmarks: 'Landmarks',
     map_legend:      'Map Legend',
 
     /* --- Stay --- */
@@ -234,6 +236,8 @@ const T = {
     filter_parking:  'पार्किंग',
     filter_transport:'परिवहन',
     filter_toilets:  'शौचालय',
+    filter_accommodation: 'आवास',
+    filter_landmarks: 'प्रमुख स्थान',
     map_legend:      'नक्शा संकेत',
 
     stay_title:      'आवास एवं ठहरने की व्यवस्था',
@@ -386,6 +390,8 @@ const T = {
     filter_parking:  'पार्किंग',
     filter_transport:'वाहतूक',
     filter_toilets:  'शौचालये',
+    filter_accommodation: 'निवास',
+    filter_landmarks: 'प्रमुख ठिकाणे',
     map_legend:      'नकाशा संकेत',
 
     stay_title:      'निवास व राहण्याची सोय',
