@@ -139,6 +139,42 @@ function sendPanic() {
   showToast(t('group_sos_sent'));
 }
 
+/* Format time-only values returned by Google Sheets */
+function formatGroupTimestamp(value) {
+  if (!value) return '—';
+
+  var raw = String(value).trim();
+  var legacyTime = raw.match(/^1899-12-30T(\d{2}):(\d{2})(?::\d{2})?(?:\.\d+)?Z$/i);
+  if (legacyTime) {
+    // Google Sheets serializes time-only cells as a UTC ISO date on 1899-12-30.
+    // Apply India's fixed +05:30 offset rather than relying on historical timezone
+    // rules for that placeholder date.
+    var utcMinutes = Number(legacyTime[1]) * 60 + Number(legacyTime[2]);
+    var istMinutes = (utcMinutes + (5 * 60) + 30) % (24 * 60);
+    return formatClockTime(Math.floor(istMinutes / 60), istMinutes % 60);
+  }
+
+  var meridiemTime = raw.match(/^(\d{1,2}):(\d{2})(?::\d{2})?\s*([ap])\.?m\.?$/i);
+  if (meridiemTime) {
+    return String(Number(meridiemTime[1])).padStart(2, '0') + ':' +
+      meridiemTime[2] + ' ' + meridiemTime[3].toUpperCase() + 'M';
+  }
+
+  var twentyFourHourTime = raw.match(/^(\d{1,2}):(\d{2})(?::\d{2})?$/);
+  if (twentyFourHourTime) {
+    return formatClockTime(Number(twentyFourHourTime[1]), Number(twentyFourHourTime[2]));
+  }
+
+  return raw;
+}
+
+function formatClockTime(hours, minutes) {
+  if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) return '—';
+  var period = hours >= 12 ? 'PM' : 'AM';
+  var hour12 = hours % 12 || 12;
+  return String(hour12).padStart(2, '0') + ':' + String(minutes).padStart(2, '0') + ' ' + period;
+}
+
 /* Load group members */
 function loadGroupMembers() {
   if (!currentGroup) return;
@@ -167,7 +203,7 @@ function renderGroupMembers(members) {
       m.memberName.charAt(0).toUpperCase() + '</div>' +
       '<div class="member-info">' +
       '<div class="member-name">' + m.memberName + (isMe ? ' ' + t('group_you') : '') + '</div>' +
-      '<div class="member-time">' + t('group_updated') + (m.timestamp || '—') + '</div>' +
+       '<div class="member-time">' + t('group_updated') + formatGroupTimestamp(m.timestamp) + '</div>' +
       (isPanic ? '<div class="member-panic">' + t('group_sos_sent_label') + '</div>' : '') +
       '</div>' +
       '<div class="member-status" style="color:' + (isPanic ? '#b71c1c' : '#2e7d32') + ';">' +
