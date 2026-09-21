@@ -1,0 +1,83 @@
+Fix two bugs in Groups feature
+
+Repo: https://github.com/Sam102009/Kumbh-Sathi
+File to edit: scripts/groups.js
+
+Bug 1 — Timestamp showing gibberish
+
+Find where the timestamp is generated before sending to GAS. It currently sends a raw timestamp that displays incorrectly.
+
+Find this line (or similar):
+
+javascript
+timestamp: new Date().toLocaleTimeString(...)
+
+Make sure it generates a clean readable time in IST:
+
+javascript
+timestamp: new Date().toLocaleTimeString('en-IN', {
+  hour: '2-digit', 
+  minute: '2-digit',
+  hour12: true,
+  timeZone: 'Asia/Kolkata'
+})
+
+Also find where timestamps are displayed in the member list cards and make sure they're shown as-is without any further conversion — the timestamp is already formatted when saved.
+
+Bug 2 — Group info lost when app is closed
+
+Currently when user closes and reopens the app, their group code and member name are gone so they have to rejoin.
+
+Fix by saving group info to localStorage when user joins or creates a group, and restoring it on page load.
+
+When user creates or joins a group, save to localStorage:
+
+javascript
+localStorage.setItem('kumbh_group', JSON.stringify({
+  groupCode: currentGroup,
+  memberName: currentMember
+}));
+
+When groups page loads, restore from localStorage:
+
+javascript
+function initGroups() {
+  // Restore saved group info
+  var saved = localStorage.getItem('kumbh_group');
+  if (saved) {
+    try {
+      var parsed = JSON.parse(saved);
+      if (parsed.groupCode && parsed.memberName) {
+        currentGroup = parsed.groupCode;
+        currentMember = parsed.memberName;
+        // Skip the join/create screen and go straight to group view
+        showGroupView();
+        startGroupTracking();
+        loadGroupMembers();
+      }
+    } catch(e) {
+      localStorage.removeItem('kumbh_group');
+    }
+  }
+}
+
+When user leaves the group, clear localStorage:
+
+javascript
+localStorage.removeItem('kumbh_group');
+
+Make sure initGroups() is called when the groups page is shown/navigated to.
+
+Also check:
+
+currentGroup and currentMember variables are properly set before saving
+showGroupView() function exists — if it has a different name, use the correct function that shows the active group screen (hiding the join/create form)
+Group tracking interval restarts correctly on restore
+
+After fix: git add . && git commit -m "Fix group timestamp format and persist group across app restarts" && git push origin main
+
+Test:
+
+Join a group → close app completely → reopen → group is still there ✅
+Member locations show clean time like "04:30 PM" not gibberish ✅
+Leave group → close app → reopen → shows join/create screen ✅

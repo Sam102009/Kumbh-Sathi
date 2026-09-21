@@ -7,6 +7,7 @@ const GROUPS_URL = 'https://script.google.com/macros/s/AKfycbyp_E-2tqiBfAtswJIxI
 var currentGroup = null;
 var currentMember = null;
 var groupUpdateInterval = null;
+var groupMembersInterval = null;
 var groupMap = null;
 var groupMarkers = {};
 
@@ -18,16 +19,38 @@ function generateGroupCode() {
 /* Save group info to localStorage */
 function saveGroupInfo(code, name) {
   try {
-    sessionStorage.setItem('ks_group_code', code);
-    sessionStorage.setItem('ks_member_name', name);
+    localStorage.setItem('kumbh_group', JSON.stringify({
+      groupCode: code,
+      memberName: name
+    }));
   } catch(e) {}
 }
 
 /* Load group info */
 function loadGroupInfo() {
+  var saved = null;
   try {
-    currentGroup = sessionStorage.getItem('ks_group_code');
-    currentMember = sessionStorage.getItem('ks_member_name');
+    saved = localStorage.getItem('kumbh_group');
+    if (saved) {
+      var parsed = JSON.parse(saved);
+      if (parsed && parsed.groupCode && parsed.memberName) {
+        currentGroup = parsed.groupCode;
+        currentMember = parsed.memberName;
+        return;
+      }
+      localStorage.removeItem('kumbh_group');
+    }
+  } catch(e) {}
+
+  // Migrate any group saved by older versions of the app.
+  try {
+    var legacyGroup = sessionStorage.getItem('ks_group_code');
+    var legacyMember = sessionStorage.getItem('ks_member_name');
+    if (legacyGroup && legacyMember) {
+      currentGroup = legacyGroup;
+      currentMember = legacyMember;
+      saveGroupInfo(legacyGroup, legacyMember);
+    }
   } catch(e) {}
 }
 
@@ -68,12 +91,14 @@ function joinGroup() {
 
 /* Start location tracking */
 function startGroupTracking() {
+  if (groupUpdateInterval) clearInterval(groupUpdateInterval);
+  if (groupMembersInterval) clearInterval(groupMembersInterval);
   updateGroupLocation(false);
   groupUpdateInterval = setInterval(function() {
     updateGroupLocation(false);
   }, 60 * 1000);
   loadGroupMembers();
-  setInterval(loadGroupMembers, 30 * 1000);
+  groupMembersInterval = setInterval(loadGroupMembers, 30 * 1000);
 }
 
 /* Update own location */
@@ -86,7 +111,14 @@ function updateGroupLocation(isPanic) {
       memberName: currentMember,
       lat: pos.coords.latitude,
       lng: pos.coords.longitude,
-      timestamp: new Date().toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'}),
+      timestamp: new Date().toLocaleTimeString('en-IN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+        timeZone: 'Asia/Kolkata'
+      }).replace(/\b(am|pm)\b/i, function(period) {
+        return period.toUpperCase();
+      }),
       panic: isPanic,
       token: 'kumbh2027secure'
     };
@@ -195,9 +227,16 @@ function shareGroupWhatsApp() {
 /* Leave group */
 function leaveGroup() {
   if (groupUpdateInterval) clearInterval(groupUpdateInterval);
+  if (groupMembersInterval) clearInterval(groupMembersInterval);
+  groupUpdateInterval = null;
+  groupMembersInterval = null;
   currentGroup = null;
   currentMember = null;
-  try { sessionStorage.removeItem('ks_group_code'); sessionStorage.removeItem('ks_member_name'); } catch(e) {}
+  try {
+    localStorage.removeItem('kumbh_group');
+    sessionStorage.removeItem('ks_group_code');
+    sessionStorage.removeItem('ks_member_name');
+  } catch(e) {}
   document.getElementById('group-setup').style.display = 'block';
   document.getElementById('group-active').style.display = 'none';
   if (groupMap) { groupMap.remove(); groupMap = null; groupMarkers = {}; }
