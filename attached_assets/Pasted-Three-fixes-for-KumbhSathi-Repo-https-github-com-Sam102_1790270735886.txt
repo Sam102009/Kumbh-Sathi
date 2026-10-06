@@ -1,0 +1,95 @@
+Three fixes for KumbhSathi
+
+Repo: https://github.com/Sam102009/Kumbh-Sathi
+Files to edit: index.html, scripts/translations.js, and any relevant page scripts
+
+Fix 1 — Dark mode text visibility
+
+Some text elements are invisible or hard to read in dark mode. The root cause is hardcoded color values like color:#333 or color:var(--dark-brown) that don't change in dark mode.
+
+Search ALL files for these patterns and fix them:
+
+Any color:#333 → change to color:var(--text-primary)
+Any color:#666 → change to color:var(--text-secondary)
+Any color:#000 → change to color:var(--text-primary)
+Any color:var(--dark-brown) used for regular text → change to color:var(--text-primary)
+Any background:#fff on cards → change to background:var(--card-bg)
+Any background:#f5f0e8 → change to background:var(--card-bg)
+
+Specifically check and fix these pages:
+
+Home page Shahi Snan cards
+Groups page member cards
+Pilgrim Registration QR card
+Lost & Found report cards
+Stay page hotel cards
+Akharas page cards
+Schedule page event cards
+Emergency page contact cards
+
+Make sure dark mode CSS variables are properly defined. Check :root and body.dark-mode or [data-theme="dark"] in the CSS — all these variables must be defined for both light and dark:
+
+css
+--text-primary
+--text-secondary  
+--card-bg
+--bg
+--border
+
+Fix 2 — Complete multilingual translation using AI
+
+Many UI elements, event names, descriptions, and labels are still showing in English even when Hindi or Marathi is selected.
+
+Do the following:
+
+Go through EVERY page and find ALL hardcoded English text that should be translated
+For each untranslated string, add a key to scripts/translations.js with translations in all 3 languages (en, hi, mr)
+Use the Gemini API or any available AI to generate accurate Hindi and Marathi translations
+Add data-t="key" attributes to all untranslated elements
+Make sure applyTranslations() is called after every dynamic render
+
+Pages to check specifically:
+
+Home page — Quick Access labels, Shahi Snan section title
+Schedule page — event names, descriptions, filter button labels, "Add to Calendar" button
+Stay page — hotel type labels, price labels, rating labels
+Akharas page — all text
+Lost & Found page — form labels, filter tabs, verification modal text, status messages
+Groups page — all button labels, member list labels, panic button
+Emergency page — all contact labels (currently showing in Hindi only, needs EN and MR too)
+Map page — legend labels, "Get Directions" button
+Pilgrim Registration — all form labels, QR card text
+More/About page — all section headings
+
+Translation quality rules:
+
+Use proper Hindi (Devanagari script) — not transliteration
+Use proper Marathi (Devanagari script) — Marathi is different from Hindi, don't use Hindi for Marathi
+Keep translations short and clear — these are UI labels not essays
+Religious terms like "Shahi Snan", "Akhara", "Ramkund" stay as-is in all languages
+
+Fix 3 — Change police emergency number
+
+Find the police emergency number in index.html or wherever the Emergency page is defined.
+
+Change 100 to 112 for the police number.
+
+Also verify these numbers are correct:
+
+Police: 112
+Ambulance: 108
+Child helpline: 1098
+Women helpline: 1091
+Tourist helpline: 1363
+Kumbh Control Room: 1800-180-2626
+
+After all fixes:
+
+git add . && git commit -m "Fix dark mode text visibility, complete multilingual translations, fix police number to 112" && git push origin main
+
+Test:
+
+Switch to dark mode → all text clearly visible on every page ✅
+Switch to Hindi → every element shows in Hindi ✅
+Switch to Marathi → every element shows in Marathi ✅
+Emergency page → Police shows 112 ✅

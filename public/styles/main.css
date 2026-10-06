@@ -19,6 +19,11 @@
   --cream:      #FFF8E1;
   --dark-brown: #3E2723;
   --light-brown:#6D4C41;
+  --text-primary: #3E2723;
+  --text-secondary: #6D4C41;
+  --card-bg: #FFFFFF;
+  --bg: #FFF8E1;
+  --border: #E0D5C5;
   --orange-light: #FFF3E0;
   --shadow-sm:  0 2px 8px rgba(62,39,35,0.12);
   --shadow-md:  0 4px 20px rgba(62,39,35,0.16);
@@ -48,8 +53,8 @@ html {
 
 body {
   font-family: var(--font-en);
-  background: var(--cream);
-  color: var(--dark-brown);
+  background: var(--bg);
+  color: var(--text-primary);
   min-height: 100vh;
   min-height: 100dvh;
   overflow-x: hidden;
@@ -89,7 +94,7 @@ body::before {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  background: rgba(255,248,225,0.97);
+  background: var(--bg);
   box-shadow: 0 0 40px rgba(0,0,0,0.08);
 }
 
@@ -604,3 +609,65 @@ body::before {
 .first-aid-body.open { max-height: 500px; }
 .first-aid-body ul { padding: 0 16px 14px 16px; list-style: disc; }
 .first-aid-body ul li { font-size: 12px; color: var(--light-brown); line-height: 1.7; margin-left: 16px; }
+
+/* Shared dark theme tokens and readable card surfaces. */
+body.dark-mode {
+  --text-primary: #F1F3F4;
+  --text-secondary: #B8C0C8;
+  --card-bg: #1E1E1E;
+  --bg: #121212;
+  --border: #3D3D3D;
+  background: var(--bg);
+  color: var(--text-primary);
+}
+body.dark-mode #app,
+body.dark-mode #main-content { background: var(--bg); }
+body.dark-mode .page { color: var(--text-primary); }
+body.dark-mode .event-card,
+body.dark-mode .listing-card,
+body.dark-mode .akhara-card,
+body.dark-mode .hospital-card,
+body.dark-mode .report-card,
+body.dark-mode .first-aid-item,
+body.dark-mode .group-member-card,
+body.dark-mode .call-card,
+body.dark-mode #qr-card-printable,
+body.dark-mode #auth-panel {
+  background: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border) !important;
+}
+body.dark-mode .call-card .call-name,
+body.dark-mode .event-tithi,
+body.dark-mode .event-meta,
+body.dark-mode .akhara-type,
+body.dark-mode .akhara-location,
+body.dark-mode .member-name,
+body.dark-mode .member-time,
+body.dark-mode .first-aid-header h4,
+body.dark-mode .first-aid-body ul li,
+body.dark-mode .hospital-name,
+body.dark-mode .hospital-addr,
+body.dark-mode .listing-name,
+body.dark-mode .listing-meta,
+body.dark-mode .akhara-name,
+body.dark-mode .akhara-desc,
+body.dark-mode .report-card,
+body.dark-mode .group-member-card {
+  color: var(--text-primary) !important;
+}
+body.dark-mode [style*="color:var(--dark-brown)"],
+body.dark-mode [style*="color: var(--dark-brown)"] {
+  color: var(--text-primary) !important;
+}
+body.dark-mode [style*="color:var(--light-brown)"],
+body.dark-mode [style*="color: var(--light-brown)"] {
+  color: var(--text-secondary) !important;
+}
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select {
+  background: #252525;
+  color: var(--text-primary);
+  border-color: var(--border);
+}

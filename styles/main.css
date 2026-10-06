@@ -19,6 +19,11 @@
   --cream:      #FFF8E1;
   --dark-brown: #3E2723;
   --light-brown:#6D4C41;
+  --text-primary: #3E2723;
+  --text-secondary: #6D4C41;
+  --card-bg: #FFFFFF;
+  --bg: #FFF8E1;
+  --border: #E0D5C5;
   --orange-light: #FFF3E0;
   --shadow-sm:  0 2px 8px rgba(62,39,35,0.12);
   --shadow-md:  0 4px 20px rgba(62,39,35,0.16);
@@ -48,8 +53,8 @@ html {
 
 body {
   font-family: var(--font-en);
-  background: var(--cream);
-  color: var(--dark-brown);
+  background: var(--bg);
+  color: var(--text-primary);
   min-height: 100vh;
   min-height: 100dvh;
   overflow-x: hidden;
@@ -89,7 +94,7 @@ body::before {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  background: rgba(255,248,225,0.97);
+  background: var(--bg);
   box-shadow: 0 0 40px rgba(0,0,0,0.08);
 }
 
@@ -582,8 +587,13 @@ body::before {
 }
 
 body.dark-mode {
-  background: #121212;
-  color: #e8e8e8;
+  --text-primary: #F1F3F4;
+  --text-secondary: #B8C0C8;
+  --card-bg: #1E1E1E;
+  --bg: #121212;
+  --border: #3D3D3D;
+  background: var(--bg);
+  color: var(--text-primary);
 }
 
 /* Body pseudo-element (mandala pattern) – keep but dim */
@@ -593,7 +603,10 @@ body.dark-mode::before {
 
 /* Main scrollable area */
 body.dark-mode #main-content {
-  background: #121212;
+  background: var(--bg);
+}
+body.dark-mode #app {
+  background: var(--bg);
 }
 
 /* Header & Nav */
@@ -1034,6 +1047,35 @@ body.dark-mode .ad-slot {
 }
 body.dark-mode .ad-placeholder {
   color: #9E9E9E !important;
+}
+
+/* Keep text that uses inline theme colors legible in every dark-mode card. */
+body.dark-mode [style*="color:var(--dark-brown)"],
+body.dark-mode [style*="color: var(--dark-brown)"] {
+  color: var(--text-primary) !important;
+}
+body.dark-mode [style*="color:var(--light-brown)"],
+body.dark-mode [style*="color: var(--light-brown)"] {
+  color: var(--text-secondary) !important;
+}
+body.dark-mode .call-card .call-name,
+body.dark-mode .event-tithi,
+body.dark-mode .event-meta,
+body.dark-mode .akhara-type,
+body.dark-mode .akhara-location,
+body.dark-mode .member-name,
+body.dark-mode .member-time,
+body.dark-mode .report-type-badge,
+body.dark-mode .group-member-card {
+  color: var(--text-primary) !important;
+}
+body.dark-mode .group-member-card,
+body.dark-mode #qr-card-printable {
+  background: var(--card-bg) !important;
+  border-color: var(--border) !important;
+}
+body.dark-mode #qr-code-container {
+  background: #fff !important;
 }
 
 /* --- Responsive for larger screens --- */

@@ -390,9 +390,9 @@
         <div>
           <div style="font-size:12px;font-weight:700;color:#b71c1c;" data-t="emergency_numbers">आपातकालीन हेल्पलाइन</div>
           <div style="font-size:12px;color:var(--dark-brown);">
-            <a href="tel:100" style="font-weight:700;color:#b71c1c;">100</a> (Police) &nbsp;|&nbsp;
-            <a href="tel:108" style="font-weight:700;color:#b71c1c;">108</a> (Ambulance) &nbsp;|&nbsp;
-            <a href="tel:1098" style="font-weight:700;color:#b71c1c;">1098</a> (Child Helpline)
+            <a href="tel:112" style="font-weight:700;color:#b71c1c;">112</a> (<span data-t="police">Police</span>) &nbsp;|&nbsp;
+            <a href="tel:108" style="font-weight:700;color:#b71c1c;">108</a> (<span data-t="ambulance">Ambulance</span>) &nbsp;|&nbsp;
+            <a href="tel:1098" style="font-weight:700;color:#b71c1c;">1098</a> (<span data-t="child_helpline">Child Helpline</span>)
           </div>
         </div>
       </div>
@@ -458,20 +458,20 @@
         <p data-t="emergency_subtitle">कॉल करने के लिए टैप करें — 24/7 उपलब्ध</p>
       </div>
       <div class="call-grid">
-        <a href="tel:100" class="call-card call-police">
+        <a href="tel:112" class="call-card call-police">
           <div class="call-icon bg-indigo pulse-red"><i class="fa-solid fa-shield-halved"></i></div>
           <div class="call-name" data-t="police">पुलिस</div>
-          <div class="call-num">100</div>
+          <div class="call-num">112</div>
         </a>
         <a href="tel:108" class="call-card call-amb">
           <div class="call-icon bg-red pulse-red"><i class="fa-solid fa-truck-medical"></i></div>
           <div class="call-name" data-t="ambulance">एम्बुलेंस</div>
           <div class="call-num">108</div>
         </a>
-        <a href="tel:18001802626" class="call-card call-kumbh">
+        <a href="tel:1077" class="call-card call-kumbh">
           <div class="call-icon bg-saffron"><i class="fa-solid fa-walkie-talkie"></i></div>
-          <div class="call-name" data-t="kumbh_control">कुंभ नियंत्रण</div>
-          <div class="call-num" style="font-size:12px;">1800-180-2626</div>
+          <div class="call-name" data-t="disaster_helpline">Nashik District Disaster Management</div>
+          <div class="call-num" style="font-size:12px;">1077</div>
         </a>
         <a href="tel:1098" class="call-card call-child">
           <div class="call-icon bg-purple"><i class="fa-solid fa-child-reaching"></i></div>
@@ -991,22 +991,22 @@ setTimeout(function(){
 <!-- Sign In Modal -->
 <div id="kumbh-signin-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9999;justify-content:center;align-items:center;">
   <div style="background:#fff;border-radius:16px;padding:24px;width:90%;max-width:340px;text-align:center;">
-    <h3 style="margin:0 0 8px;color:#3E1F0D;">🔐 Sign In Required</h3>
-    <p style="font-size:14px;color:#777;margin-bottom:20px;">Sign in with Google to verify your identity and view contact details</p>
+    <h3 data-t="sign_in_required" style="margin:0 0 8px;color:#3E1F0D;">🔐 Sign In Required</h3>
+    <p data-t="sign_in_verify_msg" style="font-size:14px;color:#777;margin-bottom:20px;">Sign in with Google to verify your identity and view contact details</p>
     <div id="kumbh-signin-btn"></div>
-    <button onclick="document.getElementById('kumbh-signin-modal').style.display='none'" style="margin-top:16px;background:none;border:none;color:#aaa;cursor:pointer;font-size:13px;">Cancel</button>
+    <button data-t="cancel" onclick="document.getElementById('kumbh-signin-modal').style.display='none'" style="margin-top:16px;background:none;border:none;color:#aaa;cursor:pointer;font-size:13px;">Cancel</button>
   </div>
 </div>
 
 <!-- Verify Identity Modal -->
 <div id="kumbh-verify-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9999;justify-content:center;align-items:center;">
   <div style="background:#fff;border-radius:16px;padding:24px;width:90%;max-width:340px;">
-    <h3 style="margin:0 0 8px;color:#3E1F0D;">📄 Verify Identity</h3>
-    <p style="font-size:13px;color:#777;margin-bottom:16px;">Upload any ID proof (Aadhaar, PAN, Voter ID) to verify your relation to this person. We will review and respond within 24 hours.</p>
+    <h3 data-t="verify_identity_title" style="margin:0 0 8px;color:#3E1F0D;">📄 Verify Identity</h3>
+    <p data-t="verify_identity_msg" style="font-size:13px;color:#777;margin-bottom:16px;">Upload any ID proof (Aadhaar, PAN, Voter ID) to verify your relation to this person. We will review and respond within 24 hours.</p>
     <input type="file" id="verify-doc-input" accept="image/*" style="width:100%;margin-bottom:16px;padding:10px;border:2px dashed #e0d5c5;border-radius:8px;font-size:13px;box-sizing:border-box;">
     <input type="hidden" id="verify-report-id">
-    <button id="verify-submit-btn" onclick="KumbhVerifyUI.submitVerification()" style="width:100%;padding:12px;background:var(--saffron);color:white;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;">Submit for Verification</button>
-    <button onclick="document.getElementById('kumbh-verify-modal').style.display='none'" style="width:100%;margin-top:8px;padding:10px;background:none;border:1px solid #ddd;border-radius:8px;cursor:pointer;font-size:13px;">Cancel</button>
+    <button id="verify-submit-btn" data-t="submit_verification" onclick="KumbhVerifyUI.submitVerification()" style="width:100%;padding:12px;background:var(--saffron);color:white;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;">Submit for Verification</button>
+    <button data-t="cancel" onclick="document.getElementById('kumbh-verify-modal').style.display='none'" style="width:100%;margin-top:8px;padding:10px;background:none;border:1px solid #ddd;border-radius:8px;cursor:pointer;font-size:13px;">Cancel</button>
     <div id="verify-status-msg" style="margin-top:12px;font-size:13px;text-align:center;"></div>
   </div>
 </div>

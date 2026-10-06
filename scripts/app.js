@@ -83,10 +83,11 @@ function parseSheetDateParts(dateStr) {
 }
 
 function getShortMonth(dateStr) {
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const parts = parseSheetDateParts(dateStr);
   if (!parts) return '';
-  return months[parts.month - 1] || '';
+  const locale = ({ en: 'en-IN', hi: 'hi-IN', mr: 'mr-IN' })[currentLang] || 'en-IN';
+  return new Intl.DateTimeFormat(locale, { month: 'short', timeZone: 'UTC' })
+    .format(new Date(Date.UTC(parts.year, parts.month - 1, 1, 12)));
 }
 
 function getSheetDay(dateStr) {
@@ -112,9 +113,18 @@ function renderSchedule() {
   const lang = currentLang;
   container.innerHTML = filtered.map(ev => {
     const title = ev[`title_${lang}`] || ev.title_en;
-    const desc  = ev.significance_en || '';
+    const localized = EVENT_TRANSLATIONS[ev.id] && EVENT_TRANSLATIONS[ev.id][lang];
+    const desc = lang === 'en'
+      ? (ev.significance_en || '')
+      : (localized && localized.significance) || t('translation_unavailable');
+    const tithi = (localized && localized.tithi) || ev.tithi;
     const typeClass = ev.type === 'shahi' ? 'type-shahi' : ev.type === 'cultural' ? 'type-cultural' : 'type-religious';
-    const typeLabel = ev.type === 'shahi' ? '⭐ Shahi Snan' : ev.type === 'cultural' ? '🎭 Cultural' : '🕉️ Religious';
+    const typeLabels = {
+      shahi: { en: '⭐ Shahi Snan', hi: '⭐ शाही स्नान', mr: '⭐ शाही स्नान' },
+      cultural: { en: '🎭 Cultural', hi: '🎭 सांस्कृतिक', mr: '🎭 सांस्कृतिक' },
+      religious: { en: '🕉️ Religious', hi: '🕉️ धार्मिक', mr: '🕉️ धार्मिक' },
+    };
+    const typeLabel = typeLabels[ev.type][lang] || typeLabels[ev.type].en;
     const calUrl  = makeCalendarUrl(ev);
 
     return `
@@ -127,7 +137,7 @@ function renderSchedule() {
               <span class="year">${ev.year}</span>
             </div>
             <div style="flex:1;">
-              <div class="event-tithi">${ev.tithi}</div>
+              <div class="event-tithi">${tithi}</div>
               <div class="event-title">${title}</div>
               <div class="event-desc">${desc}</div>
               <div class="event-meta">
@@ -164,6 +174,15 @@ function normalizeCat(raw) {
   return 'religious';
 }
 
+function localizedSheetValue(row, field, allowSourceValue) {
+  const language = currentLang || 'en';
+  const suffix = language.toUpperCase();
+  const value = row[field + '_' + suffix] || row[field + '_' + language] ||
+    (language === 'en' ? row[field + '_EN'] || row[field] : '') ||
+    (allowSourceValue ? row[field] : '');
+  return String(value || '').trim();
+}
+
 function renderSheetSchedule(rows) {
   const container = document.getElementById('events-container');
   if (!container) return;
@@ -182,11 +201,27 @@ function renderSheetSchedule(rows) {
   container.innerHTML = filtered.map(r => {
     const cat = normalizeCat(r['Category']);
     const typeClass = cat === 'shahi' ? 'type-shahi' : cat === 'cultural' ? 'type-cultural' : 'type-religious';
-    const typeLabel = cat === 'shahi' ? '⭐ Shahi Snan' : cat === 'cultural' ? '🎭 Cultural' : '🕉️ Religious';
+    const typeLabels = {
+      shahi: { en: '⭐ Shahi Snan', hi: '⭐ शाही स्नान', mr: '⭐ शाही स्नान' },
+      cultural: { en: '🎭 Cultural', hi: '🎭 सांस्कृतिक', mr: '🎭 सांस्कृतिक' },
+      religious: { en: '🕉️ Religious', hi: '🕉️ धार्मिक', mr: '🕉️ धार्मिक' },
+    };
+    const typeLabel = typeLabels[cat][currentLang] || typeLabels[cat].en;
     const dateStr = String(r['Date'] || '');
+    const eventDate = dateStr.split('T')[0];
+    const fallbackEvent = EVENTS_DATA.find(ev => ev.date === eventDate);
     const dayNum = getSheetDay(dateStr);
     const yearNum = getSheetYear(dateStr) || '2027';
     const timeVal = parseSheetTime(r['Time']);
+    const fallbackLocalized = fallbackEvent && EVENT_TRANSLATIONS[fallbackEvent.id] && EVENT_TRANSLATIONS[fallbackEvent.id][currentLang];
+    const sheetEvent = localizedSheetValue(r, 'Event', true);
+    const sheetDescription = localizedSheetValue(r, 'Description', false);
+    const eventTitle = currentLang === 'en' ? sheetEvent :
+      localizedSheetValue(r, 'Event', false) || (fallbackEvent && fallbackEvent['title_' + currentLang]) || t('translation_unavailable');
+    const eventDescription = sheetDescription ||
+      (currentLang === 'en' ? (r['Description'] || (fallbackEvent && fallbackEvent.significance_en) || '') :
+        (fallbackLocalized && fallbackLocalized.significance) || t('translation_unavailable'));
+    const location = localizedSheetValue(r, 'Location', true);
     return `
       <div class="event-card ${typeClass} reveal">
         <div class="event-card-inner">
@@ -198,10 +233,10 @@ function renderSheetSchedule(rows) {
               <span class="year">${yearNum}</span>
             </div>
             <div style="flex:1;">
-              <div class="event-title">${r['Event'] || ''}</div>
-              <div class="event-desc">${r['Description'] || ''}</div>
+              <div class="event-title">${eventTitle}</div>
+              <div class="event-desc">${eventDescription}</div>
               <div class="event-meta">
-                ${r['Location'] ? `<span><i class="fa-solid fa-location-dot"></i> ${r['Location']}</span>` : ''}
+                ${location ? `<span><i class="fa-solid fa-location-dot"></i> ${location}</span>` : ''}
                 ${timeVal ? `<span><i class="fa-solid fa-clock"></i> ${timeVal}</span>` : ''}
               </div>
             </div>
@@ -227,9 +262,9 @@ function renderSheetSchedule(rows) {
 function makeSheetCalendarUrl(r) {
   const dateStr = String(r['Date'] || '').split('T')[0].replace(/-/g, '');
   const year    = getSheetYear(r['Date']) || '2027';
-  const title   = encodeURIComponent((r['Event'] || '') + ' — Kumbh Nashik ' + year);
-  const details = encodeURIComponent(r['Description'] || '');
-  const loc     = encodeURIComponent(r['Location'] || '');
+  const title   = encodeURIComponent((localizedSheetValue(r, 'Event', true) || '') + ' — Kumbh Nashik ' + year);
+  const details = encodeURIComponent(localizedSheetValue(r, 'Description', true));
+  const loc     = encodeURIComponent(localizedSheetValue(r, 'Location', true));
   return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dateStr}/${dateStr}&details=${details}&location=${loc}`;
 }
 
@@ -332,9 +367,9 @@ function renderHomeShahiSnan(events) {
       '<div class="card nav-link" style="padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer;" data-nav="schedule">' +
         '<div style="width:50px;height:50px;background:' + gradient + ';border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">⭐</div>' +
         '<div>' +
-          '<div style="font-weight:700;color:var(--dark-brown);font-size:14px;">' + (item['Event'] || '') + '</div>' +
+        '<div style="font-weight:700;color:var(--dark-brown);font-size:14px;">' + (localizedSheetValue(item, 'Event', true) || t('translation_unavailable')) + '</div>' +
           '<div style="font-size:12px;color:var(--saffron);font-weight:600;">' + day + ' ' + month + ' ' + year + '</div>' +
-          '<div style="font-size:11px;color:var(--light-brown);">' + (item['Location'] || '') + '</div>' +
+          '<div style="font-size:11px;color:var(--light-brown);">' + localizedSheetValue(item, 'Location', true) + '</div>' +
         '</div>' +
         '<i class="fa-solid fa-chevron-right" style="margin-left:auto;color:var(--light-brown);"></i>' +
       '</div>'
@@ -371,12 +406,19 @@ function _stayCard(s) {
   var full   = Math.floor(rating);
   var stars  = '★'.repeat(full) + ((rating - full) >= 0.5 ? '½' : '');
   var phone  = _stayPhoneStr(s.phone);
+  var lang   = currentLang || 'en';
+  var name   = s['name_' + lang] || s.name || '';
+  var type   = s['type_' + lang] || s.type || '';
+  var address = s['address_' + lang] || s.address || '';
+  var description = lang === 'en'
+    ? (s.description_en || s.description || '')
+    : (s['description_' + lang] || t('translation_unavailable'));
 
   return (
     '<div class="listing-card' + (s.sponsored ? ' sponsored' : '') + ' reveal">' +
       (s.image
         ? '<div class="stay-card-image">' +
-            '<img src="' + s.image + '" alt="' + s.name + '" loading="lazy" onerror="this.style.display=\'none\'">' +
+            '<img src="' + s.image + '" alt="' + name + '" loading="lazy" onerror="this.style.display=\'none\'">' +
             '<div class="stay-card-overlay"></div>' +
             (s.sponsored
               ? '<div class="stay-badges"><span class="listing-sponsored-badge">' +
@@ -387,10 +429,10 @@ function _stayCard(s) {
         : '') +
       '<div class="listing-card-header">' +
         '<div>' +
-          '<div class="listing-name">' + s.name + '</div>' +
+          '<div class="listing-name">' + name + '</div>' +
           '<div class="listing-meta">' +
-            '<span><i class="fa-solid fa-hotel"></i> ' + (s.type || '') + '</span>' +
-            (s.address ? '<span><i class="fa-solid fa-map-marker-alt"></i> ' + s.address + '</span>' : '') +
+            '<span><i class="fa-solid fa-hotel"></i> ' + type + '</span>' +
+            (address ? '<span><i class="fa-solid fa-map-marker-alt"></i> ' + address + '</span>' : '') +
           '</div>' +
           '<div class="stars">' + stars + '</div>' +
         '</div>' +
@@ -399,7 +441,7 @@ function _stayCard(s) {
         '</div>' +
       '</div>' +
       '<div class="listing-card-body">' +
-        '<p style="font-size:12px;color:var(--light-brown);line-height:1.6;margin-bottom:8px;">' + (s.description || '') + '</p>' +
+        '<p style="font-size:12px;color:var(--light-brown);line-height:1.6;margin-bottom:8px;">' + description + '</p>' +
       '</div>' +
       '<div class="listing-card-footer">' +
         '<a href="tel:' + phone + '" class="btn btn-primary btn-sm" style="flex:1;">' +
@@ -478,13 +520,22 @@ function fetchAndRenderStay() {
         return {
           id:          'stay-' + i,
           name:        String(r['Name']        || ''),
+          name_hi:     String(r['Name_HI'] || r['Name_Hindi'] || ''),
+          name_mr:     String(r['Name_MR'] || r['Name_Marathi'] || ''),
           type:        String(r['Type']        || '').trim(),
+          type_hi:     String(r['Type_HI'] || r['Type_Hindi'] || ''),
+          type_mr:     String(r['Type_MR'] || r['Type_Marathi'] || ''),
           category:    _stayCategoryFromType(r['Type']),
           address:     String(r['Address']     || ''),
+          address_hi:  String(r['Address_HI'] || r['Address_Hindi'] || ''),
+          address_mr:  String(r['Address_MR'] || r['Address_Marathi'] || ''),
           price:       String(r['Price']       || ''),
           phone:       r['Phone'],                 /* kept raw — _stayPhoneStr handles number/string */
           rating:      parseFloat(r['Rating'])  || 3.5,
           description: String(r['Description'] || ''),
+          description_en: String(r['Description_EN'] || r['Description'] || ''),
+          description_hi: String(r['Description_HI'] || r['Description_Hindi'] || ''),
+          description_mr: String(r['Description_MR'] || r['Description_Marathi'] || ''),
           image:       String(r['Image']       || ''),
           sponsored:   (r['Sponsored'] === true || r['Sponsored'] === 'TRUE' || r['Sponsored'] === 'true'),
         };
@@ -650,16 +701,17 @@ function renderHospitals() {
 function renderFirstAid() {
   const container = document.getElementById('first-aid-container');
   if (!container) return;
+  const lang = currentLang || 'en';
   container.innerHTML = FIRST_AID_DATA.map((item, i) => `
     <div class="first-aid-item">
       <div class="first-aid-header" id="fa-header-${i}">
         <i class="fa-solid fa-kit-medical main-icon"></i>
-        <h4>${item.title_en} / ${item.title_hi}</h4>
+        <h4>${item['title_' + lang] || item.title_en}</h4>
         <i class="fa-solid fa-chevron-down toggle"></i>
       </div>
       <div class="first-aid-body" id="fa-body-${i}">
         <ul>
-          ${item.tips_en.map(tip => `<li>${tip}</li>`).join('')}
+          ${(item['tips_' + lang] || item.tips_en).map(tip => `<li>${tip}</li>`).join('')}
         </ul>
       </div>
     </div>
@@ -711,10 +763,18 @@ function renderNews(newsArray) {
   }
   const lang = currentLang;
   container.innerHTML = filtered.map(n => {
-    const headline = n[`headline_${lang}`] || n.headline_en || n.title || '';
-    const short    = n[`short_${lang}`]    || n.short_en || n.description || '';
+    const matchingStatic = NEWS_DATA.find(item => item.headline_en && item.headline_en === n.headline_en);
+    const headline = n[`headline_${lang}`] || (matchingStatic && matchingStatic[`headline_${lang}`]) ||
+      (lang === 'en' ? n.headline_en || n.title || '' : t('translation_unavailable'));
+    const short = n[`short_${lang}`] || (matchingStatic && matchingStatic[`short_${lang}`]) ||
+      (lang === 'en' ? n.short_en || n.description || '' : t('translation_unavailable'));
     const catColors = { announce:'#FF6F00', vip:'#6a1b9a', weather:'#1565c0', traffic:'#e65100' };
-    const catLabels = { announce:'📢 Announcement', vip:'⭐ VIP', weather:'🌧 Weather', traffic:'🚗 Traffic' };
+    const catLabels = {
+      announce: { en: '📢 Announcement', hi: '📢 घोषणा', mr: '📢 घोषणा' },
+      vip: { en: '⭐ VIP', hi: '⭐ विशिष्ट अतिथि', mr: '⭐ मान्यवर' },
+      weather: { en: '🌧 Weather', hi: '🌧 मौसम', mr: '🌧 हवामान' },
+      traffic: { en: '🚗 Traffic', hi: '🚗 यातायात', mr: '🚗 वाहतूक' },
+    };
 
     return `
       <div class="news-card reveal" onclick="toggleNewsCard(this)">
@@ -722,14 +782,14 @@ function renderNews(newsArray) {
         <div class="news-card-image">
           <img src="${n.image}" alt="${headline}" loading="lazy" onerror="this.style.display='none'">
           <span class="news-card-category" style="background:${catColors[n.category]||'#FF6F00'};">
-            ${catLabels[n.category] || n.category}
+            ${(catLabels[n.category] && (catLabels[n.category][lang] || catLabels[n.category].en)) || n.category}
           </span>
         </div>` : ''}
         <div class="news-card-content">
           <div class="news-card-title">${headline}</div>
           <div class="news-card-date"><i class="fa-solid fa-calendar-days"></i> ${n.date || ''}</div>
           <div class="news-card-desc">${short}</div>
-          <div class="news-card-expanded">${n.full_en || short}</div>
+          <div class="news-card-expanded">${n[`full_${lang}`] || short}</div>
           <button class="btn btn-outline btn-sm" style="margin-top:8px;font-size:11px;" onclick="event.stopPropagation();toggleNewsCard(this.closest('.news-card'))">
             <i class="fa-solid fa-chevron-down"></i>
             <span class="read-more-label" data-t="read_more">${t('read_more')}</span>
@@ -764,12 +824,14 @@ function fetchAndRenderNews() {
         id: 'n' + i,
         category: (r['Category'] || 'announce').toLowerCase(),
         headline_en: r['Headline_EN'] || '',
-        headline_hi: r['Headline_HI'] || r['Headline_EN'] || '',
-        headline_mr: r['Headline_MR'] || r['Headline_EN'] || '',
+        headline_hi: r['Headline_HI'] || '',
+        headline_mr: r['Headline_MR'] || '',
         short_en: r['Short_EN'] || '',
-        short_hi: r['Short_HI'] || r['Short_EN'] || '',
-        short_mr: r['Short_MR'] || r['Short_EN'] || '',
+        short_hi: r['Short_HI'] || '',
+        short_mr: r['Short_MR'] || '',
         full_en: r['Short_EN'] || '',
+        full_hi: r['Full_HI'] || r['Short_HI'] || '',
+        full_mr: r['Full_MR'] || r['Short_MR'] || '',
         date: r['Date'] || '',
         image: r['Image'] || ''
       }));
@@ -794,25 +856,73 @@ function initNews() {
 }
 
 /* ===== AKHARAS PAGE ===== */
-function renderAkharas() {
+function renderAkharas(akharaRows) {
   const container = document.getElementById('akharas-container');
   if (!container) return;
-  container.innerHTML = AKHARAS_DATA.map(a => `
-    <div class="akhara-card reveal">
-      <div class="akhara-icon">${a.icon}</div>
-      <div style="flex:1;">
-        <div class="akhara-name">${a.name}</div>
-        <div class="akhara-type">${a.type}</div>
-        <div class="akhara-desc">${a.desc_en}</div>
-        <div class="akhara-location">
-          <i class="fa-solid fa-location-dot"></i> ${a.camp}
-        </div>
-        <div style="font-size:11px;color:var(--light-brown);margin-top:3px;">
-          <i class="fa-solid fa-om"></i> Deity: ${a.deity} &nbsp;|&nbsp; ${a.est}
+  const lang = currentLang || 'en';
+  const source = akharaRows || window._akharaCache || AKHARAS_DATA;
+  container.innerHTML = source.map(row => {
+    const isSheet = Object.prototype.hasOwnProperty.call(row, 'Name');
+    const nameValue = isSheet ? localizedSheetValue(row, 'Name', true) : '';
+    const matchName = nameValue || row.name || row.name_en || '';
+    const fallback = isSheet
+      ? AKHARAS_DATA.find(item => item.name === matchName || item.name_en === matchName || item.name_mr === matchName)
+      : row;
+    const group = isSheet ? '—' : ((row.type || '').match(/\(([^)]+)\)$/) || [null, ''])[1];
+    const types = {
+      'Shaiva': { en: 'Shaiva', hi: 'शैव', mr: 'शैव' },
+      'Shaiva Naga': { en: 'Shaiva Naga', hi: 'शैव — नागा', mr: 'शैव — नागा' },
+      'Sikh': { en: 'Sikh', hi: 'सिख', mr: 'शीख' },
+      'Vaishnava': { en: 'Vaishnava', hi: 'वैष्णव', mr: 'वैष्णव' },
+      'Udaseen': { en: 'Udaseen', hi: 'उदासीन', mr: 'उदासीन' },
+    };
+    const type = isSheet
+      ? localizedSheetValue(row, 'Type', true)
+      : (types[group] && types[group][lang]) || row.type || '';
+    const name = isSheet
+      ? localizedSheetValue(row, 'Name', false) || (fallback && (fallback['name_' + lang] || (lang === 'hi' ? fallback.name : fallback.name_en))) || nameValue || t('translation_unavailable')
+      : (row['name_' + lang] || (lang === 'hi' ? row.name : row.name_en));
+    const description = isSheet
+      ? localizedSheetValue(row, 'Description', false) || (fallback && (fallback['desc_' + lang] || (lang === 'hi' ? fallback.desc_hi : fallback.desc_en))) || t('translation_unavailable')
+      : row['desc_' + lang] || (lang === 'hi' ? row.desc_hi : row.desc_en);
+    const camp = isSheet
+      ? localizedSheetValue(row, 'Location', true)
+      : row['camp_' + lang] || row.camp || '';
+    const deityNames = {
+      'Lord Shiva (Kapila)': { hi: 'भगवान शिव (कपिल)', mr: 'भगवान शिव (कपिल)' },
+      'Lord Dattatreya': { hi: 'भगवान दत्तात्रेय', mr: 'भगवान दत्तात्रेय' },
+      'Lord Kartik': { hi: 'भगवान कार्तिकेय', mr: 'भगवान कार्तिकेय' },
+      'Lord Ganesha': { hi: 'भगवान गणेश', mr: 'भगवान गणेश' },
+      'Guru Granth Sahib': { hi: 'गुरु ग्रंथ साहिब', mr: 'गुरु ग्रंथ साहिब' },
+      'Lord Vishnu': { hi: 'भगवान विष्णु', mr: 'भगवान विष्णू' },
+      'Lord Ram & Shiva': { hi: 'भगवान राम और शिव', mr: 'भगवान राम आणि शिव' },
+    };
+    const deityRaw = isSheet ? localizedSheetValue(row, 'Deity', true) : row.deity;
+    const deity = lang === 'en' ? deityRaw : (deityNames[deityRaw] && deityNames[deityRaw][lang]) || deityRaw;
+    const established = isSheet
+      ? localizedSheetValue(row, 'Founded', true)
+      : row['est_' + lang] || row.est || '';
+    const labels = {
+      en: { camp: 'Camp', deity: 'Deity', established: 'Established' },
+      hi: { camp: 'छावनी', deity: 'आराध्य देवता', established: 'स्थापना' },
+      mr: { camp: 'छावणी', deity: 'आराध्य दैवत', established: 'स्थापना' },
+    }[lang] || { camp: 'Camp', deity: 'Deity', established: 'Established' };
+    const icon = isSheet ? '🕉️' : row.icon;
+    return `
+      <div class="akhara-card reveal">
+        <div class="akhara-icon">${icon}</div>
+        <div style="flex:1;">
+          <div class="akhara-name">${name}</div>
+          <div class="akhara-type">${type}</div>
+          <div class="akhara-desc">${description}</div>
+          <div class="akhara-location"><i class="fa-solid fa-location-dot"></i> ${labels.camp}: ${camp}</div>
+          <div style="font-size:11px;color:var(--light-brown);margin-top:3px;">
+            <i class="fa-solid fa-om"></i> ${labels.deity}: ${deity} &nbsp;|&nbsp; ${labels.established}: ${established}
+          </div>
         </div>
       </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
   if (typeof applyTranslations === 'function') applyTranslations();
 }
 
@@ -823,21 +933,13 @@ function fetchAndRenderAkharas() {
   fetch(GAS_URL + '?sheet=Akharas')
     .then(r => r.json())
     .then(rows => {
-      if (!rows || rows.length === 0) { renderAkharas(); return; }
-      container.innerHTML = rows.map(r => `
-        <div class="akhara-card reveal">
-          ${r['Image'] ? `<img src="${r['Image']}" style="width:56px;height:56px;border-radius:50%;object-fit:cover;flex-shrink:0;" onerror="this.style.display='none'">` : '<div class="akhara-icon">🕉️</div>'}
-          <div style="flex:1;">
-            <div class="akhara-name">${r['Name'] || ''}</div>
-            <div class="akhara-type">${r['Location'] || ''}</div>
-            <div class="akhara-desc">${r['Description'] || ''}</div>
-            ${r['Location'] ? `<div class="akhara-location"><i class="fa-solid fa-location-dot"></i> ${r['Location']}</div>` : ''}
-            ${r['Founded'] ? `<div style="font-size:11px;color:var(--light-brown);margin-top:3px;"><i class="fa-solid fa-calendar"></i> Est: ${r['Founded']}</div>` : ''}
-            ${r['Significance'] ? `<div style="font-size:11px;color:var(--light-brown);line-height:1.5;margin-top:4px;">${r['Significance']}</div>` : ''}
-          </div>
-        </div>
-      `).join('');
-      if (typeof applyTranslations === 'function') applyTranslations();
+      if (!Array.isArray(rows) || rows.length === 0) {
+        window._akharaCache = null;
+        renderAkharas();
+        return;
+      }
+      window._akharaCache = rows;
+      renderAkharas(rows);
     })
     .catch(() => renderAkharas());
 }
@@ -918,11 +1020,11 @@ function renderAbout() {
   }
   fetchAndRenderSponsors();
   const about1 = document.getElementById('about-content-1');
-  if (about1) about1.textContent = ABOUT_CONTENT.what_is_kumbh_en;
+  if (about1) about1.textContent = ABOUT_CONTENT['what_is_kumbh_' + currentLang] || ABOUT_CONTENT.what_is_kumbh_en;
   const about2 = document.getElementById('about-content-2');
-  if (about2) about2.textContent = ABOUT_CONTENT.nashik_special_en;
+  if (about2) about2.textContent = ABOUT_CONTENT['nashik_special_' + currentLang] || ABOUT_CONTENT.nashik_special_en;
   const about3 = document.getElementById('about-content-3');
-  if (about3) about3.textContent = ABOUT_CONTENT.shahi_significance_en;
+  if (about3) about3.textContent = ABOUT_CONTENT['shahi_significance_' + currentLang] || ABOUT_CONTENT.shahi_significance_en;
 }
 
 /* ===== NEWS TICKER ===== */
@@ -959,8 +1061,10 @@ function initLangSwitcher() {
       renderSchedule();
       if (window._scheduleCache && window._scheduleCache.length) renderSheetSchedule(window._scheduleCache);
       renderNews(window._newsCache || NEWS_DATA);
-      renderAkharas();
+      renderAkharas(window._akharaCache || null);
       renderStay(window._stayCache || null);
+      renderFirstAid();
+      renderAbout();
       initTicker();
       // Sync second ticker on news page
       var t2 = document.getElementById('ticker-content-2');

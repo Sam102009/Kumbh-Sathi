@@ -147,6 +147,60 @@ const EVENTS_DATA = [
   },
 ];
 
+/* Localized event detail text used when a live schedule sheet has no translation columns. */
+const EVENT_TRANSLATIONS = {
+  ss1: {
+    en: { tithi: 'Shravan Purnima' },
+    hi: { tithi: 'श्रावण पूर्णिमा', significance: 'पहला शाही स्नान सिंहस्थ कुंभ मेले का शुभारंभ करता है। निरंजनी और आनंद अखाड़े सबसे पहले Ramkund में पवित्र स्नान करते हैं।' },
+    mr: { tithi: 'श्रावण पौर्णिमा', significance: 'पहिले Shahi Snan सिंहस्थ कुंभमेळ्याची सुरुवात करते. निरंजनी आणि आनंद आखाडे Ramkund येथे सर्वप्रथम पवित्र स्नान करतात.' },
+  },
+  ss2: {
+    en: { tithi: 'Bhadrapad Amavasya' },
+    hi: { tithi: 'भाद्रपद अमावस्या', significance: 'भाद्रपद अमावस्या पर सबसे बड़ा अखाड़ा, जूना अखाड़ा, Shahi Snan करता है। Ramkund में लाखों श्रद्धालु एकत्र होते हैं।' },
+    mr: { tithi: 'भाद्रपद अमावस्या', significance: 'भाद्रपद अमावस्येला सर्वात मोठा जूना आखाडा Shahi Snan करतो. Ramkund येथे लाखो भाविक एकत्र येतात.' },
+  },
+  ss3: {
+    en: { tithi: 'Mahalaya Amavasya' },
+    hi: { tithi: 'महालया अमावस्या', significance: 'सिंहस्थ के दौरान यह तीसरा और अंतिम प्रमुख Shahi Snan है। Ramkund में सभी अखाड़े इस भव्य आयोजन में शामिल होते हैं।' },
+    mr: { tithi: 'महालया अमावस्या', significance: 'सिंहस्थमधील हे तिसरे आणि अंतिम प्रमुख Shahi Snan आहे. Ramkund येथील या भव्य सोहळ्यात सर्व आखाडे सहभागी होतात.' },
+  },
+  ev1: {
+    en: { tithi: 'Simhastha Kumbh Opening' },
+    hi: { tithi: 'सिंहस्थ कुंभ उद्घाटन', significance: 'पूजा, अखाड़ों की शोभायात्रा और सांस्कृतिक कार्यक्रमों के साथ भव्य उद्घाटन समारोह होगा। विशिष्ट अतिथि और संत उपस्थित रहेंगे।' },
+    mr: { tithi: 'सिंहस्थ कुंभ उद्घाटन', significance: 'पूजा, आखाड्यांची मिरवणूक आणि सांस्कृतिक कार्यक्रमांसह भव्य उद्घाटन सोहळा होईल. मान्यवर आणि संत उपस्थित राहतील.' },
+  },
+  ev2: {
+    en: { tithi: 'Shravan Panchami' },
+    hi: { tithi: 'श्रावण पंचमी', significance: 'नाशिक की सड़कों से नागा साधुओं, हाथियों, घोड़ों और सजे हुए रथों की भव्य शोभायात्रा निकलेगी।' },
+    mr: { tithi: 'श्रावण पंचमी', significance: 'नाशिकच्या रस्त्यांवरून नागा साधू, हत्ती, घोडे आणि सजवलेल्या रथांची भव्य मिरवणूक निघेल.' },
+  },
+  ev3: {
+    en: { tithi: 'Independence Day' },
+    hi: { tithi: 'स्वतंत्रता दिवस', significance: 'कुंभ क्षेत्र में शास्त्रीय संगीत, लोकनृत्य और देशभक्ति प्रस्तुतियों के साथ स्वतंत्रता दिवस मनाया जाएगा।' },
+    mr: { tithi: 'स्वातंत्र्यदिन', significance: 'कुंभ परिसरात शास्त्रीय संगीत, लोकनृत्य आणि देशभक्तिपर सादरीकरणांसह स्वातंत्र्यदिन साजरा केला जाईल.' },
+  },
+  ev4: {
+    en: { tithi: 'Shravan Shivratri' },
+    hi: { tithi: 'श्रावण शिवरात्रि', significance: 'त्र्यंबकेश्वर मंदिर में 108 पुजारियों द्वारा भव्य रुद्राभिषेक होगा। यह कुंभ की सबसे शुभ रात्रियों में से एक है।' },
+    mr: { tithi: 'श्रावण शिवरात्री', significance: 'त्र्यंबकेश्वर मंदिरात 108 पुजाऱ्यांच्या हस्ते भव्य रुद्राभिषेक होईल. ही कुंभातील सर्वात शुभ रात्रींपैकी एक आहे.' },
+  },
+  ev5: {
+    en: { tithi: 'Bhadrapad Prathama' },
+    hi: { tithi: 'भाद्रपद प्रथमा', significance: 'कुंभ मेले में गणेशोत्सव के शास्त्रीय और लोक प्रस्तुतियों वाले कार्यक्रम होंगे, जिनसे महाराष्ट्र का प्रमुख त्योहार पवित्र क्षेत्र तक पहुँचेगा।' },
+    mr: { tithi: 'भाद्रपद प्रतिपदा', significance: 'कुंभमेळ्यात शास्त्रीय आणि लोककलांच्या सादरीकरणांसह गणेशोत्सव साजरा होईल; महाराष्ट्राचा हा प्रमुख उत्सव पवित्र परिसरात रंगेल.' },
+  },
+  ev6: {
+    en: { tithi: 'Pitru Paksha Begins' },
+    hi: { tithi: 'पितृ पक्ष आरंभ', significance: 'Ramkund में पूर्वजों के लिए पवित्र तर्पण अनुष्ठान होंगे। पितृ पक्ष के कर्मकांडों के लिए नाशिक को विशेष पवित्र माना जाता है।' },
+    mr: { tithi: 'पितृपक्षारंभ', significance: 'Ramkund येथे पूर्वजांसाठी पवित्र तर्पण विधी होतील. पितृपक्षातील विधींसाठी नाशिक अत्यंत पवित्र मानले जाते.' },
+  },
+  ev7: {
+    en: { tithi: 'Vijaya Dashami (Dussehra)' },
+    hi: { tithi: 'विजयादशमी (दशहरा)', significance: 'विजयादशमी पर सिंहस्थ कुंभ मेले का भव्य समापन होगा। अंतिम शाही शोभायात्राओं के बाद औपचारिक विदाई दी जाएगी।' },
+    mr: { tithi: 'विजयादशमी (दसरा)', significance: 'विजयादशमीला सिंहस्थ कुंभमेळ्याचा भव्य समारोप होईल. अंतिम शाही मिरवणुकांनंतर औपचारिक निरोप दिला जाईल.' },
+  },
+};
+
 /* STAY_DATA removed — Stay page now loads live from Google Sheet */
 const _STAY_DATA_REMOVED = true; // placeholder so references fail loudly
 
@@ -317,6 +371,8 @@ const NEWS_DATA = [
     headline_mr: 'नाशिक कुंभ 2027: सरकारने ₹5,000 कोटी पायाभूत सुविधांची घोषणा केली',
     date: '15 Jan 2027',
     short_en: 'Maharashtra government approves a massive ₹5,000 crore infrastructure plan for Nashik and Trimbakeshwar to handle the unprecedented crowd during Simhastha Kumbh 2027.',
+    short_hi: 'महाराष्ट्र सरकार ने सिंहस्थ कुंभ 2027 में आने वाली बड़ी भीड़ के लिए नाशिक और त्र्यंबकेश्वर में ₹5,000 करोड़ की बुनियादी ढाँचा योजना मंज़ूर की है।',
+    short_mr: 'सिंहस्थ कुंभ 2027 मधील मोठ्या गर्दीच्या व्यवस्थेसाठी महाराष्ट्र सरकारने नाशिक आणि त्र्यंबकेश्वरमध्ये ₹5,000 कोटींची पायाभूत सुविधा योजना मंजूर केली आहे.',
     full_en: 'Maharashtra government has approved a massive ₹5,000 crore infrastructure development plan for Nashik and Trimbakeshwar ahead of Simhastha Kumbh Mela 2027. The plan includes construction of 8 new ghats, widening of 45 roads, installation of 10,000 CCTV cameras, 50 new parking zones, and a state-of-the-art crowd monitoring system. Chief Minister confirmed that over 5 crore pilgrims are expected during the 3-month event.',
     image: 'https://picsum.photos/seed/news1/200/130',
   },
@@ -328,6 +384,8 @@ const NEWS_DATA = [
     headline_mr: 'पंतप्रधान नाशिक कुंभ 2027 च्या उद्घाटनाला उपस्थित राहणार',
     date: '28 Feb 2027',
     short_en: 'Prime Minister confirmed to inaugurate the Simhastha Kumbh Mela 2027 at Nashik on August 1st, 2027 along with religious leaders and Chief Minister.',
+    short_hi: 'प्रधानमंत्री 1 अगस्त 2027 को नाशिक में सिंहस्थ कुंभ मेले का उद्घाटन करेंगे। इस अवसर पर धार्मिक नेता और मुख्यमंत्री भी उपस्थित रहेंगे।',
+    short_mr: '1 ऑगस्ट 2027 रोजी नाशिक येथे सिंहस्थ कुंभमेळ्याचे उद्घाटन पंतप्रधान करणार असून धार्मिक नेते आणि मुख्यमंत्री उपस्थित राहतील.',
     full_en: 'The Prime Minister of India has confirmed attendance at the official inauguration of Simhastha Kumbh Mela 2027 at Nashik on August 1st. The event will be attended by the Chief Minister of Maharashtra, Union Ministers, and prominent saints and religious leaders from across India. A grand cultural program featuring artists from all 28 states has been planned. Security arrangements for the VIP visit are being coordinated by NSG and state police.',
     image: 'https://picsum.photos/seed/news2/200/130',
   },
@@ -339,6 +397,8 @@ const NEWS_DATA = [
     headline_mr: 'IMD अंदाज: नाशिक कुंभ काळात सामान्य पाऊस अपेक्षित',
     date: '10 Mar 2027',
     short_en: 'India Meteorological Department forecasts normal monsoon rainfall during the Nashik Kumbh period. Pilgrims advised to carry light rain gear.',
+    short_hi: 'मौसम विभाग ने कुंभ अवधि में सामान्य मानसून वर्षा का अनुमान दिया है। यात्रियों को हल्का वर्षा-सामान साथ रखने की सलाह है।',
+    short_mr: 'कुंभ काळात नेहमीसारखा पाऊस अपेक्षित असल्याचा हवामान विभागाचा अंदाज आहे. भाविकांनी हलकी पावसाळी साधने सोबत ठेवावीत.',
     full_en: 'India Meteorological Department (IMD) has released its forecast indicating normal monsoon rainfall patterns for the Nashik region during the August-September 2027 Kumbh period. Average rainfall of 80-100mm per month is expected. While rainfall during Shahi Snan days may occur, authorities are well-prepared. Pilgrims are advised to carry lightweight rain gear and check weather updates regularly. Emergency shelters are being set up at all major ghat points.',
     image: 'https://picsum.photos/seed/news3/200/130',
   },
@@ -350,6 +410,8 @@ const NEWS_DATA = [
     headline_mr: 'कुंभ काळात नाशिक व त्र्यंबकेश्वर दरम्यान मोफत शटल सेवा',
     date: '5 Apr 2027',
     short_en: 'Maharashtra MSRTC announces free shuttle bus service connecting Nashik and Trimbakeshwar every 15 minutes throughout the Kumbh Mela period.',
+    short_hi: 'महाराष्ट्र MSRTC ने कुंभ मेले के दौरान नाशिक और त्र्यंबकेश्वर के बीच हर 15 मिनट में मुफ्त शटल बस चलाने की घोषणा की है।',
+    short_mr: 'कुंभमेळ्याच्या काळात नाशिक आणि त्र्यंबकेश्वरदरम्यान दर 15 मिनिटांनी मोफत शटल बस चालवण्याची घोषणा महाराष्ट्र MSRTC ने केली आहे.',
     full_en: 'Maharashtra State Road Transport Corporation (MSRTC) has announced a free shuttle bus service connecting Nashik city and Trimbakeshwar throughout the Simhastha Kumbh Mela 2027. Buses will operate every 15 minutes from 4 AM to midnight. Special buses for elderly and differently-abled pilgrims will be available. Over 500 buses have been dedicated for this service. The shuttle will operate from Nashik Bus Stand, Panchavati, Ramkund, and all major akhara camps.',
     image: 'https://picsum.photos/seed/news4/200/130',
   },
@@ -361,6 +423,8 @@ const NEWS_DATA = [
     headline_mr: 'शाही स्नानाच्या दिवसांसाठी नाशिकमध्ये वाहतूक बदल योजना जाहीर',
     date: '20 May 2027',
     short_en: 'Nashik Police releases detailed traffic diversion plan for Shahi Snan days. Private vehicles to be restricted within 5km of Ramkund.',
+    short_hi: 'नाशिक पुलिस ने Shahi Snan के दिनों के लिए यातायात योजना जारी की है। Ramkund के 5 किमी के दायरे में निजी वाहनों पर रोक रहेगी।',
+    short_mr: 'नाशिक पोलिसांनी Shahi Snan दिवसांसाठी वाहतूक योजना जाहीर केली आहे. Ramkund पासून 5 किमी परिसरात खासगी वाहनांना प्रवेश नसेल.',
     full_en: 'Nashik Police has released a detailed traffic management and diversion plan for the three Shahi Snan days during Simhastha Kumbh 2027. Private vehicles will be restricted within a 5km radius of Ramkund Ghat on Shahi Snan days. 45 parking zones have been designated at various points across Nashik. Park-and-walk, park-and-shuttle facilities are available. Out-of-state vehicles arriving via Highway NH3 and NH60 will be directed to designated parking areas.',
     image: 'https://picsum.photos/seed/news5/200/130',
   },
@@ -372,6 +436,8 @@ const NEWS_DATA = [
     headline_mr: 'नाशिक कुंभ 2027 साठी 50,000 सुरक्षा जवान तैनात होणार',
     date: '1 Jun 2027',
     short_en: 'Maharashtra Home Department approves deployment of 50,000 police and security personnel including CRPF companies for Kumbh security.',
+    short_hi: 'महाराष्ट्र गृह विभाग ने कुंभ की सुरक्षा के लिए CRPF सहित 50,000 पुलिस और सुरक्षा कर्मियों की तैनाती मंज़ूर की है।',
+    short_mr: 'कुंभच्या सुरक्षेसाठी CRPF सह 50,000 पोलीस आणि सुरक्षा कर्मचाऱ्यांच्या तैनातीला महाराष्ट्र गृह विभागाने मंजुरी दिली आहे.',
     full_en: 'The Maharashtra Home Department has approved deployment of 50,000 police and security personnel for Simhastha Kumbh Mela 2027. This includes state police, CRPF companies, NSG for VIP protection, fire brigade teams, and 5,000 home guards. AI-powered crowd monitoring systems will be installed at 50 strategic points. Lost and found centers will operate at 10 locations. A dedicated control room will coordinate all emergency responses.',
     image: 'https://picsum.photos/seed/news6/200/130',
   },
@@ -383,6 +449,8 @@ const NEWS_DATA = [
     headline_mr: '12 देशांतील अध्यात्मिक नेते नाशिक कुंभ 2027 ला उपस्थित राहणार',
     date: '15 Jun 2027',
     short_en: 'Spiritual leaders, sadhus, and delegations from 12 countries including USA, UK, Germany, Japan, and Australia to attend Nashik Kumbh.',
+    short_hi: 'USA, UK, Germany, Japan और Australia सहित 12 देशों के आध्यात्मिक नेता, साधु और प्रतिनिधिमंडल नाशिक कुंभ में शामिल होंगे।',
+    short_mr: 'USA, UK, Germany, Japan आणि Australia यांसह 12 देशांतील आध्यात्मिक नेते, साधू आणि प्रतिनिधी नाशिक कुंभात सहभागी होतील.',
     full_en: 'The Ministry of External Affairs has confirmed participation of spiritual leaders and cultural delegations from 12 countries at Simhastha Kumbh Mela Nashik 2027. Delegations from USA, UK, Germany, France, Japan, Australia, Singapore, South Africa, Brazil, Canada, Nepal, and Sri Lanka will be present. Special arrangements for international pilgrims including translation services, international food options, and dedicated accommodation zones are being prepared.',
     image: 'https://picsum.photos/seed/news7/200/130',
   },
@@ -394,6 +462,8 @@ const NEWS_DATA = [
     headline_mr: 'कुंभसाथी ऐप लॉन्च: नाशिक कुंभ भाविकांसाठी डिजिटल मार्गदर्शक',
     date: '1 Jul 2027',
     short_en: 'Official KumbhSathi mobile app launched to help pilgrims navigate Nashik Kumbh 2027 with maps, schedules, emergency contacts, and lost & found services.',
+    short_hi: 'यात्रियों की मदद के लिए KumbhSathi ऐप शुरू हुआ है। इसमें नक्शे, कार्यक्रम, आपातकालीन संपर्क और खोया-पाया सुविधा उपलब्ध हैं।',
+    short_mr: 'भाविकांसाठी नकाशे, वेळापत्रक, आपत्कालीन संपर्क आणि हरवले-सापडले सेवा देणारे KumbhSathi अॅप सुरू झाले आहे.',
     full_en: 'The KumbhSathi mobile application has been officially launched as the comprehensive digital companion for pilgrims attending Simhastha Kumbh Mela Nashik 2027. The app features interactive maps with OpenStreetMap, complete event schedules, accommodation listings, transport guides, emergency helplines, and a lost & found reporting system. Available in English, Hindi, and Marathi. The app works offline and is available as a Progressive Web App installable on any smartphone.',
     image: 'https://picsum.photos/seed/news8/200/130',
   },
@@ -405,11 +475,13 @@ const AKHARAS_DATA = [
     id: 'ak1',
     name: 'श्री पंचायती अखाड़ा महानिर्वाणी',
     name_en: 'Mahanirvani Akhara',
+    name_mr: 'श्री पंचायती महानिर्वाणी आखाडा',
     type: 'शैव (Shaiva)',
     camp: 'Panchavati Camp Ground, Nashik',
     deity: 'Lord Shiva (Kapila)',
     est: 'Est. 8th century CE',
     desc_hi: 'यह सबसे प्राचीन और सम्मानित अखाड़ों में से एक है। इसकी स्थापना आदि गुरु शंकराचार्य ने की थी। महानिर्वाणी अखाड़ा शाही स्नान में प्रथम स्थान प्राप्त करने वाला अखाड़ा है।',
+    desc_mr: 'हा सर्वात प्राचीन आणि मान्यवर शैव आखाड्यांपैकी एक आहे. आदि गुरु शंकराचार्यांनी त्याची स्थापना केली. Shahi Snan मिरवणुकीत महानिर्वाणी आखाड्याला प्रथम स्थान आहे.',
     desc_en: 'One of the oldest and most revered Shaiva akharas, founded by Adi Guru Shankaracharya. Mahanirvani Akhara holds the first position in the Shahi Snan procession.',
     icon: '🕉️',
   },
@@ -417,11 +489,13 @@ const AKHARAS_DATA = [
     id: 'ak2',
     name: 'श्री पंचदशनाम जूना अखाड़ा',
     name_en: 'Juna Akhara',
+    name_mr: 'श्री पंचदशनाम जुना आखाडा',
     type: 'शैव — नागा (Shaiva Naga)',
     camp: 'Godavari Camp Area, Nashik',
     deity: 'Lord Dattatreya',
     est: 'Est. 13th century CE',
     desc_hi: 'जूना अखाड़ा सबसे बड़ा और सबसे प्रसिद्ध अखाड़ा है। इसमें 5 लाख से अधिक साधु सदस्य हैं। नागा साधुओं की अनूठी परंपराओं के लिए जाना जाता है।',
+    desc_mr: 'जुना आखाडा हा सर्वात मोठा आणि प्रसिद्ध आखाडा असून त्यात 5 लाखांहून अधिक साधू सदस्य आहेत. नागा साधूंच्या अनोख्या परंपरांसाठी तो ओळखला जातो.',
     desc_en: 'Juna Akhara is the largest akhara with over 5 lakh member sadhus. Famous for its Naga Sadhus and unique spiritual traditions. Also known as Bhairav Akhara.',
     icon: '🔱',
   },
@@ -429,11 +503,13 @@ const AKHARAS_DATA = [
     id: 'ak3',
     name: 'श्री पंचायती अखाड़ा निरंजनी',
     name_en: 'Niranjani Akhara',
+    name_mr: 'श्री पंचायती निरंजनी आखाडा',
     type: 'शैव (Shaiva)',
     camp: 'Ramkund Camp, Nashik',
     deity: 'Lord Kartik',
     est: 'Est. 904 CE',
     desc_hi: 'निरंजनी अखाड़ा शाही स्नान में दूसरे स्थान पर है। इसकी स्थापना 904 CE में हुई। यह अखाड़ा सात प्रमुख शैव अखाड़ों में से एक है।',
+    desc_mr: 'Shahi Snan मिरवणुकीत निरंजनी आखाड्याला दुसरे स्थान आहे. त्याची स्थापना इ.स. 904 मध्ये झाली. हा सात प्रमुख शैव आखाड्यांपैकी एक आहे.',
     desc_en: 'Niranjani Akhara holds the second position in Shahi Snan. Founded in 904 CE, it is one of the seven major Shaiva akharas and is known for its scholarly traditions.',
     icon: '☀️',
   },
@@ -441,11 +517,13 @@ const AKHARAS_DATA = [
     id: 'ak4',
     name: 'श्री पंचायती अटल अखाड़ा',
     name_en: 'Atal Akhara',
+    name_mr: 'श्री पंचायती अटल आखाडा',
     type: 'शैव (Shaiva)',
     camp: 'Trimbakeshwar Camp',
     deity: 'Lord Ganesha',
     est: 'Est. 569 CE',
     desc_hi: 'अटल अखाड़ा सबसे छोटे पंच अखाड़ों में से एक है। लेकिन इसकी परंपराएं बेहद प्राचीन हैं। भगवान गणेश इस अखाड़े के इष्ट देव हैं।',
+    desc_mr: 'अटल आखाडा पंच आखाड्यांपैकी आकाराने लहान असला, तरी त्याची परंपरा प्राचीन आहे. भगवान गणेश हे या आखाड्याचे आराध्य दैवत आहेत.',
     desc_en: 'Atal Akhara, though one of the smaller akharas, has ancient traditions dating back to 569 CE. Lord Ganesha is the presiding deity. Known for its Vedic scholarship.',
     icon: '🐘',
   },
@@ -453,11 +531,13 @@ const AKHARAS_DATA = [
     id: 'ak5',
     name: 'श्री निर्मल पंचायती अखाड़ा',
     name_en: 'Nirmal Akhara',
+    name_mr: 'श्री निर्मल पंचायती आखाडा',
     type: 'सिख (Sikh)',
     camp: 'Nashik Camp Zone B',
     deity: 'Guru Granth Sahib',
     est: 'Est. 1784 CE',
     desc_hi: 'निर्मल अखाड़ा सिख परंपरा का प्रतिनिधित्व करता है। इसकी स्थापना 1784 CE में दसवें गुरु की आज्ञा से हुई। यह कुंभ में सिख-हिंदू एकता का प्रतीक है।',
+    desc_mr: 'निर्मल आखाडा कुंभात शीख परंपरेचे प्रतिनिधित्व करतो. दहाव्या गुरूंच्या आज्ञेने त्याची स्थापना इ.स. 1784 मध्ये झाली. तो शीख-हिंदू एकतेचे प्रतीक आहे.',
     desc_en: 'Nirmal Akhara represents the Sikh tradition at Kumbh, founded in 1784 CE. It is a symbol of Sikh-Hindu unity and participates in all Kumbh rituals alongside Shaiva and Vaishnava akharas.',
     icon: '✡️',
   },
@@ -465,11 +545,13 @@ const AKHARAS_DATA = [
     id: 'ak6',
     name: 'श्री वैष्णव दिगंबर अखाड़ा',
     name_en: 'Digambar Akhara (Vaishnava)',
+    name_mr: 'श्री वैष्णव दिगंबर आखाडा',
     type: 'वैष्णव (Vaishnava)',
     camp: 'Godavari Bank Camp, Nashik',
     deity: 'Lord Vishnu',
     est: 'Est. Ancient',
     desc_hi: 'दिगंबर अखाड़ा वैष्णव संप्रदाय का प्रमुख अखाड़ा है। भगवान विष्णु के भक्त साधुओं का यह संगम भारत की अद्वितीय धार्मिक परंपराओं को जीवंत रखता है।',
+    desc_mr: 'दिगंबर आखाडा हा वैष्णव संप्रदायातील प्रमुख आखाडा असून भगवान विष्णूचे भक्त साधू येथे सहभागी होतात. तो भारताच्या अद्वितीय धार्मिक परंपरा जिवंत ठेवतो.',
     desc_en: 'Digambar Akhara is a prominent Vaishnava akhara devoted to Lord Vishnu. Represents the Vaishnava sampradaya tradition and participates in Vaishnava Shahi Snan at Ramkund.',
     icon: '🌺',
   },
@@ -477,11 +559,13 @@ const AKHARAS_DATA = [
     id: 'ak7',
     name: 'श्री पंचायती उदासीन अखाड़ा (बड़ा)',
     name_en: 'Bada Udaseen Akhara',
+    name_mr: 'श्री पंचायती उदासीन आखाडा (मोठा)',
     type: 'उदासीन (Udaseen)',
     camp: 'Nashik Camp Zone C',
     deity: 'Lord Ram & Shiva',
     est: 'Est. 17th century',
     desc_hi: 'उदासीन संप्रदाय की स्थापना श्री चंद्र जी महाराज ने की थी। यह अखाड़ा गुरु नानक के पुत्र श्री चंद्र की परंपरा को आगे बढ़ाता है।',
+    desc_mr: 'उदासीन संप्रदायाची स्थापना श्री चंद्रजी महाराजांनी केली. हा आखाडा गुरू नानकांचे पुत्र श्री चंद्र यांची परंपरा पुढे चालवतो.',
     desc_en: 'Founded in the Udaseen tradition by Sri Chandra Ji Maharaj, son of Guru Nanak. This akhara bridges Sikh and Hindu traditions and participates actively in Kumbh Mela.',
     icon: '🕊️',
   },
@@ -614,7 +698,7 @@ const HOSPITALS_DATA = [
   { name: 'Wockhardt Hospital', addr: 'Gangapur Rd, Nashik', phone: '0253-6604444', emergency: true },
   { name: 'Trimbak General Hospital', addr: 'Main Rd, Trimbakeshwar', phone: '02594-233244', emergency: true },
   { name: 'Nashik Civil Trauma Centre', addr: 'Nashik Road', phone: '0253-2464000', emergency: true },
-  { name: 'Kumbh Medical Camp', addr: 'Ramkund Camp, Nashik', phone: '1800-XXX-XXXX (Toll Free)', emergency: true },
+  { name: 'Nashik District Disaster Management', addr: 'Nashik District', phone: '1077', emergency: true },
 ];
 
 /* ===== FIRST AID TIPS ===== */
@@ -622,6 +706,7 @@ const FIRST_AID_DATA = [
   {
     title_en: 'Heat Stroke & Dehydration',
     title_hi: 'लू और निर्जलीकरण',
+    title_mr: 'उष्माघात आणि निर्जलीकरण',
     tips_en: [
       'Move the person to shade immediately',
       'Give ORS / cold water to drink slowly',
@@ -629,10 +714,25 @@ const FIRST_AID_DATA = [
       'Fan the person to cool down body',
       'Seek medical help if unconscious',
     ],
+    tips_hi: [
+      'व्यक्ति को तुरंत छाया में ले जाएँ',
+      'ORS या ठंडा पानी धीरे-धीरे पिलाएँ',
+      'सिर और गर्दन पर गीला कपड़ा रखें',
+      'शरीर को ठंडा करने के लिए हवा करें',
+      'बेहोशी की स्थिति में तुरंत चिकित्सा सहायता लें',
+    ],
+    tips_mr: [
+      'व्यक्तीला त्वरित सावलीत न्या',
+      'ORS किंवा थंड पाणी हळूहळू पिण्यास द्या',
+      'डोके आणि मानेवर ओले कापड ठेवा',
+      'शरीर थंड करण्यासाठी हवा घाला',
+      'बेशुद्ध असल्यास त्वरित वैद्यकीय मदत घ्या',
+    ],
   },
   {
     title_en: 'Crowd Crush / Stampede',
     title_hi: 'भीड़ में दबना',
+    title_mr: 'गर्दीत चेंगराचेंगरी',
     tips_en: [
       'Don\'t panic — move with the crowd flow',
       'Keep arms bent at elbow to protect chest',
@@ -640,21 +740,51 @@ const FIRST_AID_DATA = [
       'Call out loudly for help',
       'Move to sides, not against the crowd',
     ],
+    tips_hi: [
+      'घबराएँ नहीं — भीड़ के बहाव के साथ चलें',
+      'छाती की रक्षा के लिए कोहनियाँ मोड़कर रखें',
+      'गिर जाएँ तो सिकुड़कर सिर की रक्षा करें',
+      'मदद के लिए ज़ोर से आवाज़ दें',
+      'भीड़ के विरुद्ध नहीं, किनारों की ओर जाएँ',
+    ],
+    tips_mr: [
+      'घाबरू नका — गर्दीच्या प्रवाहासोबत चला',
+      'छातीचे संरक्षण करण्यासाठी कोपरे वाकवून ठेवा',
+      'पडल्यास शरीर आकसून डोक्याचे संरक्षण करा',
+      'मदतीसाठी मोठ्याने हाका मारा',
+      'गर्दीच्या विरुद्ध न जाता बाजूला सरका',
+    ],
   },
   {
     title_en: 'Getting Lost at Kumbh',
     title_hi: 'भीड़ में खो जाने पर',
+    title_mr: 'कुंभमेळ्यात हरवल्यास',
     tips_en: [
-      'Call Kumbh Control Room: 1800-XXX-XXXX',
+      'Call emergency services on 112',
       'Go to nearest Police Booth',
       'Stay at a landmark — don\'t wander',
       'Use the KumbhSathi Lost & Found feature',
       'Share your location with family',
     ],
+    tips_hi: [
+      '112 पर आपातकालीन सहायता के लिए कॉल करें',
+      'नज़दीकी पुलिस बूथ पर जाएँ',
+      'किसी पहचान योग्य स्थान पर रुकें — भटकें नहीं',
+      'KumbhSathi के खोया-पाया फ़ीचर का उपयोग करें',
+      'परिवार के साथ अपनी लोकेशन साझा करें',
+    ],
+    tips_mr: [
+      'आपत्कालीन मदतीसाठी 112 वर कॉल करा',
+      'जवळच्या पोलीस चौकीत जा',
+      'ओळखण्याजोग्या ठिकाणी थांबा — भटकू नका',
+      'KumbhSathi मधील हरवले-सापडले सुविधा वापरा',
+      'कुटुंबासोबत तुमचे स्थान शेअर करा',
+    ],
   },
   {
     title_en: 'Snake Bite',
     title_hi: 'सर्पदंश',
+    title_mr: 'सर्पदंश',
     tips_en: [
       'Keep the bitten area still and below heart level',
       'Do NOT suck, cut, or apply tourniquet',
@@ -662,16 +792,45 @@ const FIRST_AID_DATA = [
       'Note time of bite and snake appearance',
       'Rush to nearest hospital immediately — call 108',
     ],
+    tips_hi: [
+      'काटे हुए हिस्से को स्थिर और हृदय से नीचे रखें',
+      'ज़हर चूसें नहीं, काटें नहीं और कसकर न बाँधें',
+      'काटे के पास के गहने या तंग कपड़े हटा दें',
+      'काटने का समय और साँप का रूप याद रखें',
+      'तुरंत नज़दीकी अस्पताल जाएँ — 108 पर कॉल करें',
+    ],
+    tips_mr: [
+      'दंश झालेला भाग स्थिर आणि हृदयापेक्षा खाली ठेवा',
+      'विष चोखू नका, जखम कापू नका किंवा घट्ट बांधू नका',
+      'दंशाजवळील दागिने किंवा घट्ट कपडे काढा',
+      'दंशाची वेळ आणि सापाचे स्वरूप लक्षात ठेवा',
+      'त्वरित जवळच्या रुग्णालयात जा — 108 वर कॉल करा',
+    ],
   },
   {
     title_en: 'Drowning / Water Accident',
     title_hi: 'डूबने की स्थिति में',
+    title_mr: 'बुडणे / पाण्यातील अपघात',
     tips_en: [
-      'Call 100 or 108 immediately',
+      'Call 112 or 108 immediately',
       'Don\'t jump into water if untrained',
       'Throw a rope or floating object',
       'Once out, lay person on side to drain water',
       'Begin CPR if not breathing — call 108',
+    ],
+    tips_hi: [
+      'तुरंत 112 या 108 पर कॉल करें',
+      'प्रशिक्षित न हों तो पानी में न कूदें',
+      'रस्सी या तैरने वाली वस्तु फेंकें',
+      'बाहर निकालने के बाद व्यक्ति को करवट पर लिटाएँ',
+      'साँस न चल रही हो तो CPR शुरू करें — 108 पर कॉल करें',
+    ],
+    tips_mr: [
+      'त्वरित 112 किंवा 108 वर कॉल करा',
+      'प्रशिक्षित नसल्यास पाण्यात उडी मारू नका',
+      'दोरी किंवा तरंगणारी वस्तू फेका',
+      'पाण्याबाहेर काढल्यावर व्यक्तीला कुशीवर झोपवा',
+      'श्वास सुरू नसल्यास CPR सुरू करा — 108 वर कॉल करा',
     ],
   },
 ];
@@ -729,7 +888,7 @@ const TICKER_ITEMS = {
     '🕉️ Free shuttle service between Nashik and Trimbakeshwar',
     '📢 Register for free accommodation at government dharamshalas',
     '⚠️ Carry identity proof for entry to restricted zones',
-    '🚑 Emergency helpline: 108 | Police: 100 | Control Room: 1800-XXX-XXXX',
+    '🚑 Emergency / Police: 112 | Ambulance: 108 | Nashik District Disaster Management: 1077',
     '🙏 Kumbh Mela Nashik 2027 — Jai Jai Gange!',
   ],
   hi: [
@@ -737,7 +896,7 @@ const TICKER_ITEMS = {
     '🕉️ नाशिक-त्र्यंबकेश्वर के बीच मुफ्त शटल सेवा',
     '📢 सरकारी धर्मशाला में मुफ्त ठहरने के लिए पंजीकरण करें',
     '⚠️ प्रतिबंधित क्षेत्रों में प्रवेश के लिए पहचान पत्र साथ रखें',
-    '🚑 आपातकालीन हेल्पलाइन: 108 | पुलिस: 100 | नियंत्रण कक्ष: 1800-XXX-XXXX',
+    '🚑 आपातकालीन / पुलिस: 112 | एम्बुलेंस: 108 | नाशिक जिला आपदा प्रबंधन: 1077',
     '🙏 कुंभ मेला नाशिक 2027 — जय जय गंगे!',
   ],
   mr: [
@@ -745,7 +904,7 @@ const TICKER_ITEMS = {
     '🕉️ नाशिक-त्र्यंबकेश्वर दरम्यान मोफत शटल सेवा',
     '📢 सरकारी धर्मशाळेत मोफत राहण्यासाठी नोंदणी करा',
     '⚠️ प्रतिबंधित क्षेत्रात प्रवेशासाठी ओळखपत्र सोबत ठेवा',
-    '🚑 आणीबाणी हेल्पलाइन: 108 | पोलिस: 100 | नियंत्रण कक्ष: 1800-XXX-XXXX',
+    '🚑 आपत्कालीन / पोलीस: 112 | रुग्णवाहिका: 108 | नाशिक जिल्हा आपत्ती व्यवस्थापन: 1077',
     '🙏 कुंभ मेळा नाशिक 2027 — जय जय गंगे!',
   ],
 };
@@ -757,18 +916,48 @@ const ABOUT_CONTENT = {
 The name "Kumbh" refers to the holy pitcher (kumbh/kalash) of nectar (amrit) that emerged during the churning of the cosmic ocean (Samudra Manthan). Drops of this nectar are believed to have fallen at these four locations, making them eternally sacred.
 
 The origins of Kumbh Mela trace back thousands of years to the Vedic and Puranic traditions. It is mentioned in the Rig Veda and various Puranas. The current systematic form of Kumbh Mela is believed to have been organized by Adi Shankaracharya in the 8th century CE.`,
+  what_is_kumbh_hi: `कुंभ मेला विश्व के सबसे बड़े धार्मिक समागमों में से एक है, जिसमें देश-दुनिया से करोड़ों श्रद्धालु आते हैं। यह भारत के चार पवित्र स्थलों — प्रयागराज, हरिद्वार, नाशिक और उज्जैन — में बृहस्पति, सूर्य और चंद्रमा की ज्योतिषीय स्थिति के अनुसार आयोजित होता है।
+
+“कुंभ” अमृत से भरे उस पवित्र कलश को कहते हैं, जो समुद्र मंथन से निकला था। मान्यता है कि अमृत की बूंदें इन चार स्थानों पर गिरीं और इन्हें पवित्र बनाया।
+
+कुंभ मेले की परंपरा वैदिक और पुराणिक काल से जुड़ी है। वर्तमान स्वरूप को 8वीं शताब्दी में आदि शंकराचार्य द्वारा व्यवस्थित किए जाने की मान्यता है।`,
+  what_is_kumbh_mr: `कुंभमेळा हा जगातील सर्वात मोठ्या धार्मिक संमेलनांपैकी एक असून देश-विदेशातून कोट्यवधी भाविक येथे येतात. बृहस्पती, सूर्य आणि चंद्र यांच्या ज्योतिषीय स्थितीनुसार भारतातील प्रयागराज, हरिद्वार, नाशिक आणि उज्जैन या चार पवित्र ठिकाणी तो भरतो.
+
+“कुंभ” म्हणजे समुद्रमंथनातून प्रकट झालेल्या अमृताचा पवित्र कलश. अमृताचे थेंब या चार ठिकाणी पडले आणि त्यामुळे ती पवित्र झाली, अशी श्रद्धा आहे.
+
+कुंभमेळ्याची परंपरा वैदिक आणि पुराणिक काळापर्यंत जाते. आठव्या शतकात आदि शंकराचार्यांनी त्याला सध्याचे संघटित स्वरूप दिले, अशी मान्यता आहे.`,
 
   nashik_special_en: `Nashik, situated on the banks of the sacred Godavari river in Maharashtra, is one of the four Kumbh Mela sites. The Nashik Kumbh is also known as "Simhastha" and occurs when Jupiter is in Leo (Simha) and the Sun is in Aries (Mesh).
 
 Trimbakeshwar, located 28km from Nashik, is the source of the Godavari river and home to one of the 12 sacred Jyotirlingas (divine light manifestations of Lord Shiva). The Shahi Snan at Nashik's Ramkund and Trimbakeshwar's Kushavart Kund are considered among the most purifying acts in Hindu religious tradition.
 
 Nashik is also deeply connected to the Ramayana — it is the place where Lord Rama, Sita, and Lakshmana spent significant years of their 14-year exile at Panchavati. The sacred banyan trees at Panchavati still stand.`,
+  nashik_special_hi: `महाराष्ट्र में पवित्र गोदावरी नदी के किनारे बसा नाशिक, कुंभ मेले के चार स्थलों में से एक है। इसे सिंहस्थ भी कहते हैं; यह तब आयोजित होता है जब बृहस्पति सिंह राशि में और सूर्य मेष राशि में होता है।
+
+नाशिक से 28 किमी दूर त्र्यंबकेश्वर गोदावरी का उद्गम स्थल और भगवान शिव के 12 पवित्र ज्योतिर्लिंगों में से एक का स्थान है। नाशिक के Ramkund और त्र्यंबकेश्वर के Kushavart Kund में Shahi Snan को अत्यंत पवित्र माना जाता है।
+
+नाशिक का रामायण से भी गहरा संबंध है। मान्यता है कि भगवान राम, सीता और लक्ष्मण ने अपने 14 वर्ष के वनवास का महत्वपूर्ण समय पंचवटी में बिताया था।`,
+  nashik_special_mr: `महाराष्ट्रातील पवित्र गोदावरी नदीकाठी वसलेले नाशिक हे कुंभमेळ्याच्या चार स्थानांपैकी एक आहे. याला सिंहस्थ असेही म्हणतात. बृहस्पती सिंह राशीत आणि सूर्य मेष राशीत असताना हा मेळा भरतो.
+
+नाशिकपासून 28 किमीवरील त्र्यंबकेश्वर हे गोदावरीचे उगमस्थान आणि भगवान शिवाच्या 12 पवित्र ज्योतिर्लिंगांपैकी एकाचे स्थान आहे. नाशिकच्या Ramkund आणि त्र्यंबकेश्वरच्या Kushavart Kund येथील Shahi Snan अत्यंत पवित्र मानले जाते.
+
+नाशिकचा रामायणाशीही जवळचा संबंध आहे. भगवान राम, सीता आणि लक्ष्मण यांनी 14 वर्षांच्या वनवासातील महत्त्वाचा काळ पंचवटीत घालवला, अशी श्रद्धा आहे.`,
 
   shahi_significance_en: `The "Shahi Snan" (Royal Bath) is the most sacred and spectacular event of the Kumbh Mela. The word "Shahi" means royal, and these bathing processions involve elaborate, grand processions of akharas (monastic orders) with their saints, elephants, horses, and decorated chariots.
 
 The timing of each Shahi Snan is determined by precise astronomical calculations based on the positions of the sun, moon, and Jupiter. Bathing at these specific times is believed to purify the soul of all sins accumulated over multiple lifetimes and to grant moksha (liberation from the cycle of rebirth).
 
 The sequence of akharas in the Shahi Snan procession follows a strict historical order determined centuries ago. Witnessing or participating in the Shahi Snan is considered among the highest religious privileges in Hindu tradition.`,
+  shahi_significance_hi: `Shahi Snan कुंभ मेले का सबसे पवित्र और भव्य आयोजन है। इसमें अखाड़ों के साधु-संत शोभायात्रा के साथ स्नान के लिए आते हैं; जुलूस में हाथी, घोड़े और सजे हुए रथ भी शामिल हो सकते हैं।
+
+हर Shahi Snan का समय सूर्य, चंद्रमा और बृहस्पति की स्थिति के आधार पर तय किया जाता है। इस शुभ समय में स्नान को पापों से मुक्ति और मोक्ष की प्राप्ति से जोड़ा जाता है।
+
+जुलूस में अखाड़ों का क्रम सदियों पुरानी परंपरा के अनुसार तय होता है। Shahi Snan को देखना या उसमें भाग लेना बड़ा धार्मिक सौभाग्य माना जाता है।`,
+  shahi_significance_mr: `Shahi Snan हा कुंभमेळ्यातील सर्वात पवित्र आणि भव्य सोहळा आहे. आखाड्यांचे साधू-संत मिरवणुकीने स्नानासाठी येतात; मिरवणुकीत हत्ती, घोडे आणि सजवलेले रथही असू शकतात.
+
+प्रत्येक Shahi Snan ची वेळ सूर्य, चंद्र आणि बृहस्पती यांच्या स्थितीनुसार ठरवली जाते. या शुभ वेळी स्नान केल्याने पापांपासून मुक्ती आणि मोक्ष मिळतो, अशी श्रद्धा आहे.
+
+मिरवणुकीतील आखाड्यांचा क्रम शतकांपासून चालत आलेल्या परंपरेनुसार ठरतो. Shahi Snan पाहणे किंवा त्यात सहभागी होणे हा मोठा धार्मिक सन्मान मानला जातो.`,
 };
 
 /* ===== GALLERY IMAGES ===== */
