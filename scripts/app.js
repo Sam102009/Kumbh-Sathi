@@ -47,6 +47,9 @@ function parseSheetTime(val) {
     return h12 + ':' + String(m).padStart(2, '0') + ' ' + ampm;
   }
   if (typeof val === 'string') {
+    if (val.trim().toLowerCase() === 'all day') {
+      return ({ en: 'All Day', hi: 'पूरा दिन', mr: 'संपूर्ण दिवस' })[currentLang] || 'All Day';
+    }
     const anyIsoMatch = val.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
     if (anyIsoMatch) {
       const d = new Date(val);
@@ -189,6 +192,10 @@ function localizedSheetValue(row, field, allowSourceValue) {
   return String(value || '').trim();
 }
 
+function normalizeScheduleEventTitle(value) {
+  return String(value || '').normalize('NFKC').trim().toLowerCase().replace(/\s+/g, ' ');
+}
+
 function renderSheetSchedule(rows) {
   const container = document.getElementById('events-container');
   if (!container) return;
@@ -222,11 +229,18 @@ function renderSheetSchedule(rows) {
     const fallbackLocalized = fallbackEvent && EVENT_TRANSLATIONS[fallbackEvent.id] && EVENT_TRANSLATIONS[fallbackEvent.id][currentLang];
     const sheetEvent = localizedSheetValue(r, 'Event', true);
     const sheetDescription = localizedSheetValue(r, 'Description', false);
+    const sheetTranslation = SHEET_SCHEDULE_TRANSLATIONS[normalizeScheduleEventTitle(sheetEvent)];
+    const localizedSheetTranslation = sheetTranslation && sheetTranslation[currentLang];
     const eventTitle = currentLang === 'en' ? sheetEvent :
-      localizedSheetValue(r, 'Event', false) || (fallbackEvent && fallbackEvent['title_' + currentLang]) || t('translation_unavailable');
+      localizedSheetValue(r, 'Event', false) ||
+      (localizedSheetTranslation && localizedSheetTranslation.title) ||
+      (fallbackEvent && fallbackEvent['title_' + currentLang]) ||
+      t('translation_unavailable');
     const eventDescription = sheetDescription ||
       (currentLang === 'en' ? (r['Description'] || (fallbackEvent && fallbackEvent.significance_en) || '') :
-        (fallbackLocalized && fallbackLocalized.significance) || t('translation_unavailable'));
+        (localizedSheetTranslation && localizedSheetTranslation.description) ||
+        (fallbackLocalized && fallbackLocalized.significance) ||
+        t('translation_unavailable'));
     const location = localizedSheetValue(r, 'Location', true);
     return `
       <div class="event-card ${typeClass} reveal">
