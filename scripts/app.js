@@ -101,6 +101,12 @@ function getSheetYear(dateStr) {
   return parts ? parts.year : '';
 }
 
+function getSheetIsoDate(dateStr) {
+  const parts = parseSheetDateParts(dateStr);
+  if (!parts || !Number.isInteger(parts.year) || !Number.isInteger(parts.month) || !Number.isInteger(parts.day)) return '';
+  return `${parts.year}-${String(parts.month).padStart(2, '0')}-${String(parts.day).padStart(2, '0')}`;
+}
+
 function renderSchedule() {
   const container = document.getElementById('events-container');
   if (!container) return;
@@ -208,7 +214,7 @@ function renderSheetSchedule(rows) {
     };
     const typeLabel = typeLabels[cat][currentLang] || typeLabels[cat].en;
     const dateStr = String(r['Date'] || '');
-    const eventDate = dateStr.split('T')[0];
+    const eventDate = getSheetIsoDate(dateStr);
     const fallbackEvent = EVENTS_DATA.find(ev => ev.date === eventDate);
     const dayNum = getSheetDay(dateStr);
     const yearNum = getSheetYear(dateStr) || '2027';
@@ -260,7 +266,8 @@ function renderSheetSchedule(rows) {
 }
 
 function makeSheetCalendarUrl(r) {
-  const dateStr = String(r['Date'] || '').split('T')[0].replace(/-/g, '');
+  const normalizedDate = getSheetIsoDate(r['Date']) || String(r['Date'] || '').split('T')[0];
+  const dateStr = normalizedDate.replace(/-/g, '');
   const year    = getSheetYear(r['Date']) || '2027';
   const title   = encodeURIComponent((localizedSheetValue(r, 'Event', true) || '') + ' — Kumbh Nashik ' + year);
   const details = encodeURIComponent(localizedSheetValue(r, 'Description', true));
