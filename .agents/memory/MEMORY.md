@@ -1,0 +1,1 @@
+- [GitHub push access](github-push-access.md) — an account-level connection is not proof the project shell can authenticate git pushes.
