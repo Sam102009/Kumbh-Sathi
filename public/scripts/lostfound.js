@@ -6,6 +6,7 @@
 var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwdyCiH2W3q7bGoRMjSl2U3grEuNWSDgg3p-oEqrxpVabbizuVh7V0Qa9XpxLJfhlicWg/exec';
 
 var activeReportType = 'lost';
+window._lostFoundCache = null;
 
 /* ---------- helpers ---------- */
 
@@ -13,7 +14,7 @@ function _lfShowSpinner(container) {
   container.innerHTML =
     '<div class="empty-state">' +
     '<i class="fa-solid fa-spinner fa-spin" style="font-size:28px;color:var(--saffron);"></i>' +
-    '<p style="margin-top:10px;">Loading reports…</p>' +
+    '<p style="margin-top:10px;">' + t('lf_loading_reports') + '</p>' +
     '</div>';
 }
 
@@ -21,7 +22,7 @@ function _lfShowError(container) {
   container.innerHTML =
     '<div class="empty-state" style="color:#b71c1c;">' +
     '<i class="fa-solid fa-triangle-exclamation" style="font-size:28px;"></i>' +
-    '<p style="margin-top:10px;">Could not connect. Please try again.</p>' +
+    '<p style="margin-top:10px;">' + t('lf_error_connect') + '</p>' +
     '</div>';
 }
 
@@ -29,37 +30,40 @@ function _lfShowEmpty(container) {
   container.innerHTML =
     '<div class="empty-state">' +
     '<i class="fa-solid fa-magnifying-glass"></i>' +
-    '<p>No reports yet. Be the first to submit one.</p>' +
+    '<p>' + t('lf_no_approved_reports') + '</p>' +
     '</div>';
 }
 
 function _lfCard(r) {
+  var type = String(r.type || 'lost').toLowerCase();
+  var typeLabel = type === 'found' ? t('lf_report_found_badge') : t('lf_report_lost_badge');
   var waText = encodeURIComponent(
-    '\uD83D\uDD0D *KumbhSathi \u2014 ' + (r.type === 'lost' ? 'LOST PERSON' : 'FOUND PERSON') + '*\n\n' +
-    'Name: ' + r.name + '\nAge: ' + r.age + '\nGender: ' + r.gender + '\n' +
-    'Last Seen: ' + r.location + '\nDetails: ' + r.desc + '\nContact: ' + r.contact + '\n' +
-    'Reported: ' + r.timestamp + '\n\nDownload KumbhSathi App for Kumbh Nashik 2027'
+    '\uD83D\uDD0D *KumbhSathi \u2014 ' + typeLabel + '*\n\n' +
+    t('field_name') + ': ' + r.name + '\n' + t('field_age') + ': ' + r.age + '\n' + t('field_gender') + ': ' + r.gender + '\n' +
+    t('field_location') + ': ' + r.location + '\n' + t('field_desc') + ': ' + r.desc + '\n' + t('field_contact') + ': ' + r.contact + '\n' +
+    t('lf_reported_label') + ': ' + r.timestamp + '\n\n' + t('app_name')
   );
   var phone = String(r.contact).replace(/[^0-9]/g, '');
   return (
     '<div class="report-card ' + r.type + '">' +
-      '<span class="report-type-badge ' + r.type + '">' + r.type.toUpperCase() + '</span>' +
+      '<span class="report-type-badge ' + type + '">' + typeLabel + '</span>' +
       '<div style="font-size:15px;font-weight:700;color:var(--dark-brown);margin-bottom:4px;">' + r.name + '</div>' +
       '<div style="font-size:12px;color:var(--light-brown);margin-bottom:4px;">' +
-        '<i class="fa-solid fa-user"></i> ' + r.age + ' yrs, ' + r.gender +
+        '<i class="fa-solid fa-user"></i> ' + t('field_age') + ': ' + r.age + ' ' + t('lf_age_years') + ', ' +
+        t('field_gender') + ': ' + r.gender +
         ' &nbsp;|&nbsp; <i class="fa-solid fa-location-dot"></i> ' + r.location +
       '</div>' +
       '<div style="font-size:12px;color:var(--light-brown);margin-bottom:8px;">' + (r.desc || '') + '</div>' +
       '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
         '<a href="https://wa.me/?text=' + waText + '" target="_blank" rel="noopener" class="btn btn-whatsapp btn-sm">' +
-          '<i class="fa-brands fa-whatsapp"></i> WhatsApp' +
+          '<i class="fa-brands fa-whatsapp"></i> ' + t('whatsapp_share') +
         '</a>' +
         '<a href="tel:' + phone + '" class="btn btn-primary btn-sm">' +
           '<i class="fa-solid fa-phone"></i> ' + r.contact +
         '</a>' +
       '</div>' +
       '<div style="font-size:10px;color:var(--light-brown);margin-top:8px;">' +
-        '<i class="fa-solid fa-clock"></i> ' + r.timestamp +
+        '<i class="fa-solid fa-clock"></i> ' + t('lf_reported_label') + ': ' + r.timestamp +
       '</div>' +
     '</div>'
   );
@@ -67,9 +71,14 @@ function _lfCard(r) {
 
 /* ---------- core functions (also used by router.js) ---------- */
 
-function renderReports() {
+function renderReports(forceFetch) {
   var container = document.getElementById('reports-container');
   if (!container) return;
+  if (!forceFetch && Array.isArray(window._lostFoundCache)) {
+    if (!window._lostFoundCache.length) { _lfShowEmpty(container); return; }
+    container.innerHTML = window._lostFoundCache.map(_lfCard).join('');
+    return;
+  }
   _lfShowSpinner(container);
 
   fetch(APPS_SCRIPT_URL)
@@ -79,9 +88,11 @@ function renderReports() {
     })
     .then(function(reports) {
       if (!Array.isArray(reports) || reports.length === 0) {
+        window._lostFoundCache = [];
         _lfShowEmpty(container);
         return;
       }
+      window._lostFoundCache = reports;
       container.innerHTML = reports.map(_lfCard).join('');
     })
     .catch(function(err) {
@@ -120,7 +131,7 @@ function initLostFound() {
       };
 
       var btn = form.querySelector('button[type="submit"]');
-      if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
+      if (btn) { btn.disabled = true; btn.textContent = t('submitting'); }
 
       fetch(APPS_SCRIPT_URL, {
         method: 'POST',
@@ -132,15 +143,16 @@ function initLostFound() {
         })
         .then(function() {
           e.target.reset();
-          if (typeof showToast === 'function') showToast('Report submitted successfully!');
+          window._lostFoundCache = null;
+          if (typeof showToast === 'function') showToast(t('report_submitted_title'));
           renderReports();
         })
         .catch(function(err) {
           console.error('[KumbhSathi] Submit failed:', err);
-          if (typeof showToast === 'function') showToast('Could not connect. Please try again.');
+          if (typeof showToast === 'function') showToast(t('lf_error_connect'));
         })
         .finally(function() {
-          if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span data-t="submit_report">रिपोर्ट सबमिट करें</span>'; }
+          if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> ' + t('submit_report'); }
         });
     });
   }

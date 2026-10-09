@@ -580,6 +580,8 @@ const TRANSPORT_DATA = {
       cost: '₹150 – ₹600 (Class dependent)',
       trains: ['Panchavati Express', 'Tapovan Express', 'Mumbai-Manmad Passenger'],
       info: 'Nashik Road is the main railway station, 8km from city centre. Frequent trains from CSMT, Dadar, Kalyan.',
+      info_hi: 'नाशिक रोड मुख्य रेलवे स्टेशन है और शहर के केंद्र से 8 किमी दूर है। CSMT, दादर और कल्याण से नियमित ट्रेनें उपलब्ध हैं।',
+      info_mr: 'नाशिक रोड हे शहराच्या केंद्रापासून 8 किमी अंतरावरील मुख्य रेल्वे स्थानक आहे. CSMT, दादर आणि कल्याणहून नियमित गाड्या उपलब्ध आहेत.',
     },
     {
       route: 'Pune → Nashik Road',
@@ -587,6 +589,8 @@ const TRANSPORT_DATA = {
       cost: '₹200 – ₹700',
       trains: ['Nashik Express', 'Intercity Express'],
       info: 'Change at Manmad or direct trains available. Check IRCTC for special Kumbh trains.',
+      info_hi: 'मनमाड में ट्रेन बदलें या सीधी ट्रेन लें। विशेष कुंभ ट्रेनों के लिए IRCTC देखें।',
+      info_mr: 'मनमाड येथे गाडी बदला किंवा थेट गाडीने जा. विशेष कुंभ गाड्यांसाठी IRCTC तपासा.',
     },
     {
       route: 'Aurangabad → Nashik Road',
@@ -594,6 +598,8 @@ const TRANSPORT_DATA = {
       cost: '₹150 – ₹550',
       trains: ['Intercity services', 'Passenger trains'],
       info: 'Via Manmad Junction. Several daily connections available.',
+      info_hi: 'मनमाड जंक्शन के रास्ते जाएँ। रोज़ कई ट्रेनें उपलब्ध हैं।',
+      info_mr: 'मनमाड जंक्शनमार्गे जा. दररोज अनेक गाड्या उपलब्ध आहेत.',
     },
   ],
   byBus: [
@@ -603,6 +609,8 @@ const TRANSPORT_DATA = {
       cost: '₹200 – ₹500 (AC/Non-AC)',
       operator: 'MSRTC, Private Volvo buses',
       info: 'Buses depart from Dadar, Borivali, Thane, and CSMT. Every 30 minutes during Kumbh peak.',
+      info_hi: 'बसें दादर, बोरीवली, ठाणे और CSMT से चलती हैं। कुंभ के व्यस्त समय में हर 30 मिनट पर बस मिलेगी।',
+      info_mr: 'दादर, बोरिवली, ठाणे आणि CSMT येथून बसेस सुटतात. कुंभच्या गर्दीच्या काळात दर 30 मिनिटांनी बस उपलब्ध असेल.',
     },
     {
       route: 'Pune → Nashik',
@@ -610,6 +618,8 @@ const TRANSPORT_DATA = {
       cost: '₹250 – ₹600',
       operator: 'MSRTC, Private operators',
       info: 'Multiple buses daily. Book in advance during Kumbh peak season.',
+      info_hi: 'रोज़ कई बसें उपलब्ध हैं। कुंभ के व्यस्त मौसम में पहले से बुक करें।',
+      info_mr: 'दररोज अनेक बसेस उपलब्ध आहेत. कुंभच्या गर्दीच्या हंगामात आगाऊ आरक्षण करा.',
     },
     {
       route: 'Aurangabad → Nashik',
@@ -617,6 +627,8 @@ const TRANSPORT_DATA = {
       cost: '₹180 – ₹400',
       operator: 'MSRTC',
       info: 'Frequent service. Via Yeola junction.',
+      info_hi: 'नियमित बस सेवा उपलब्ध है। मार्ग येवला जंक्शन से होकर जाता है।',
+      info_mr: 'नियमित बस सेवा उपलब्ध आहे. मार्ग येवला जंक्शनमार्गे जातो.',
     },
   ],
   byAir: [
@@ -625,16 +637,22 @@ const TRANSPORT_DATA = {
       dist: '20 km from Nashik city',
       flights: 'Mumbai, Hyderabad, Bengaluru',
       info: 'Ozar Airport has limited commercial flights. During Kumbh, special flights may be added. Check airlines for latest schedules.',
+      info_hi: 'ओझर हवाई अड्डे से सीमित नियमित उड़ानें हैं। कुंभ के दौरान विशेष उड़ानें शुरू हो सकती हैं; ताज़ा समय-सारणी के लिए एयरलाइन से जाँचें।',
+      info_mr: 'ओझर विमानतळावरून मर्यादित व्यावसायिक उड्डाणे आहेत. कुंभकाळात विशेष उड्डाणे सुरू होऊ शकतात; अद्ययावत वेळापत्रकासाठी विमान कंपनीकडे तपासा.',
     },
     {
       airport: 'Pune Airport (PNQ)',
       dist: '210 km from Nashik',
       info: 'Nearest major airport. Well-connected internationally. Take bus/taxi from Pune to Nashik (4-5 hrs).',
+      info_hi: 'यह सबसे नज़दीकी बड़ा हवाई अड्डा है और अंतरराष्ट्रीय उड़ानों से जुड़ा है। पुणे से नाशिक बस या टैक्सी से जाएँ (4–5 घंटे)।',
+      info_mr: 'हे सर्वात जवळचे मोठे विमानतळ असून आंतरराष्ट्रीय उड्डाणांनी जोडलेले आहे. पुण्याहून नाशिकला बस किंवा टॅक्सीने जा (4–5 तास).',
     },
     {
       airport: 'Chhatrapati Shivaji Maharaj (BOM)',
       dist: '170 km from Nashik',
       info: 'Mumbai Airport — best connected internationally. Multiple transport options to Nashik: bus, train, cab.',
+      info_hi: 'मुंबई हवाई अड्डा अंतरराष्ट्रीय उड़ानों से सबसे अच्छी तरह जुड़ा है। नाशिक के लिए बस, ट्रेन और टैक्सी उपलब्ध हैं।',
+      info_mr: 'मुंबई विमानतळ आंतरराष्ट्रीय उड्डाणांनी उत्तमरीत्या जोडलेले आहे. नाशिकसाठी बस, रेल्वे आणि टॅक्सीचे पर्याय उपलब्ध आहेत.',
     },
   ],
   byRoad: [
@@ -644,6 +662,8 @@ const TRANSPORT_DATA = {
       duration: '~3.5 – 4.5 hours',
       dist: '~170 km',
       info: 'NH-160 is the main route via Kasara. NH-61 via Bhiwandi-Igatpuri is more scenic but slower.',
+      info_hi: 'कसारा घाट से होकर NH-160 मुख्य मार्ग है। भिवंडी–इगतपुरी से NH-61 अधिक सुंदर है, लेकिन धीमा है।',
+      info_mr: 'कसारा घाटमार्गे NH-160 हा मुख्य मार्ग आहे. भिवंडी–इगतपुरीमार्गे NH-61 अधिक निसर्गरम्य आहे, पण धीमा आहे.',
     },
     {
       route: 'Pune → Nashik',
@@ -651,6 +671,8 @@ const TRANSPORT_DATA = {
       duration: '~4 – 5 hours',
       dist: '~210 km',
       info: 'NH-60 via Shirdi is the fastest route. Via Sangamner adds extra 30 min but avoids highway tolls.',
+      info_hi: 'शिर्डी से होकर NH-60 सबसे तेज़ मार्ग है। संगमनेर का रास्ता लगभग 30 मिनट लंबा है, लेकिन राजमार्ग टोल से बचाता है।',
+      info_mr: 'शिर्डीमार्गे NH-60 हा सर्वात जलद मार्ग आहे. संगमनेरमार्गे प्रवास सुमारे 30 मिनिटे जास्त, पण महामार्ग टोल टाळता येतो.',
     },
     {
       route: 'Aurangabad → Nashik',
@@ -658,6 +680,8 @@ const TRANSPORT_DATA = {
       duration: '~3 hours',
       dist: '~105 km',
       info: 'Good quality road. Route passes through Yeola, famous for its handwoven Paithani sarees.',
+      info_hi: 'सड़क अच्छी स्थिति में है। मार्ग येवला से होकर जाता है, जो हाथ से बुनी पैठणी साड़ियों के लिए प्रसिद्ध है।',
+      info_mr: 'रस्ता चांगल्या स्थितीत आहे. हा मार्ग हातमागावरील पैठणी साड्यांसाठी प्रसिद्ध असलेल्या येवल्यातून जातो.',
     },
   ],
   local: [

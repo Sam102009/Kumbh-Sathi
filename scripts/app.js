@@ -599,7 +599,7 @@ function renderTransport() {
         <div class="transport-route-info">
           <h4>${item.mode}</h4>
           <p>${item.route}</p>
-          <p><strong>Frequency:</strong> ${item.frequency}</p>
+          <p><strong>${t('frequency')}:</strong> ${item.frequency}</p>
           <div class="route-tags">
             <span class="route-tag"><i class="fa-solid fa-tag"></i> ${item.cost}</span>
           </div>
@@ -615,7 +615,7 @@ function renderTransport() {
         <div class="transport-route-icon"><i class="fa-solid fa-train"></i></div>
         <div class="transport-route-info">
           <h4>${r.route}</h4>
-          <p>${r.info}</p>
+          <p>${r['info_' + currentLang] || r.info}</p>
           <div class="route-tags">
             <span class="route-tag">⏱ ${r.duration}</span>
             <span class="route-tag">💰 ${r.cost}</span>
@@ -632,7 +632,7 @@ function renderTransport() {
         <div class="transport-route-icon"><i class="fa-solid fa-bus"></i></div>
         <div class="transport-route-info">
           <h4>${r.route}</h4>
-          <p>${r.info}</p>
+          <p>${r['info_' + currentLang] || r.info}</p>
           <div class="route-tags">
             <span class="route-tag">⏱ ${r.duration}</span>
             <span class="route-tag">💰 ${r.cost}</span>
@@ -649,7 +649,7 @@ function renderTransport() {
         <div class="transport-route-icon"><i class="fa-solid fa-plane"></i></div>
         <div class="transport-route-info">
           <h4>${r.airport}</h4>
-          <p>${r.info}</p>
+          <p>${r['info_' + currentLang] || r.info}</p>
           ${r.dist ? `<div class="route-tags"><span class="route-tag">📍 ${r.dist}</span></div>` : ''}
         </div>
       </div>
@@ -664,7 +664,7 @@ function renderTransport() {
         <div class="transport-route-info">
           <h4>${r.route}</h4>
           <p><strong>${r.highway}</strong></p>
-          <p>${r.info}</p>
+          <p>${r['info_' + currentLang] || r.info}</p>
           <div class="route-tags">
             <span class="route-tag">⏱ ${r.duration}</span>
             <span class="route-tag">📍 ${r.dist}</span>
@@ -998,7 +998,7 @@ function fetchAndRenderSponsors() {
       if (!active.length) { container.innerHTML = ''; return; }
       container.innerHTML = active.map(s => `
         <a href="${s['Website'] || '#'}" target="_blank" style="display:inline-block;margin:8px;text-align:center;text-decoration:none;">
-          <div style="background:#fff;border-radius:12px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,0.1);min-width:120px;">
+          <div style="background:var(--card-bg);border-radius:12px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,0.1);min-width:120px;">
             <img src="${s['Logo']}" alt="${s['Name']}" style="height:50px;object-fit:contain;" onerror="this.style.display='none'">
             <div style="font-size:11px;color:#FF6F00;font-weight:600;margin-top:6px;">${s['Name']}</div>
             <div style="font-size:10px;color:#666;">${s['Tagline'] || ''}</div>
@@ -1063,8 +1063,12 @@ function initLangSwitcher() {
       renderNews(window._newsCache || NEWS_DATA);
       renderAkharas(window._akharaCache || null);
       renderStay(window._stayCache || null);
+      renderTransport();
+      renderHospitals();
       renderFirstAid();
       renderAbout();
+      if (typeof renderReports === 'function') renderReports();
+      if (typeof refreshPilgrimLanguage === 'function') refreshPilgrimLanguage();
       initTicker();
       // Sync second ticker on news page
       var t2 = document.getElementById('ticker-content-2');

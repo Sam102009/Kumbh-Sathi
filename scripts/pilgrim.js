@@ -94,13 +94,14 @@ function submitPilgrimRegistration() {
 
 function showQRCard(pilgrim) {
   var output = document.getElementById('pilgrim-qr-output');
-  var qrData = 'KUMBHSATHI PILGRIM\n' +
-    'Name: ' + pilgrim.name + '\n' +
-    'Age: ' + pilgrim.age + ' | ' + pilgrim.gender + '\n' +
-    'City: ' + pilgrim.city + '\n' +
-    (pilgrim.medical ? 'Medical: ' + pilgrim.medical + '\n' : '') +
-    'Contact: ' + pilgrim.contact1 + '\n' +
-    (pilgrim.contact2 ? 'Alt Contact: ' + pilgrim.contact2 + '\n' : '') +
+  window._currentPilgrimQR = pilgrim;
+  var qrData = t('qr_pilgrim_id') + '\n' +
+    t('qr_name') + ': ' + pilgrim.name + '\n' +
+    t('qr_age') + ': ' + pilgrim.age + ' | ' + _pilgrimGenderLabel(pilgrim.gender) + '\n' +
+    t('qr_city') + ': ' + pilgrim.city + '\n' +
+    (pilgrim.medical ? t('qr_medical') + ': ' + pilgrim.medical + '\n' : '') +
+    t('qr_contact') + ': ' + pilgrim.contact1 + '\n' +
+    (pilgrim.contact2 ? t('qr_alt_contact') + ': ' + pilgrim.contact2 + '\n' : '') +
     'ID: ' + pilgrim.id;
   var appUrl = qrData;
 
@@ -109,11 +110,11 @@ function showQRCard(pilgrim) {
     : '<div style="width:70px;height:70px;border-radius:8px;background:#f5f0e8;border:2px dashed #ccc;display:flex;align-items:center;justify-content:center;font-size:24px;">👤</div>';
 
   var medicalHtml = pilgrim.medical
-    ? '<div style="font-size:11px;color:#c62828;margin-top:4px;">🏥 ' + pilgrim.medical + '</div>'
+    ? '<div style="font-size:11px;color:#c62828;margin-top:4px;">🏥 ' + t('qr_medical') + ': ' + pilgrim.medical + '</div>'
     : '';
 
   var contact2Html = pilgrim.contact2
-    ? '<div style="font-size:13px;color:var(--light-brown);">📱 ' + pilgrim.contact2 + '</div>'
+    ? '<div style="font-size:13px;color:var(--light-brown);">' + t('qr_alt') + pilgrim.contact2 + '</div>'
     : '';
 
   output.style.display = 'block';
@@ -121,13 +122,13 @@ function showQRCard(pilgrim) {
     '<div id="qr-card-printable" style="background:#fff;border-radius:16px;padding:20px;box-shadow:0 4px 20px rgba(0,0,0,0.15);border:2px solid var(--saffron);">' +
       '<div style="text-align:center;margin-bottom:12px;">' +
         '<div style="font-size:18px;font-weight:800;color:var(--saffron);">🙏 KumbhSathi</div>' +
-        '<div style="font-size:11px;color:var(--light-brown);">Kumbh Mela Nashik 2027 — Pilgrim ID Card</div>' +
+        '<div style="font-size:11px;color:var(--light-brown);">' + t('qr_card_subtitle') + '</div>' +
       '</div>' +
       '<div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;">' +
         photoHtml +
         '<div style="flex:1;">' +
           '<div style="font-size:18px;font-weight:800;color:var(--dark-brown);">' + pilgrim.name + '</div>' +
-          '<div style="font-size:13px;color:var(--light-brown);">' + t('pilgrim_age_label') + pilgrim.age + ' | ' + pilgrim.gender + '</div>' +
+          '<div style="font-size:13px;color:var(--light-brown);">' + t('pilgrim_age_label') + pilgrim.age + ' | ' + _pilgrimGenderLabel(pilgrim.gender) + '</div>' +
           '<div style="font-size:13px;color:var(--light-brown);">🏠 ' + pilgrim.city + '</div>' +
           medicalHtml +
         '</div>' +
@@ -143,7 +144,7 @@ function showQRCard(pilgrim) {
       '</div>' +
       '<div style="text-align:center;font-size:10px;color:var(--light-brown);margin-bottom:14px;">' + t('pilgrim_scan_qr') + '</div>' +
       '<div style="display:flex;gap:8px;">' +
-        '<button onclick="window.print()" style="flex:1;padding:12px;background:var(--saffron);color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;">🖨️ Print</button>' +
+        '<button onclick="window.print()" style="flex:1;padding:12px;background:var(--saffron);color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;">' + t('qr_print') + '</button>' +
         '<button onclick="registerAnotherPilgrim()" style="flex:1;padding:12px;background:#f5f0e8;color:var(--dark-brown);border:none;border-radius:8px;font-weight:700;cursor:pointer;">' + t('pilgrim_add_another') + '</button>' +
       '</div>' +
     '</div>';
@@ -162,6 +163,18 @@ function showQRCard(pilgrim) {
   }, 100);
 
   output.scrollIntoView({ behavior: 'smooth' });
+}
+
+function _pilgrimGenderLabel(value) {
+  var normalized = String(value || '').trim().toLowerCase();
+  var key = normalized === 'male' ? 'gender_male' : normalized === 'female' ? 'gender_female' : normalized === 'other' ? 'gender_other' : '';
+  return key ? t(key) : value;
+}
+
+function refreshPilgrimLanguage() {
+  loadPilgrimList();
+  if (window._currentPilgrimQR) showQRCard(window._currentPilgrimQR);
+  if (window._lastScannedPilgrim) showPilgrimScanCard(window._lastScannedPilgrim.data, window._lastScannedPilgrim.container);
 }
 
 function registerAnotherPilgrim() {
@@ -250,7 +263,7 @@ function fetchPilgrimById(id) {
     if (page && page.parentNode) page.parentNode.appendChild(scanDiv);
   }
   scanDiv.style.display = 'block';
-  scanDiv.innerHTML = '<div style="text-align:center;padding:40px;">⏳ Loading pilgrim info...</div>';
+  scanDiv.innerHTML = '<div style="text-align:center;padding:40px;">' + t('qr_loading') + '</div>';
 
   // Try localStorage first
   var local = JSON.parse(localStorage.getItem('kumbh_pilgrims') || '[]');
@@ -264,37 +277,38 @@ function fetchPilgrimById(id) {
       if (data && !data.error) {
         showPilgrimScanCard(data, scanDiv);
       } else {
-        scanDiv.innerHTML = '<div style="text-align:center;padding:40px;color:#c62828;">❌ Pilgrim not found.<br><small>ID: ' + id + '</small></div>';
+        scanDiv.innerHTML = '<div style="text-align:center;padding:40px;color:#c62828;">' + t('qr_not_found') + '<br><small>ID: ' + id + '</small></div>';
       }
     })
     .catch(function() {
-      scanDiv.innerHTML = '<div style="text-align:center;padding:40px;color:#c62828;">❌ Could not load pilgrim info. Please check your connection.</div>';
+      scanDiv.innerHTML = '<div style="text-align:center;padding:40px;color:#c62828;">' + t('qr_load_error') + '</div>';
     });
 }
 
 function showPilgrimScanCard(p, container) {
+  window._lastScannedPilgrim = { data: p, container: container };
   var photoHtml = p.Photo || p.photo
     ? '<img src="' + (p.Photo || p.photo) + '" style="width:90px;height:90px;border-radius:50%;object-fit:cover;border:3px solid #FF6F00;margin-bottom:12px;">'
     : '<div style="width:90px;height:90px;border-radius:50%;background:#f5f0e8;border:3px solid #FF6F00;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 12px auto;">👤</div>';
   var medicalHtml = (p.Medical || p.medical)
-    ? '<div style="background:#ffebee;border-radius:8px;padding:10px;margin:12px 0;font-size:13px;color:#c62828;text-align:left;">🏥 Medical: ' + (p.Medical || p.medical) + '</div>'
+    ? '<div style="background:#ffebee;border-radius:8px;padding:10px;margin:12px 0;font-size:13px;color:#c62828;text-align:left;">🏥 ' + t('qr_medical') + ': ' + (p.Medical || p.medical) + '</div>'
     : '';
   var contact1 = p.Contact1 || p.contact1 || '';
   var contact2 = p.Contact2 || p.contact2 || '';
   var contact2Html = contact2
-    ? '<a href="tel:' + contact2 + '" style="display:block;padding:12px;background:#fff;color:#FF6F00;border:2px solid #FF6F00;border-radius:10px;font-weight:700;font-size:15px;text-decoration:none;margin-top:8px;text-align:center;">📱 Alt: ' + contact2 + '</a>'
+    ? '<a href="tel:' + contact2 + '" style="display:block;padding:12px;background:#fff;color:#FF6F00;border:2px solid #FF6F00;border-radius:10px;font-weight:700;font-size:15px;text-decoration:none;margin-top:8px;text-align:center;">' + t('qr_alt') + contact2 + '</a>'
     : '';
 
   container.innerHTML =
     '<div style="background:#fff3e0;border-radius:16px;padding:20px;border:3px solid #FF6F00;text-align:center;max-width:400px;margin:0 auto;">' +
-      '<div style="font-size:13px;font-weight:700;color:#FF6F00;margin-bottom:16px;letter-spacing:1px;">🙏 KUMBHSATHI — PILGRIM ID</div>' +
+      '<div style="font-size:13px;font-weight:700;color:#FF6F00;margin-bottom:16px;letter-spacing:1px;">🙏 ' + t('qr_pilgrim_id') + '</div>' +
       photoHtml +
       '<div style="font-size:22px;font-weight:800;color:#333;margin-bottom:4px;">' + (p.Name || p.name) + '</div>' +
-      '<div style="font-size:14px;color:#666;margin-bottom:4px;">Age: ' + (p.Age || p.age) + ' | ' + (p.Gender || p.gender) + '</div>' +
+      '<div style="font-size:14px;color:#666;margin-bottom:4px;">' + t('qr_age') + ': ' + (p.Age || p.age) + ' | ' + _pilgrimGenderLabel(p.Gender || p.gender) + '</div>' +
       '<div style="font-size:14px;color:#666;margin-bottom:12px;">🏠 ' + (p.City || p.city) + '</div>' +
       medicalHtml +
       '<div style="font-size:11px;color:#999;margin-bottom:16px;">ID: ' + (p.ID || p.id) + '</div>' +
-      '<a href="tel:' + contact1 + '" style="display:block;padding:14px;background:#FF6F00;color:#fff;border-radius:10px;font-weight:700;font-size:16px;text-decoration:none;text-align:center;">📞 Call Family: ' + contact1 + '</a>' +
+      '<a href="tel:' + contact1 + '" style="display:block;padding:14px;background:#FF6F00;color:#fff;border-radius:10px;font-weight:700;font-size:16px;text-decoration:none;text-align:center;">' + t('qr_call_family') + contact1 + '</a>' +
       contact2Html +
     '</div>';
 }
@@ -306,10 +320,10 @@ function showPilgrimDetails(p) {
     ? '<img src="' + p.photo + '" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--saffron);margin-bottom:12px;">'
     : '';
   var medicalHtml = p.medical
-    ? '<div style="background:#ffebee;border-radius:8px;padding:8px;margin-bottom:12px;font-size:12px;color:#c62828;">🏥 ' + p.medical + '</div>'
+    ? '<div style="background:#ffebee;border-radius:8px;padding:8px;margin-bottom:12px;font-size:12px;color:#c62828;">🏥 ' + t('qr_medical') + ': ' + p.medical + '</div>'
     : '';
   var contact2Html = p.contact2
-    ? '<a href="tel:' + p.contact2 + '" style="display:block;padding:12px;background:#fff;color:var(--saffron);border:2px solid var(--saffron);border-radius:10px;font-weight:700;font-size:14px;text-decoration:none;margin-bottom:8px;">' + t('pilgrim_alt_label') + p.contact2 + '</a>'
+    ? '<a href="tel:' + p.contact2 + '" style="display:block;padding:12px;background:#fff;color:var(--saffron);border:2px solid var(--saffron);border-radius:10px;font-weight:700;font-size:14px;text-decoration:none;margin-bottom:8px;">' + t('qr_alt') + p.contact2 + '</a>'
     : '';
   var phone = p.contact1.replace(/[^0-9]/g, '');
   output.style.display = 'block';
@@ -319,12 +333,12 @@ function showPilgrimDetails(p) {
       '<div style="font-size:16px;font-weight:800;color:#c62828;margin-bottom:12px;">' + t('pilgrim_lost_person') + '</div>' +
       photoHtml +
       '<div style="font-size:20px;font-weight:800;color:var(--dark-brown);">' + p.name + '</div>' +
-      '<div style="font-size:14px;color:var(--light-brown);margin-bottom:4px;">' + t('pilgrim_age_label') + p.age + ' | ' + p.gender + '</div>' +
+      '<div style="font-size:14px;color:var(--light-brown);margin-bottom:4px;">' + t('pilgrim_age_label') + p.age + ' | ' + _pilgrimGenderLabel(p.gender) + '</div>' +
       '<div style="font-size:14px;color:var(--light-brown);margin-bottom:12px;">🏠 ' + p.city + '</div>' +
       medicalHtml +
       '<a href="tel:' + p.contact1 + '" style="display:block;padding:14px;background:var(--saffron);color:#fff;border-radius:10px;font-weight:700;font-size:16px;text-decoration:none;margin-bottom:8px;">' + t('pilgrim_call_family') + p.contact1 + '</a>' +
       contact2Html +
-      '<a href="https://wa.me/' + phone + '" target="_blank" style="display:block;padding:12px;background:#25D366;color:#fff;border-radius:10px;font-weight:700;font-size:14px;text-decoration:none;">💬 WhatsApp</a>' +
+      '<a href="https://wa.me/' + phone + '" target="_blank" style="display:block;padding:12px;background:#25D366;color:#fff;border-radius:10px;font-weight:700;font-size:14px;text-decoration:none;">💬 ' + t('whatsapp_share') + '</a>' +
     '</div>';
   output.scrollIntoView({ behavior: 'smooth' });
 }

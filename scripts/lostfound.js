@@ -5,6 +5,8 @@
 var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyp_E-2tqiBfAtswJIxIeeq2iH6gwMjjlPZwlxxijqU6RdfZW8UOlcM83Gd9Yay7ZbufQ/exec';
 
 var activeReportType = 'lost';
+window._lostFoundCache = null;
+window._lfVerifications = [];
 
 /* ---------- helpers ---------- */
 
@@ -19,7 +21,7 @@ function _lfShowSpinner(container) {
   container.innerHTML =
     '<div class="empty-state">' +
     '<i class="fa-solid fa-spinner fa-spin" style="font-size:28px;color:var(--saffron);"></i>' +
-    '<p style="margin-top:10px;">Loading reports…</p>' +
+    '<p style="margin-top:10px;">' + t('lf_loading_reports') + '</p>' +
     '</div>';
 }
 
@@ -27,7 +29,7 @@ function _lfShowEmpty(container) {
   container.innerHTML =
     '<div class="empty-state">' +
     '<i class="fa-solid fa-magnifying-glass" style="font-size:28px;color:var(--saffron);"></i>' +
-    '<p style="margin-top:10px;">No approved reports yet.</p>' +
+    '<p style="margin-top:10px;">' + t('lf_no_approved_reports') + '</p>' +
     '</div>';
 }
 
@@ -42,6 +44,7 @@ function _lfCard(r, verifications) {
   var contact   = r.contact  || r.Contact  || '';
   var timestamp = r.timestamp|| r.Timestamp|| '';
   var type      = (r.type    || r.Type     || 'lost').toLowerCase();
+  var typeLabel = type === 'found' ? t('lf_report_found_badge') : t('lf_report_lost_badge');
   var photo     = r.photo    || r.Photo    || '';
   var reportId  = r.id || r.ID || r.ReportID || (name + age).replace(/\s/g, '');
 
@@ -59,15 +62,16 @@ function _lfCard(r, verifications) {
   var phone = String(contact).replace(/[^0-9]/g, '');
   var contactHtml = approvedVerification
     ? '<a href="tel:' + phone + '" class="btn btn-primary btn-sm"><i class="fa-solid fa-phone"></i> ' + contact + '</a>'
-    : '<button onclick="KumbhVerifyUI.startVerification(\'' + reportId.replace(/'/g, "\\'") + '\')" style="padding:8px 14px;background:var(--saffron);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700;">🔍 I know this person</button>';
+    : '<button onclick="KumbhVerifyUI.startVerification(\'' + reportId.replace(/'/g, "\\'") + '\')" style="padding:8px 14px;background:var(--saffron);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700;">🔍 ' + t('lf_know_person') + '</button>';
 
   return (
     '<div class="report-card ' + type + '">' +
       photoHtml +
-      '<span class="report-type-badge ' + type + '">' + type.toUpperCase() + '</span>' +
+      '<span class="report-type-badge ' + type + '">' + typeLabel + '</span>' +
       '<div style="font-size:15px;font-weight:700;color:var(--dark-brown);margin-bottom:4px;">' + name + '</div>' +
       '<div style="font-size:12px;color:var(--light-brown);margin-bottom:4px;">' +
-        '<i class="fa-solid fa-user"></i> ' + age + ' yrs, ' + gender +
+        '<i class="fa-solid fa-user"></i> ' + t('field_age') + ': ' + age + ' ' + t('lf_age_years') + ', ' +
+        t('field_gender') + ': ' + gender +
         ' &nbsp;|&nbsp; <i class="fa-solid fa-location-dot"></i> ' + location +
       '</div>' +
       '<div style="font-size:12px;color:var(--light-brown);margin-bottom:8px;">' + (desc || '') + '</div>' +
@@ -75,7 +79,7 @@ function _lfCard(r, verifications) {
         contactHtml +
       '</div>' +
       '<div style="font-size:10px;color:var(--light-brown);margin-top:8px;">' +
-        '<i class="fa-solid fa-clock"></i> ' + timestamp +
+        '<i class="fa-solid fa-clock"></i> ' + t('lf_reported_label') + ': ' + timestamp +
       '</div>' +
     '</div>'
   );
@@ -108,7 +112,7 @@ function _lfShowSuccessModal() {
     '<div style="font-size:13px;color:#555;line-height:1.7;margin-bottom:20px;">' + msg + '</div>' +
     '<button id="lf-modal-ok" style="background:linear-gradient(135deg,var(--saffron),var(--deep-orange));' +
       'color:#fff;border:none;border-radius:22px;padding:10px 32px;font-size:14px;font-weight:700;cursor:pointer;">' +
-      'OK 🙏' +
+      t('ok') +
     '</button>';
 
   overlay.appendChild(box);
@@ -140,9 +144,13 @@ function loadLostFound() {
       /* Fetch live verification status, then render */
       if (typeof KumbhVerify !== 'undefined') {
         KumbhVerify.checkStatus(function(verifications) {
+          window._lostFoundCache = approvedReports;
+          window._lfVerifications = verifications;
           _renderCards(container, approvedReports, verifications);
         });
       } else {
+        window._lostFoundCache = approvedReports;
+        window._lfVerifications = [];
         _renderCards(container, approvedReports, []);
       }
     })
@@ -151,14 +159,22 @@ function loadLostFound() {
       container.innerHTML =
         '<div class="empty-state" style="color:#b71c1c;">' +
         '<i class="fa-solid fa-triangle-exclamation" style="font-size:28px;"></i>' +
-        '<p style="margin-top:10px;font-size:12px;word-break:break-word;">Error: ' + (err.message || err) + '</p>' +
-        '<button onclick="loadLostFound()" style="margin-top:12px;padding:8px 20px;background:var(--saffron);color:#fff;border:none;border-radius:20px;font-size:13px;cursor:pointer;">Retry</button>' +
+        '<p style="margin-top:10px;font-size:12px;word-break:break-word;">' + t('lf_error_connect') + '</p>' +
+        '<button onclick="loadLostFound()" style="margin-top:12px;padding:8px 20px;background:var(--saffron);color:#fff;border:none;border-radius:20px;font-size:13px;cursor:pointer;">' + t('retry') + '</button>' +
         '</div>';
     });
 }
 
 /* Keep renderReports as an alias so other code (auth.js signOut) can still call it */
-function renderReports() { loadLostFound(); }
+function renderReports() {
+  var container = document.getElementById('reports-container');
+  if (!container) return;
+  if (Array.isArray(window._lostFoundCache)) {
+    _renderCards(container, window._lostFoundCache, window._lfVerifications || []);
+    return;
+  }
+  loadLostFound();
+}
 
 function _renderCards(container, reports, verifications) {
   if (reports.length === 0) { _lfShowEmpty(container); return; }
@@ -181,7 +197,7 @@ function submitLostFoundReport(report, btn) {
     })
     .catch(function(err) {
       console.error('[KumbhSathi] Submit failed:', err);
-      if (typeof showToast === 'function') showToast('❌ Could not connect. Please try again.');
+      if (typeof showToast === 'function') showToast('❌ ' + t('lf_error_connect'));
     })
     .finally(function() {
       if (btn) {
@@ -222,7 +238,7 @@ function initLostFound() {
       };
 
       var btn = form.querySelector('button[type="submit"]');
-      if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
+      if (btn) { btn.disabled = true; btn.textContent = t('submitting'); }
 
       var photoFile = document.getElementById('lf-photo') && document.getElementById('lf-photo').files[0];
       if (photoFile) {

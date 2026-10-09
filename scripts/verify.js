@@ -66,7 +66,7 @@ var KumbhVerifyUI = {
     document.getElementById('verify-status-msg').textContent = '';
     document.getElementById('verify-doc-input').value = '';
     document.getElementById('verify-submit-btn').disabled = false;
-    document.getElementById('verify-submit-btn').textContent = 'Submit for Verification';
+    document.getElementById('verify-submit-btn').textContent = t('submit_verification');
     document.getElementById('kumbh-verify-modal').style.display = 'flex';
   },
 
@@ -77,26 +77,26 @@ var KumbhVerifyUI = {
     var statusMsg = document.getElementById('verify-status-msg');
 
     if (!fileInput.files[0]) {
-      statusMsg.textContent = 'Please upload an ID document.';
+      statusMsg.textContent = t('verification_requires_file');
       statusMsg.style.color = 'red';
       return;
     }
 
     btn.disabled = true;
-    btn.textContent = 'Submitting...';
+    btn.textContent = t('submitting');
 
     var reader = new FileReader();
     reader.onload = function(e) {
       KumbhVerify.submit(reportId, e.target.result, function(result) {
         if (result.error) {
-          statusMsg.textContent = 'Failed. Please try again.';
+          statusMsg.textContent = t('verification_error');
           statusMsg.style.color = 'red';
           btn.disabled = false;
-          btn.textContent = 'Submit for Verification';
+          btn.textContent = t('submit_verification');
         } else {
-          statusMsg.textContent = '✅ Submitted! We will review within 24 hours.';
+          statusMsg.textContent = '✅ ' + t('verification_submitted');
           statusMsg.style.color = 'green';
-          btn.textContent = 'Submitted';
+          btn.textContent = t('verification_submitted');
           setTimeout(function() {
             document.getElementById('kumbh-verify-modal').style.display = 'none';
             if (typeof loadLostFound === 'function') loadLostFound();
