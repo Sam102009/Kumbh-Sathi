@@ -76,7 +76,7 @@
 
 /* ================ CARDS ================ */
 .card {
-  background: #fff;
+  background: var(--card-bg);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
@@ -86,7 +86,7 @@
 
 /* Quick access card on home */
 .quick-card {
-  background: #fff;
+  background: var(--card-bg);
   border-radius: var(--radius-md);
   padding: 16px 8px 14px;
   display: flex;
@@ -134,7 +134,7 @@
 
 /* Listing / Info card */
 .listing-card {
-  background: #fff;
+  background: var(--card-bg);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
   margin-bottom: 14px;
@@ -430,7 +430,7 @@
   font-weight: 600;
   border: 1.5px solid rgba(255,111,0,0.25);
   color: var(--saffron);
-  background: #fff;
+  background: var(--card-bg);
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.2s;
@@ -442,7 +442,7 @@
 }
 
 .event-card {
-  background: #fff;
+  background: var(--card-bg);
   border-radius: var(--radius-md);
   margin: 0 16px 12px;
   overflow: hidden;
@@ -534,7 +534,7 @@
   font-size: 11px;
   font-weight: 600;
   border: 1.5px solid rgba(0,0,0,0.12);
-  background: #fff;
+  background: var(--card-bg);
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.2s;
@@ -567,7 +567,7 @@
   align-items: center;
   gap: 8px;
   font-size: 12px;
-  color: var(--dark-brown);
+  color: var(--text-primary);
 }
 
 .legend-dot {
@@ -620,7 +620,7 @@
 }
 
 .transport-mode {
-  background: #fff;
+  background: var(--card-bg);
   border-radius: var(--radius-md);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
@@ -710,7 +710,7 @@
 }
 
 .call-card {
-  background: #fff;
+  background: var(--card-bg);
   border-radius: var(--radius-md);
   padding: 16px 12px;
   text-align: center;
@@ -740,7 +740,7 @@
   font-size: 22px;
 }
 
-.call-card .call-name { font-size: 12px; font-weight: 700; color: var(--dark-brown); text-align: center; }
+.call-card .call-name { font-size: 12px; font-weight: 700; color: var(--text-primary); text-align: center; }
 .call-card .call-num  { font-size: 20px; font-weight: 800; line-height: 1; font-family: var(--font-en); }
 
 .call-police  { color: #1565c0; }
@@ -751,7 +751,7 @@
 .call-women   { color: #ad1457; }
 
 .first-aid-item {
-  background: #fff;
+  background: var(--card-bg);
   border-radius: var(--radius-sm);
   margin: 0 16px 10px;
   overflow: hidden;
@@ -791,7 +791,7 @@
 
 /* ================ LOST & FOUND PAGE ================ */
 .report-form {
-  background: #fff;
+  background: var(--card-bg);
   border-radius: var(--radius-md);
   padding: 16px;
   margin: 0 16px 16px;
@@ -812,7 +812,7 @@
   font-weight: 600;
   border: 1.5px solid rgba(255,111,0,0.25);
   color: var(--saffron);
-  background: #fff;
+  background: var(--card-bg);
   cursor: pointer;
   transition: all 0.2s;
   text-align: center;
@@ -870,7 +870,7 @@
 }
 
 .report-card {
-  background: #fff;
+  background: var(--card-bg);
   border-radius: var(--radius-md);
   padding: 14px;
   margin-bottom: 12px;
@@ -902,7 +902,7 @@
 }
 
 .news-card {
-  background: #fff;
+  background: var(--card-bg);
   border-radius: var(--radius-md);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
@@ -999,7 +999,7 @@
 
 /* ================ AKHARAS PAGE ================ */
 .akhara-card {
-  background: #fff;
+  background: var(--card-bg);
   border-radius: var(--radius-md);
   margin: 0 16px 14px;
   padding: 16px;
@@ -1061,7 +1061,7 @@
 }
 
 .info-block {
-  background: #fff;
+  background: var(--card-bg);
   border-radius: var(--radius-md);
   margin: 0 16px 14px;
   padding: 16px;
@@ -1086,7 +1086,7 @@
 
 /* ================ SPONSOR PAGE ================ */
 .sponsor-tier {
-  background: #fff;
+  background: var(--card-bg);
   border-radius: var(--radius-md);
   margin: 0 16px 14px;
   overflow: hidden;
@@ -1126,7 +1126,7 @@
 
 /* ================ HOSPITAL LIST ================ */
 .hospital-card {
-  background: #fff;
+  background: var(--card-bg);
   border-radius: var(--radius-sm);
   padding: 14px;
   margin: 0 16px 10px;
@@ -1457,7 +1457,7 @@
 
 /* ===== GROUPS FEATURE ===== */
 .group-member-card {
-  background: #fff;
+  background: var(--card-bg);
   border-radius: var(--radius-md);
   padding: 12px;
   margin-bottom: 8px;
