@@ -34,6 +34,9 @@ function updateCountdown() {
 /* ===== SCHEDULE PAGE ===== */
 let activeScheduleFilter = 'all';
 window._scheduleCache = null;
+const scheduleAiTranslationCache = { hi: new Map(), mr: new Map() };
+const scheduleAiTranslationPending = { hi: null, mr: null };
+const scheduleAiTranslationFailures = { hi: new Map(), mr: new Map() };
 
 /* Convert Google Sheets time value (fraction or string) to readable format */
 function parseSheetTime(val) {
@@ -196,6 +199,154 @@ function normalizeScheduleEventTitle(value) {
   return String(value || '').normalize('NFKC').trim().toLowerCase().replace(/\s+/g, ' ');
 }
 
+function getEnglishScheduleValue(row, field) {
+  return String(row[field + '_EN'] || row[field + '_en'] || row[field] || '').trim();
+}
+
+function getEnglishScheduleItem(row, id) {
+  return {
+    id: String(id),
+    title: getEnglishScheduleValue(row, 'Event'),
+    description: getEnglishScheduleValue(row, 'Description'),
+    location: getEnglishScheduleValue(row, 'Location'),
+  };
+}
+
+function getScheduleTranslationKey(item) {
+  return JSON.stringify([item.title, item.description, item.location]);
+}
+
+function getLocalizedScheduleContent(row, language) {
+  const requestedLanguage = language || currentLang || 'en';
+  const lang = requestedLanguage === 'hi' || requestedLanguage === 'mr' ? requestedLanguage : 'en';
+  const source = getEnglishScheduleItem(row, '');
+  if (lang === 'en') return source;
+
+  const aiTranslation = scheduleAiTranslationCache[lang].get(getScheduleTranslationKey(source));
+  const sheetTranslation = SHEET_SCHEDULE_TRANSLATIONS[normalizeScheduleEventTitle(source.title)];
+  const localizedSheetTranslation = sheetTranslation && sheetTranslation[lang];
+  const fallbackEvent = EVENTS_DATA.find(ev => ev.date === getSheetIsoDate(row['Date']));
+  const fallbackLocalized = fallbackEvent && EVENT_TRANSLATIONS[fallbackEvent.id] && EVENT_TRANSLATIONS[fallbackEvent.id][lang];
+
+  return {
+    title: localizedSheetValue(row, 'Event', false) ||
+      (aiTranslation && aiTranslation.title) ||
+      (localizedSheetTranslation && localizedSheetTranslation.title) ||
+      (fallbackEvent && fallbackEvent['title_' + lang]) ||
+      t('translation_unavailable'),
+    description: localizedSheetValue(row, 'Description', false) ||
+      (aiTranslation && aiTranslation.description) ||
+      (localizedSheetTranslation && localizedSheetTranslation.description) ||
+      (fallbackLocalized && fallbackLocalized.significance) ||
+      t('translation_unavailable'),
+    location: localizedSheetValue(row, 'Location', false) ||
+      (aiTranslation && aiTranslation.location) ||
+      source.location,
+  };
+}
+
+function escapeScheduleHtml(value) {
+  return String(value == null ? '' : value).replace(/[&<>"']/g, character => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  })[character]);
+}
+
+function scheduleTranslationEndpoint() {
+  // Set window.KUMBHSATHI_API_ORIGIN to the published API origin when the site is hosted separately.
+  const apiOriginMeta = document.querySelector('meta[name="kumbhsathi-api-origin"]');
+  const configuredOrigin = window.KUMBHSATHI_API_ORIGIN || (apiOriginMeta && apiOriginMeta.content) || '';
+  const apiOrigin = String(configuredOrigin).trim().replace(/\/+$/, '');
+  return apiOrigin + '/api/translations/schedule';
+}
+
+function ensureScheduleTranslations(rows, language) {
+  if (language !== 'hi' && language !== 'mr') return Promise.resolve();
+  if (scheduleAiTranslationPending[language]) {
+    return scheduleAiTranslationPending[language].then(() => ensureScheduleTranslations(rows, language));
+  }
+
+  const now = Date.now();
+  const missing = [];
+  rows.forEach((row, index) => {
+    const source = getEnglishScheduleItem(row, index);
+    if (!source.title && !source.description && !source.location) return;
+    const key = getScheduleTranslationKey(source);
+    if (scheduleAiTranslationCache[language].has(key)) return;
+
+    const failedUntil = scheduleAiTranslationFailures[language].get(key);
+    if (failedUntil && failedUntil > now) return;
+    scheduleAiTranslationFailures[language].delete(key);
+
+    const hasUntranslatedEnglish = [
+      ['Event', source.title],
+      ['Description', source.description],
+      ['Location', source.location],
+    ].some(([field, value]) => value && !localizedSheetValue(row, field, false));
+    if (hasUntranslatedEnglish) missing.push({ row, source, key });
+  });
+  if (missing.length === 0) return Promise.resolve();
+
+  const request = (async () => {
+    try {
+      const response = await fetch(scheduleTranslationEndpoint(), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          targetLanguage: language,
+          items: missing.map(entry => entry.source),
+        }),
+      });
+      if (!response.ok) throw new Error('Translation request failed: ' + response.status);
+      const payload = await response.json();
+      if (!Array.isArray(payload.items)) throw new Error('Translation response is invalid');
+
+      const translatedById = new Map(payload.items.map(item => [String(item.id), item]));
+      for (const entry of missing) {
+        const translated = translatedById.get(String(entry.source.id));
+        if (!translated || typeof translated.title !== 'string' ||
+            typeof translated.description !== 'string' || typeof translated.location !== 'string') {
+          throw new Error('Translation response is incomplete');
+        }
+        scheduleAiTranslationCache[language].set(entry.key, {
+          title: translated.title,
+          description: translated.description,
+          location: translated.location,
+        });
+        scheduleAiTranslationFailures[language].delete(entry.key);
+      }
+
+      if (currentLang === language && window._scheduleCache && window._scheduleCache.length) {
+        renderSheetSchedule(window._scheduleCache);
+      }
+      if (currentLang === language && window._homeShahiEvents && window._homeShahiEvents.length) {
+        renderHomeShahiSnan(window._homeShahiEvents);
+      }
+    } catch (error) {
+      for (const entry of missing) {
+        scheduleAiTranslationFailures[language].set(entry.key, Date.now() + 60000);
+      }
+      console.warn('Gemini schedule translation unavailable; using saved translations.', error);
+      if (currentLang === language && typeof showToast === 'function') {
+        const message = {
+          hi: 'AI अनुवाद उपलब्ध नहीं है; सहेजे गए अनुवाद दिखाए जा रहे हैं।',
+          mr: 'AI भाषांतर उपलब्ध नाही; जतन केलेली भाषांतरे दाखवत आहोत.',
+        };
+        showToast(message[language]);
+      }
+    }
+  })();
+
+  scheduleAiTranslationPending[language] = request;
+  request.finally(() => {
+    if (scheduleAiTranslationPending[language] === request) scheduleAiTranslationPending[language] = null;
+  });
+  return request;
+}
+
 function renderSheetSchedule(rows) {
   const container = document.getElementById('events-container');
   if (!container) return;
@@ -221,43 +372,31 @@ function renderSheetSchedule(rows) {
     };
     const typeLabel = typeLabels[cat][currentLang] || typeLabels[cat].en;
     const dateStr = String(r['Date'] || '');
-    const eventDate = getSheetIsoDate(dateStr);
-    const fallbackEvent = EVENTS_DATA.find(ev => ev.date === eventDate);
     const dayNum = getSheetDay(dateStr);
     const yearNum = getSheetYear(dateStr) || '2027';
     const timeVal = parseSheetTime(r['Time']);
-    const fallbackLocalized = fallbackEvent && EVENT_TRANSLATIONS[fallbackEvent.id] && EVENT_TRANSLATIONS[fallbackEvent.id][currentLang];
-    const sheetEvent = localizedSheetValue(r, 'Event', true);
-    const sheetDescription = localizedSheetValue(r, 'Description', false);
-    const sheetTranslation = SHEET_SCHEDULE_TRANSLATIONS[normalizeScheduleEventTitle(sheetEvent)];
-    const localizedSheetTranslation = sheetTranslation && sheetTranslation[currentLang];
-    const eventTitle = currentLang === 'en' ? sheetEvent :
-      localizedSheetValue(r, 'Event', false) ||
-      (localizedSheetTranslation && localizedSheetTranslation.title) ||
-      (fallbackEvent && fallbackEvent['title_' + currentLang]) ||
-      t('translation_unavailable');
-    const eventDescription = sheetDescription ||
-      (currentLang === 'en' ? (r['Description'] || (fallbackEvent && fallbackEvent.significance_en) || '') :
-        (localizedSheetTranslation && localizedSheetTranslation.description) ||
-        (fallbackLocalized && fallbackLocalized.significance) ||
-        t('translation_unavailable'));
-    const location = localizedSheetValue(r, 'Location', true);
+    const localizedContent = getLocalizedScheduleContent(r, currentLang);
+    const eventTitle = localizedContent.title;
+    const eventDescription = localizedContent.description;
+    const location = localizedContent.location;
+    const imageSource = String(r['Image'] || '').trim();
+    const imageUrl = /^https?:\/\//i.test(imageSource) ? escapeScheduleHtml(imageSource) : '';
     return `
       <div class="event-card ${typeClass} reveal">
         <div class="event-card-inner">
-          ${r['Image'] ? `<img src="${r['Image']}" style="width:100%;height:140px;object-fit:cover;border-radius:8px;margin-bottom:10px;" onerror="this.style.display='none'">` : ''}
+          ${imageUrl ? `<img src="${imageUrl}" style="width:100%;height:140px;object-fit:cover;border-radius:8px;margin-bottom:10px;" onerror="this.style.display='none'">` : ''}
           <div style="display:flex;gap:12px;align-items:flex-start;">
             <div class="event-date-badge ${cat === 'shahi' ? 'shahi' : ''}">
-              <span class="day">${dayNum}</span>
-              <span class="month">${getShortMonth(dateStr)}</span>
-              <span class="year">${yearNum}</span>
+              <span class="day">${escapeScheduleHtml(dayNum)}</span>
+              <span class="month">${escapeScheduleHtml(getShortMonth(dateStr))}</span>
+              <span class="year">${escapeScheduleHtml(yearNum)}</span>
             </div>
             <div style="flex:1;">
-              <div class="event-title">${eventTitle}</div>
-              <div class="event-desc">${eventDescription}</div>
+              <div class="event-title">${escapeScheduleHtml(eventTitle)}</div>
+              <div class="event-desc">${escapeScheduleHtml(eventDescription)}</div>
               <div class="event-meta">
-                ${location ? `<span><i class="fa-solid fa-location-dot"></i> ${location}</span>` : ''}
-                ${timeVal ? `<span><i class="fa-solid fa-clock"></i> ${timeVal}</span>` : ''}
+                ${location ? `<span><i class="fa-solid fa-location-dot"></i> ${escapeScheduleHtml(location)}</span>` : ''}
+                ${timeVal ? `<span><i class="fa-solid fa-clock"></i> ${escapeScheduleHtml(timeVal)}</span>` : ''}
               </div>
             </div>
           </div>
@@ -277,15 +416,17 @@ function renderSheetSchedule(rows) {
     `;
   }).join('');
   if (typeof applyTranslations === 'function') applyTranslations();
+  if (currentLang === 'hi' || currentLang === 'mr') ensureScheduleTranslations(filtered, currentLang);
 }
 
 function makeSheetCalendarUrl(r) {
   const normalizedDate = getSheetIsoDate(r['Date']) || String(r['Date'] || '').split('T')[0];
   const dateStr = normalizedDate.replace(/-/g, '');
   const year    = getSheetYear(r['Date']) || '2027';
-  const title   = encodeURIComponent((localizedSheetValue(r, 'Event', true) || '') + ' — Kumbh Nashik ' + year);
-  const details = encodeURIComponent(localizedSheetValue(r, 'Description', true));
-  const loc     = encodeURIComponent(localizedSheetValue(r, 'Location', true));
+  const localizedContent = getLocalizedScheduleContent(r, currentLang);
+  const title   = encodeURIComponent((localizedContent.title || '') + ' — Kumbh Nashik ' + year);
+  const details = encodeURIComponent(localizedContent.description || '');
+  const loc     = encodeURIComponent(localizedContent.location || '');
   return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dateStr}/${dateStr}&details=${details}&location=${loc}`;
 }
 
@@ -354,6 +495,7 @@ function loadHomeShahiSnan() {
       var shahiEvents = (Array.isArray(data) ? data : []).filter(function(item) {
         return normalizeCat(item['Category']) === 'shahi';
       });
+      window._homeShahiEvents = shahiEvents;
       renderHomeShahiSnan(shahiEvents);
       _homeShahiLoaded = true;
     })
@@ -378,6 +520,7 @@ function renderHomeShahiSnan(events) {
     return;
   }
   container.innerHTML = events.map(function(item, i) {
+    var localizedContent = getLocalizedScheduleContent(item, currentLang);
     var dateStr  = String(item['Date'] || '');
     var day      = getSheetDay(dateStr);
     var month    = getShortMonth(dateStr);
@@ -388,9 +531,9 @@ function renderHomeShahiSnan(events) {
       '<div class="card nav-link" style="padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer;" data-nav="schedule">' +
         '<div style="width:50px;height:50px;background:' + gradient + ';border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">⭐</div>' +
         '<div>' +
-        '<div style="font-weight:700;color:var(--dark-brown);font-size:14px;">' + (localizedSheetValue(item, 'Event', true) || t('translation_unavailable')) + '</div>' +
-          '<div style="font-size:12px;color:var(--saffron);font-weight:600;">' + day + ' ' + month + ' ' + year + '</div>' +
-          '<div style="font-size:11px;color:var(--light-brown);">' + localizedSheetValue(item, 'Location', true) + '</div>' +
+        '<div style="font-weight:700;color:var(--dark-brown);font-size:14px;">' + escapeScheduleHtml(localizedContent.title) + '</div>' +
+          '<div style="font-size:12px;color:var(--saffron);font-weight:600;">' + escapeScheduleHtml(day) + ' ' + escapeScheduleHtml(month) + ' ' + escapeScheduleHtml(year) + '</div>' +
+          '<div style="font-size:11px;color:var(--light-brown);">' + escapeScheduleHtml(localizedContent.location) + '</div>' +
         '</div>' +
         '<i class="fa-solid fa-chevron-right" style="margin-left:auto;color:var(--light-brown);"></i>' +
       '</div>'
@@ -400,6 +543,7 @@ function renderHomeShahiSnan(events) {
   container.querySelectorAll('.nav-link[data-nav]').forEach(function(el) {
     el.addEventListener('click', function() { navigateTo(el.dataset.nav); });
   });
+  if (currentLang === 'hi' || currentLang === 'mr') ensureScheduleTranslations(events, currentLang);
 }
 
 /* ── STAY PAGE ──────────────────────────────────────────
@@ -1081,6 +1225,7 @@ function initLangSwitcher() {
       // Re-render all dynamic content with new language
       renderSchedule();
       if (window._scheduleCache && window._scheduleCache.length) renderSheetSchedule(window._scheduleCache);
+      if (window._homeShahiEvents && window._homeShahiEvents.length) renderHomeShahiSnan(window._homeShahiEvents);
       renderNews(window._newsCache || NEWS_DATA);
       renderAkharas(window._akharaCache || null);
       renderStay(window._stayCache || null);

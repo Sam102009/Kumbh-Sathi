@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: translations
+    description: AI translation operations
 paths:
   /healthz:
     get:
@@ -24,6 +26,33 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /translations/schedule:
+    post:
+      operationId: translateSchedule
+      tags: [translations]
+      summary: Translate live schedule data
+      description: Translates schedule titles, descriptions, and locations into Hindi or Marathi.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScheduleTranslationRequest"
+      responses:
+        "200":
+          description: Translated schedule items
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScheduleTranslationResponse"
+        "400":
+          description: Invalid request
+        "429":
+          description: Translation rate limit exceeded
+        "502":
+          description: Gemini translation failed
+        "503":
+          description: Gemini is not configured
 components:
   schemas:
     HealthStatus:
@@ -33,4 +62,68 @@ components:
           type: string
       required:
         - status
+    ScheduleTranslationRequest:
+      type: object
+      properties:
+        targetLanguage:
+          type: string
+          enum: [hi, mr]
+        items:
+          type: array
+          minItems: 1
+          maxItems: 40
+          items:
+            $ref: "#/components/schemas/ScheduleTranslationItem"
+      required:
+        - targetLanguage
+        - items
+    ScheduleTranslationResponse:
+      type: object
+      properties:
+        targetLanguage:
+          type: string
+          enum: [hi, mr]
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/TranslatedScheduleItem"
+      required:
+        - targetLanguage
+        - items
+    ScheduleTranslationItem:
+      type: object
+      properties:
+        id:
+          type: string
+          maxLength: 100
+        title:
+          type: string
+          maxLength: 300
+        description:
+          type: string
+          maxLength: 2500
+        location:
+          type: string
+          maxLength: 300
+      required:
+        - id
+        - title
+        - description
+        - location
+    TranslatedScheduleItem:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        location:
+          type: string
+      required:
+        - id
+        - title
+        - description
+        - location
 

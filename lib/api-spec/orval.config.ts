@@ -23,6 +23,7 @@ export default defineConfig({
     },
     output: {
       workspace: apiClientReactSrc,
+      tsconfig: path.resolve(root, "lib", "api-client-react", "tsconfig.json"),
       target: "generated",
       client: "react-query",
       mode: "split",
@@ -49,6 +50,7 @@ export default defineConfig({
     },
     output: {
       workspace: apiZodSrc,
+      tsconfig: path.resolve(root, "lib", "api-zod", "tsconfig.json"),
       client: "zod",
       target: "generated",
       schemas: { path: "generated/types", type: "typescript" },

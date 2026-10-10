@@ -1,1 +1,3 @@
 - [GitHub push access](github-push-access.md) — an account-level connection is not proof the project shell can authenticate git pushes.
+- [Gemini model availability](gemini-model-availability.md) — New direct Gemini keys may reject older Flash model names; inspect model-specific 404s.
+- [Generated schema project references](generated-schema-project-references.md) — Rebuild api-zod before API server typecheck after OpenAPI codegen.
