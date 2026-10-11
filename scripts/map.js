@@ -103,7 +103,7 @@ function getDirections(destLat, destLng, destName) {
       if (typeof showToast === 'function') showToast(`${destName} का रास्ता दिखाया जा रहा है`);
     },
     err => {
-      alert('लोकेशन एक्सेस नहीं मिली। कृपया लोकेशन परमिशन दें।');
+      if (typeof showToast === 'function') showToast('लोकेशन एक्सेस नहीं मिली। कृपया लोकेशन परमिशन दें।'); else console.warn('Location permission denied');
     },
     { enableHighAccuracy: true, timeout: 10000 }
   );
