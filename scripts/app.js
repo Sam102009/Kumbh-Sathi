@@ -3,7 +3,7 @@
    Kumbh Mela Nashik 2027 PWA
    =================================================== */
 
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbyp_E-2tqiBfAtswJIxIeeq2iH6gwMjjlPZwlxxijqU6RdfZW8UOlcM83Gd9Yay7ZbufQ/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbxIpxbFmkxOIJi-dNMPmleSq17DrMkBIUCICb6r8Cp_7H8cLU96N-wM-JuKTX0XV-ct/exec';
 
 /* ===== COUNTDOWN TIMER ===== */
 function updateCountdown() {
@@ -1152,7 +1152,7 @@ function fetchAndRenderAds() {
 
 /* ===== ABOUT PAGE ===== */
 function fetchAndRenderSponsors() {
-  const GAS_URL = 'https://script.google.com/macros/s/AKfycbyp_E-2tqiBfAtswJIxIeeq2iH6gwMjjlPZwlxxijqU6RdfZW8UOlcM83Gd9Yay7ZbufQ/exec';
+  const GAS_URL = 'https://script.google.com/macros/s/AKfycbxIpxbFmkxOIJi-dNMPmleSq17DrMkBIUCICb6r8Cp_7H8cLU96N-wM-JuKTX0XV-ct/exec';
   const container = document.getElementById('sponsors-container');
   if (!container) return;
   container.innerHTML = '<div style="text-align:center;padding:20px;color:#FF6F00;">Loading...</div>';

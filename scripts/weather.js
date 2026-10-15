@@ -1,4 +1,4 @@
-const WEATHER_URL = "https://script.google.com/macros/s/AKfycbyp_E-2tqiBfAtswJIxIeeq2iH6gwMjjlPZwlxxijqU6RdfZW8UOlcM83Gd9Yay7ZbufQ/exec?weather=1";
+const WEATHER_URL = "https://script.google.com/macros/s/AKfycbxIpxbFmkxOIJi-dNMPmleSq17DrMkBIUCICb6r8Cp_7H8cLU96N-wM-JuKTX0XV-ct/exec?weather=1";
 
 async function loadWeather() {
   const card = document.getElementById('weather-card');

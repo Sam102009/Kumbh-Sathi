@@ -78,7 +78,7 @@ function initCrowd() { drawCrowd(); }
 function loadCrowdOverrides() { drawCrowd(); }
 
 /* Fetch overrides from Google Sheet */
-var CROWD_URL = 'https://script.google.com/macros/s/AKfycbyp_E-2tqiBfAtswJIxIeeq2iH6gwMjjlPZwlxxijqU6RdfZW8UOlcM83Gd9Yay7ZbufQ/exec?sheet=Crowd';
+var CROWD_URL = 'https://script.google.com/macros/s/AKfycbxIpxbFmkxOIJi-dNMPmleSq17DrMkBIUCICb6r8Cp_7H8cLU96N-wM-JuKTX0XV-ct/exec?sheet=Crowd';
 
 function loadCrowdOverrides() {
   fetch(CROWD_URL)

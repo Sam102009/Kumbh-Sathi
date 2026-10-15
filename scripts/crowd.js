@@ -1,5 +1,5 @@
 const CROWD_SHEET_URL =
-  'https://script.google.com/macros/s/AKfycbyp_E-2tqiBfAtswJIxIeeq2iH6gwMjjlPZwlxxijqU6RdfZW8UOlcM83Gd9Yay7ZbufQ/exec?sheet=Crowd';
+  'https://script.google.com/macros/s/AKfycbxIpxbFmkxOIJi-dNMPmleSq17DrMkBIUCICb6r8Cp_7H8cLU96N-wM-JuKTX0XV-ct/exec?sheet=Crowd';
 
 const SHAHI_SNAN_DATES = [
   '2027-08-29',
