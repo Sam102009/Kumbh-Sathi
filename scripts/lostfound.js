@@ -242,12 +242,10 @@ function initLostFound() {
 
       var photoFile = document.getElementById('lf-photo') && document.getElementById('lf-photo').files[0];
       if (photoFile) {
-        var reader = new FileReader();
-        reader.onload = function(e2) {
-          report.photo = e2.target.result;
+        resizeImageFile(photoFile, 1024, function(dataUrl) {
+          report.photo = dataUrl;
           submitLostFoundReport(report, btn);
-        };
-        reader.readAsDataURL(photoFile);
+        });
       } else {
         report.photo = '';
         submitLostFoundReport(report, btn);

@@ -84,9 +84,7 @@ function submitPilgrimRegistration() {
   }
 
   if (photoFile) {
-    var reader = new FileReader();
-    reader.onload = function(e) { processAndSubmit(e.target.result); };
-    reader.readAsDataURL(photoFile);
+    resizeImageFile(photoFile, 1024, function(dataUrl) { processAndSubmit(dataUrl); });
   } else {
     processAndSubmit('');
   }

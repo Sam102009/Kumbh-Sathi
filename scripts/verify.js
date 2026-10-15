@@ -85,9 +85,8 @@ var KumbhVerifyUI = {
     btn.disabled = true;
     btn.textContent = t('submitting');
 
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      KumbhVerify.submit(reportId, e.target.result, function(result) {
+    resizeImageFile(fileInput.files[0], 1600, function(dataUrl) {
+      KumbhVerify.submit(reportId, dataUrl, function(result) {
         if (result.error) {
           statusMsg.textContent = t('verification_error');
           statusMsg.style.color = 'red';
@@ -103,7 +102,6 @@ var KumbhVerifyUI = {
           }, 2000);
         }
       });
-    };
-    reader.readAsDataURL(fileInput.files[0]);
+    });
   }
 };

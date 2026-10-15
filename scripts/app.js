@@ -1309,3 +1309,41 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   observer.observe(crowdPage, { attributes: true, attributeFilter: ['class'] });
 })();
+
+/* Resize + compress an image file to a JPEG data URL (max side in px, ~400KB cap).
+   Falls back to the original file if the browser can't decode it. */
+function resizeImageFile(file, maxSide, callback) {
+  var fallback = function() {
+    var r = new FileReader();
+    r.onload = function(ev) { callback(ev.target.result); };
+    r.readAsDataURL(file);
+  };
+  try {
+    var img = new Image();
+    var url = URL.createObjectURL(file);
+    img.onload = function() {
+      URL.revokeObjectURL(url);
+      var scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+      var cw = Math.round(img.width * scale);
+      var ch = Math.round(img.height * scale);
+      var canvas = document.createElement('canvas');
+      canvas.width = cw;
+      canvas.height = ch;
+      var ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, cw, ch);
+      ctx.drawImage(img, 0, 0, cw, ch);
+      var q = 0.7;
+      var out = canvas.toDataURL('image/jpeg', q);
+      while (out.length > 550000 && q > 0.3) {
+        q -= 0.1;
+        out = canvas.toDataURL('image/jpeg', q);
+      }
+      callback(out);
+    };
+    img.onerror = function() { URL.revokeObjectURL(url); fallback(); };
+    img.src = url;
+  } catch (err) {
+    fallback();
+  }
+}
