@@ -145,6 +145,19 @@ function initMap() {
     });
   }
 
+  if (window.KS_DEBUG) {
+    var copyBtn = document.createElement('button');
+    copyBtn.textContent = '\uD83D\uDCCB Copy fixed pins';
+    copyBtn.style.cssText = 'position:fixed;left:12px;bottom:90px;z-index:9999;background:#1565c0;color:#fff;border:none;border-radius:20px;padding:10px 14px;font-size:13px;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,.3);';
+    copyBtn.onclick = function() {
+      var out = JSON.stringify(MAP_MARKERS, null, 1);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(out).then(function() { copyBtn.textContent = '\u2705 Copied!'; }, function() { window.prompt('Copy this:', out); });
+      } else { window.prompt('Copy this:', out); }
+    };
+    document.body.appendChild(copyBtn);
+  }
+
   // Add all marker layers
   Object.keys(MAP_MARKERS).forEach(category => {
     const markers = MAP_MARKERS[category];
@@ -154,7 +167,16 @@ function initMap() {
       const marker = L.marker([point.lat, point.lng], {
         icon: createMarkerIcon(category),
         title: point.name,
+        draggable: !!window.KS_DEBUG,
       });
+      if (window.KS_DEBUG) {
+        marker.on('dragend', function() {
+          var p = marker.getLatLng();
+          point.lat = +p.lat.toFixed(6);
+          point.lng = +p.lng.toFixed(6);
+          L.popup().setLatLng(p).setContent('<b>' + point.name + '</b><br>moved to ' + point.lat + ', ' + point.lng).openOn(leafletMap);
+        });
+      }
 
       marker.bindPopup(`
         <div style="font-family:'Poppins',sans-serif;min-width:180px;">
