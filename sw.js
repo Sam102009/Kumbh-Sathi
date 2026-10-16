@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kumbhsathi-v4';
+const CACHE_NAME = 'kumbhsathi-v5';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -15,6 +15,12 @@ const STATIC_ASSETS = [
   './scripts/weather.js',
   './scripts/lostfound.js',
   './scripts/news.js',
+  './scripts/cache.js',
+  './scripts/auth.js',
+  './scripts/verify.js',
+  './scripts/notifications.js',
+  './scripts/pilgrim.js',
+  './scripts/chatbot.js',
   './manifest.json',
   './assets/icons/icon-192.png',
   './assets/icons/icon-512.png'

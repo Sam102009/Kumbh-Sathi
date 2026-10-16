@@ -434,7 +434,7 @@ function fetchAndRenderSchedule() {
   const container = document.getElementById('events-container');
   if (!container) return;
   container.innerHTML = '<div style="text-align:center;padding:40px;color:#FF6F00;">📅 ' + t('loading') + '</div>';
-  fetch(GAS_URL + '?sheet=Schedule')
+  cachedFetch(GAS_URL + '?sheet=Schedule')
     .then(r => r.text())
     .then(text => {
       let rows;
@@ -487,7 +487,7 @@ function loadHomeShahiSnan() {
   if (_homeShahiLoaded) return; // only fetch once per session
   var container = document.getElementById('home-shahi-snan-list');
   if (!container) return;
-  fetch(GAS_URL + '?sheet=Schedule')
+  cachedFetch(GAS_URL + '?sheet=Schedule')
     .then(function(r) { return r.text(); })
     .then(function(text) {
       var data;
@@ -663,7 +663,7 @@ function fetchAndRenderStay() {
     '<i class="fa-solid fa-bed" style="font-size:28px;"></i>' +
     '<p style="margin-top:10px;font-size:13px;">Loading accommodations…</p></div>';
 
-  fetch(GAS_URL + '?sheet=Stay')
+  cachedFetch(GAS_URL + '?sheet=Stay')
     .then(function(res) { return res.json(); })
     .then(function(rows) {
       console.log('[KumbhSathi Stay] GAS response:', rows); /* DEBUG — remove once confirmed */
@@ -978,7 +978,7 @@ function fetchAndRenderNews() {
   const container = document.getElementById('news-container');
   if (!container) return;
   container.innerHTML = '<div style="text-align:center;padding:40px;color:#FF6F00;">📰 ' + t('loading') + '</div>';
-  fetch(GAS_URL + '?sheet=News')
+  cachedFetch(GAS_URL + '?sheet=News')
     .then(r => r.json())
     .then(rows => {
       if (!rows || rows.length === 0) {
@@ -1095,7 +1095,7 @@ function fetchAndRenderAkharas() {
   const container = document.getElementById('akharas-container');
   if (!container) return;
   container.innerHTML = '<div style="text-align:center;padding:40px;color:#FF6F00;">🕉️ ' + t('loading') + '</div>';
-  fetch(GAS_URL + '?sheet=Akharas')
+  cachedFetch(GAS_URL + '?sheet=Akharas')
     .then(r => r.json())
     .then(rows => {
       if (!Array.isArray(rows) || rows.length === 0) {
@@ -1111,7 +1111,7 @@ function fetchAndRenderAkharas() {
 
 /* ===== MANAGED AD SLOTS ===== */
 function fetchAndRenderAds() {
-  fetch(GAS_URL + '?sheet=Ads')
+  cachedFetch(GAS_URL + '?sheet=Ads')
     .then(function(r) { return r.json(); })
     .then(function(rows) {
       if (!rows || !Array.isArray(rows)) return;
@@ -1156,7 +1156,7 @@ function fetchAndRenderSponsors() {
   const container = document.getElementById('sponsors-container');
   if (!container) return;
   container.innerHTML = '<div style="text-align:center;padding:20px;color:#FF6F00;">Loading...</div>';
-  fetch(GAS_URL + '?sheet=Sponsors')
+  cachedFetch(GAS_URL + '?sheet=Sponsors')
     .then(r => r.json())
     .then(rows => {
       const active = rows.filter(r => r['Active'] === true || r['Active'] === 'TRUE');

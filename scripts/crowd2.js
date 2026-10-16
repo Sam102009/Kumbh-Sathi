@@ -81,7 +81,7 @@ function loadCrowdOverrides() { drawCrowd(); }
 var CROWD_URL = 'https://script.google.com/macros/s/AKfycbxIpxbFmkxOIJi-dNMPmleSq17DrMkBIUCICb6r8Cp_7H8cLU96N-wM-JuKTX0XV-ct/exec?sheet=Crowd';
 
 function loadCrowdOverrides() {
-  fetch(CROWD_URL)
+  cachedFetch(CROWD_URL)
     .then(function(res) { return res.json(); })
     .then(function(data) {
       if (Array.isArray(data)) {

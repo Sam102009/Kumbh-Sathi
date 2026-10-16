@@ -12,7 +12,7 @@ function renderNewsLoading() {
 }
 
 function fetchNews() {
-  fetch(NEWS_URL)
+  cachedFetch(NEWS_URL)
     .then(function(res) { return res.json(); })
     .then(function(data) {
       renderNews(data);

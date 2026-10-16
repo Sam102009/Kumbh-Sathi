@@ -130,7 +130,7 @@ function loadLostFound() {
   if (!container) return;
   _lfShowSpinner(container);
 
-  fetch(APPS_SCRIPT_URL + '?sheet=Lost%20and%20Found')
+  cachedFetch(APPS_SCRIPT_URL + '?sheet=Lost%20and%20Found')
     .then(function(res) { return res.text(); })
     .then(function(text) {
       var reports;

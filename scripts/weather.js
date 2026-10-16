@@ -5,7 +5,7 @@ async function loadWeather() {
   if (!card) return;
 
   try {
-    const response = await fetch(WEATHER_URL);
+    const response = await cachedFetch(WEATHER_URL);
     const data = await response.json();
     const current = data.list[0];
     const temp = Math.round(current.main.temp);
