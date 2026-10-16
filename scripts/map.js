@@ -136,6 +136,15 @@ function initMap() {
     maxZoom: 19,
   }).addTo(leafletMap);
 
+  // DEBUG MODE: open the app with ?debug=1 to see coordinates when tapping the map
+  window.KS_DEBUG = /[?&]debug=1/.test(location.search);
+  if (window.KS_DEBUG) {
+    leafletMap.on('click', function(ev) {
+      var c = ev.latlng.lat.toFixed(6) + ', ' + ev.latlng.lng.toFixed(6);
+      L.popup().setLatLng(ev.latlng).setContent('<b>' + c + '</b>').openOn(leafletMap);
+    });
+  }
+
   // Add all marker layers
   Object.keys(MAP_MARKERS).forEach(category => {
     const markers = MAP_MARKERS[category];
@@ -150,7 +159,7 @@ function initMap() {
       marker.bindPopup(`
         <div style="font-family:'Poppins',sans-serif;min-width:180px;">
           <strong style="font-size:13px;color:#3E2723;display:block;margin-bottom:4px;">${point.name}</strong>
-          <p style="font-size:11px;color:#6D4C41;margin:0 0 10px;line-height:1.4;">${point.info}</p>
+          <p style="font-size:11px;color:#6D4C41;margin:0 0 10px;line-height:1.4;">${point.info}${window.KS_DEBUG ? '<br><b>' + point.lat + ', ' + point.lng + '</b>' : ''}</p>
           <div style="display:flex;gap:6px;flex-wrap:wrap;">
             <button onclick="getDirections(${point.lat},${point.lng},'${point.name.replace(/'/g, '')}')"
                style="display:inline-flex;align-items:center;gap:4px;background:#FF6F00;color:#fff;
