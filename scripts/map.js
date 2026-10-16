@@ -6,7 +6,7 @@
 let leafletMap = null;
 let mapLayers = {};
 let routingControl = null;
-let activeFilters = new Set(['ghats','temples','hospitals','parking','transport','accommodation','landmarks']);
+let activeFilters = new Set(['ghats','temples','hospitals','parking','transport','accommodation','landmarks','india']);
 
 /* Color-coded marker icons per category */
 const CATEGORY_COLORS = {
@@ -18,6 +18,7 @@ const CATEGORY_COLORS = {
   transport: '#004d40',
   accommodation: '#6a1b9a',
   landmarks: '#795548',
+  india:     '#ad1457',
 };
 
 const CATEGORY_ICONS = {
@@ -29,6 +30,7 @@ const CATEGORY_ICONS = {
   transport: '🚌',
   accommodation: '🏕️',
   landmarks: '📍',
+  india:     '🙏',
 };
 
 /* Create a custom div icon for Leaflet */

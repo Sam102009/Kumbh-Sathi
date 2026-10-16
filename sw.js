@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kumbhsathi-v9';
+const CACHE_NAME = 'kumbhsathi-v10';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -8,6 +8,7 @@ const STATIC_ASSETS = [
   './scripts/app.js',
   './scripts/router.js',
   './scripts/data.js',
+  './scripts/india.js',
   './scripts/translations.js',
   './scripts/crowd2.js',
   './scripts/groups.js',

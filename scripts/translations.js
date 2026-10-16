@@ -106,6 +106,7 @@ const T = {
     filter_toilets:  'Toilets',
     filter_accommodation: 'Accommodation',
     filter_landmarks: 'Landmarks',
+    filter_india: 'India Pilgrimage',
     map_legend:      'Map Legend',
 
     /* --- Stay --- */
@@ -409,6 +410,7 @@ const T = {
     filter_toilets:  'शौचालय',
     filter_accommodation: 'आवास',
     filter_landmarks: 'प्रमुख स्थान',
+    filter_india: 'भारत के तीर्थ',
     map_legend:      'नक्शा संकेत',
 
     stay_title:      'आवास एवं ठहरने की व्यवस्था',
@@ -705,6 +707,7 @@ const T = {
     filter_toilets:  'शौचालये',
     filter_accommodation: 'निवास',
     filter_landmarks: 'प्रमुख ठिकाणे',
+    filter_india: 'भारतातील तीर्थक्षेत्रे',
     map_legend:      'नकाशा संकेत',
 
     stay_title:      'निवास व राहण्याची सोय',
