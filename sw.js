@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kumbhsathi-v12';
+const CACHE_NAME = 'kumbhsathi-v13';
 const STATIC_ASSETS = [
   './',
   './index.html',

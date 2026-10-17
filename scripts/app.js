@@ -1348,18 +1348,9 @@ function resizeImageFile(file, maxSide, callback) {
 
 /* ===== Location helper: right message for each failure, one retry with lower accuracy ===== */
 function ksLocationError(err) {
-  var icons = { loc_denied: '🚫', loc_off: '📍', loc_timeout: '⏳' };
-  var show = function(key) { showInfoPopup(icons[key], t(key + '_title'), t(key), '#e65100'); };
-  if (err && err.code === 3) { show('loc_timeout'); return; }
-  var fallback = function() { show(err && err.code === 1 ? 'loc_denied' : 'loc_off'); };
-  if (navigator.permissions && navigator.permissions.query) {
-    navigator.permissions.query({ name: 'geolocation' }).then(function(r) {
-      var denied = r.state === 'denied' || (r.state === 'prompt' && err && err.code === 1);
-      show(denied ? 'loc_denied' : 'loc_off');
-    }).catch(fallback);
-  } else {
-    fallback();
-  }
+  var icons = { loc_denied: '📍', loc_timeout: '⏳' };
+  var key = (err && err.code === 3) ? 'loc_timeout' : 'loc_denied';
+  showInfoPopup(icons[key], t(key + '_title'), t(key), '#e65100');
 }
 
 function ksGetLocation(onOk, onErr) {
@@ -1392,7 +1383,7 @@ function showInfoPopup(icon, title, message, titleColor) {
   box.innerHTML =
     '<div class="ks-pop-icon" style="font-size:52px;margin-bottom:12px;"></div>' +
     '<div class="ks-pop-title" style="font-size:17px;font-weight:800;margin-bottom:10px;"></div>' +
-    '<div class="ks-pop-msg" style="font-size:13px;color:#555;line-height:1.7;margin-bottom:20px;"></div>' +
+    '<div class="ks-pop-msg" style="font-size:13px;color:#555;line-height:1.7;margin-bottom:20px;white-space:pre-line;"></div>' +
     '<button class="ks-pop-ok" style="background:linear-gradient(135deg,var(--saffron),var(--deep-orange));' +
       'color:#fff;border:none;border-radius:22px;padding:10px 32px;font-size:14px;font-weight:700;cursor:pointer;"></button>';
 
