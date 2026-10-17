@@ -93,49 +93,64 @@ function joinGroup() {
 function startGroupTracking() {
   if (groupUpdateInterval) clearInterval(groupUpdateInterval);
   if (groupMembersInterval) clearInterval(groupMembersInterval);
-  updateGroupLocation(false);
+  groupMapCentered = false;
+  updateGroupLocation(false, true);
   groupUpdateInterval = setInterval(function() {
-    updateGroupLocation(false);
+    updateGroupLocation(false, false);
   }, 60 * 1000);
   loadGroupMembers();
   groupMembersInterval = setInterval(loadGroupMembers, 30 * 1000);
 }
 
 /* Update own location */
-function updateGroupLocation(isPanic) {
+var ksLastGroupPos = null;
+
+function ksPostGroupUpdate(lat, lng, isPanic) {
+  var data = {
+    action: 'updateGroup',
+    groupCode: currentGroup,
+    memberName: currentMember,
+    lat: lat,
+    lng: lng,
+    timestamp: new Date().toLocaleTimeString('en-IN', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+      timeZone: 'Asia/Kolkata'
+    }).replace(/\b(am|pm)\b/i, function(period) {
+      return period.toUpperCase();
+    }),
+    panic: isPanic,
+    token: 'kumbh2027secure'
+  };
+  fetch(GROUPS_URL, {
+    method: 'POST',
+    body: JSON.stringify(data)
+  }).then(function() {
+    loadGroupMembers();
+  }).catch(function() {});
+}
+
+function updateGroupLocation(isPanic, loud) {
   if (!navigator.geolocation) return;
+  var opts = { enableHighAccuracy: true, timeout: 8000, maximumAge: isPanic ? 120000 : 30000 };
   navigator.geolocation.getCurrentPosition(function(pos) {
-    var data = {
-      action: 'updateGroup',
-      groupCode: currentGroup,
-      memberName: currentMember,
-      lat: pos.coords.latitude,
-      lng: pos.coords.longitude,
-      timestamp: new Date().toLocaleTimeString('en-IN', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true,
-        timeZone: 'Asia/Kolkata'
-      }).replace(/\b(am|pm)\b/i, function(period) {
-        return period.toUpperCase();
-      }),
-      panic: isPanic,
-      token: 'kumbh2027secure'
-    };
-    fetch(GROUPS_URL, {
-      method: 'POST',
-      body: JSON.stringify(data)
-    }).then(function() {
-      loadGroupMembers();
-    }).catch(function() {});
-  }, function() {
-    showToast(t('group_location_perm'));
-  });
+    ksLastGroupPos = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+    ksPostGroupUpdate(ksLastGroupPos.lat, ksLastGroupPos.lng, isPanic);
+  }, function(err) {
+    if (isPanic && ksLastGroupPos) {
+      ksPostGroupUpdate(ksLastGroupPos.lat, ksLastGroupPos.lng, true);
+    } else if (isPanic) {
+      showInfoPopup('\uD83D\uDEA8', t('group_sos_nopos_title'), t('group_sos_nopos'), '#b71c1c');
+    } else if (loud && typeof ksLocationError === 'function') {
+      ksLocationError(err);
+    }
+  }, opts);
 }
 
 /* Send panic alert */
 function sendPanic() {
-  updateGroupLocation(true);
+  updateGroupLocation(true, true);
   showToast(t('group_sos_sent'));
 }
 
@@ -213,6 +228,8 @@ function renderGroupMembers(members) {
 }
 
 /* Update group map */
+var groupMapCentered = false;
+
 function updateGroupMap(members) {
   var mapEl = document.getElementById('group-map');
   if (!mapEl) return;
@@ -221,6 +238,28 @@ function updateGroupMap(members) {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors', maxZoom: 19
     }).addTo(groupMap);
+    var GroupLocate = L.Control.extend({
+      options: { position: 'bottomright' },
+      onAdd: function() {
+        var btn = L.DomUtil.create('button', 'ks-locate-btn');
+        btn.type = 'button';
+        btn.textContent = '\uD83C\uDFAF';
+        btn.title = t('my_location');
+        btn.style.cssText = 'width:44px;height:44px;border-radius:50%;background:#fff;border:2px solid rgba(0,0,0,.2);font-size:22px;line-height:1;box-shadow:0 2px 8px rgba(0,0,0,.3);cursor:pointer;';
+        L.DomEvent.disableClickPropagation(btn);
+        L.DomEvent.on(btn, 'click', function() {
+          if (!navigator.geolocation) return;
+          btn.textContent = '\u23F3';
+          ksGetLocation(function(pos) {
+            btn.textContent = '\uD83C\uDFAF';
+            ksLastGroupPos = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+            groupMap.flyTo([pos.coords.latitude, pos.coords.longitude], Math.max(groupMap.getZoom(), 15), { duration: 1 });
+          }, function() { btn.textContent = '\uD83C\uDFAF'; });
+        });
+        return btn;
+      }
+    });
+    groupMap.addControl(new GroupLocate());
   }
   members.forEach(function(m) {
     if (!m.lat || !m.lng) return;
@@ -240,6 +279,13 @@ function updateGroupMap(members) {
         .addTo(groupMap);
     }
   });
+  if (!groupMapCentered) {
+    var me = members.filter(function(m) { return m.memberName === currentMember && m.lat && m.lng; })[0];
+    if (me) {
+      groupMap.setView([me.lat, me.lng], 15);
+      groupMapCentered = true;
+    }
+  }
 }
 
 /* Copy group code */
