@@ -72,7 +72,7 @@ function getDirections(destLat, destLng, destName) {
   // Show loading indicator
   if (typeof showToast === 'function') showToast('आपकी लोकेशन ढूंढी जा रही है...');
 
-  navigator.geolocation.getCurrentPosition(
+  ksGetLocation(
     pos => {
       const userLat = pos.coords.latitude;
       const userLng = pos.coords.longitude;
@@ -103,11 +103,7 @@ function getDirections(destLat, destLng, destName) {
       }).addTo(leafletMap);
 
       if (typeof showToast === 'function') showToast(`${destName} का रास्ता दिखाया जा रहा है`);
-    },
-    err => {
-      if (typeof showToast === 'function') showToast('लोकेशन एक्सेस नहीं मिली। कृपया लोकेशन परमिशन दें।'); else console.warn('Location permission denied');
-    },
-    { enableHighAccuracy: true, timeout: 10000 }
+    }
   );
 }
 

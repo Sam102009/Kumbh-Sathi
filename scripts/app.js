@@ -901,11 +901,9 @@ function shareLocation() {
     showToast('Geolocation not supported on this device.');
     return;
   }
-  navigator.geolocation.getCurrentPosition(pos => {
+  ksGetLocation(pos => {
     const url = `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
     window.open(url, '_blank');
-  }, () => {
-    showToast('Could not get location. Please allow location access.');
   });
 }
 
@@ -1346,4 +1344,30 @@ function resizeImageFile(file, maxSide, callback) {
   } catch (err) {
     fallback();
   }
+}
+
+/* ===== Location helper: right message for each failure, one retry with lower accuracy ===== */
+function ksLocationError(err) {
+  var show = function(key) { showToast(t(key)); };
+  if (err && err.code === 3) { show('loc_timeout'); return; }
+  var fallback = function() { show(err && err.code === 1 ? 'loc_denied' : 'loc_off'); };
+  if (navigator.permissions && navigator.permissions.query) {
+    navigator.permissions.query({ name: 'geolocation' }).then(function(r) {
+      var denied = r.state === 'denied' || (r.state === 'prompt' && err && err.code === 1);
+      show(denied ? 'loc_denied' : 'loc_off');
+    }).catch(fallback);
+  } else {
+    fallback();
+  }
+}
+
+function ksGetLocation(onOk, onErr) {
+  var fail = function(err) { ksLocationError(err); if (onErr) onErr(err); };
+  navigator.geolocation.getCurrentPosition(onOk, function(err) {
+    if (err && err.code !== 1) {
+      navigator.geolocation.getCurrentPosition(onOk, fail, { enableHighAccuracy: false, timeout: 15000, maximumAge: 60000 });
+    } else {
+      fail(err);
+    }
+  }, { enableHighAccuracy: true, timeout: 8000, maximumAge: 30000 });
 }
