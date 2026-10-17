@@ -133,15 +133,15 @@ function ksPostGroupUpdate(lat, lng, isPanic) {
 
 function updateGroupLocation(isPanic, loud) {
   if (!navigator.geolocation) return;
-  var opts = { enableHighAccuracy: true, timeout: 8000, maximumAge: isPanic ? 120000 : 30000 };
+  // SOS: send the last known position right away, then refine below
+  if (isPanic && ksLastGroupPos) ksPostGroupUpdate(ksLastGroupPos.lat, ksLastGroupPos.lng, true);
+  var opts = { enableHighAccuracy: false, timeout: 20000, maximumAge: isPanic ? 300000 : 60000 };
   navigator.geolocation.getCurrentPosition(function(pos) {
     ksLastGroupPos = { lat: pos.coords.latitude, lng: pos.coords.longitude };
     ksPostGroupUpdate(ksLastGroupPos.lat, ksLastGroupPos.lng, isPanic);
   }, function(err) {
-    if (isPanic && ksLastGroupPos) {
-      ksPostGroupUpdate(ksLastGroupPos.lat, ksLastGroupPos.lng, true);
-    } else if (isPanic) {
-      showInfoPopup('\uD83D\uDEA8', t('group_sos_nopos_title'), t('group_sos_nopos'), '#b71c1c');
+    if (isPanic) {
+      if (!ksLastGroupPos) showInfoPopup('\uD83D\uDEA8', t('group_sos_nopos_title'), t('group_sos_nopos'), '#b71c1c');
     } else if (loud && typeof ksLocationError === 'function') {
       ksLocationError(err);
     }
