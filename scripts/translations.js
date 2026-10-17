@@ -110,6 +110,9 @@ const T = {
     loc_denied: 'Location permission is blocked. Open Settings → Apps → KumbhSathi → Permissions → Location and allow it.',
     loc_off: 'Could not get your location. Please turn on Location (GPS) on your phone and try again.',
     loc_timeout: 'Location is taking too long. Move to an open area, check that Location is on, and try again.',
+    loc_denied_title: 'Location Access Blocked',
+    loc_off_title: 'Location is Off',
+    loc_timeout_title: 'Taking Too Long',
     map_legend:      'Map Legend',
 
     /* --- Stay --- */
@@ -417,6 +420,9 @@ const T = {
     loc_denied: 'लोकेशन की अनुमति बंद है। सेटिंग्स → ऐप्स → KumbhSathi → अनुमतियाँ → लोकेशन में जाकर इसे चालू करें।',
     loc_off: 'आपकी लोकेशन नहीं मिल पाई। कृपया फ़ोन में लोकेशन (GPS) चालू करें और फिर कोशिश करें।',
     loc_timeout: 'लोकेशन मिलने में बहुत समय लग रहा है। खुली जगह पर जाएँ, लोकेशन चालू है यह जाँचें और फिर कोशिश करें।',
+    loc_denied_title: 'लोकेशन की अनुमति बंद है',
+    loc_off_title: 'लोकेशन बंद है',
+    loc_timeout_title: 'बहुत समय लग रहा है',
     map_legend:      'नक्शा संकेत',
 
     stay_title:      'आवास एवं ठहरने की व्यवस्था',
@@ -717,6 +723,9 @@ const T = {
     loc_denied: 'लोकेशनची परवानगी बंद आहे. सेटिंग्ज → ॲप्स → KumbhSathi → परवानग्या → लोकेशन मध्ये जाऊन ती चालू करा.',
     loc_off: 'तुमचे लोकेशन मिळाले नाही. कृपया फोनमध्ये लोकेशन (GPS) चालू करा आणि पुन्हा प्रयत्न करा.',
     loc_timeout: 'लोकेशन मिळायला खूप वेळ लागत आहे. मोकळ्या जागी जा, लोकेशन चालू आहे का ते तपासा आणि पुन्हा प्रयत्न करा.',
+    loc_denied_title: 'लोकेशन परवानगी बंद आहे',
+    loc_off_title: 'लोकेशन बंद आहे',
+    loc_timeout_title: 'खूप वेळ लागत आहे',
     map_legend:      'नकाशा संकेत',
 
     stay_title:      'निवास व राहण्याची सोय',

@@ -1348,7 +1348,8 @@ function resizeImageFile(file, maxSide, callback) {
 
 /* ===== Location helper: right message for each failure, one retry with lower accuracy ===== */
 function ksLocationError(err) {
-  var show = function(key) { showToast(t(key)); };
+  var icons = { loc_denied: '🚫', loc_off: '📍', loc_timeout: '⏳' };
+  var show = function(key) { showInfoPopup(icons[key], t(key + '_title'), t(key), '#e65100'); };
   if (err && err.code === 3) { show('loc_timeout'); return; }
   var fallback = function() { show(err && err.code === 1 ? 'loc_denied' : 'loc_off'); };
   if (navigator.permissions && navigator.permissions.query) {
@@ -1370,4 +1371,42 @@ function ksGetLocation(onOk, onErr) {
       fail(err);
     }
   }, { enableHighAccuracy: true, timeout: 8000, maximumAge: 30000 });
+}
+
+/* ===== Info popup: same look as the Lost & Found "Report Submitted" popup ===== */
+function showInfoPopup(icon, title, message, titleColor) {
+  var existing = document.getElementById('ks-info-popup');
+  if (existing) existing.remove();
+
+  var overlay = document.createElement('div');
+  overlay.id = 'ks-info-popup';
+  overlay.style.cssText =
+    'position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:99999;' +
+    'display:flex;align-items:center;justify-content:center;padding:24px;';
+
+  var box = document.createElement('div');
+  box.style.cssText =
+    'background:#fff;border-radius:18px;padding:28px 24px;max-width:340px;width:100%;' +
+    'text-align:center;box-shadow:0 8px 40px rgba(0,0,0,0.25);';
+
+  box.innerHTML =
+    '<div class="ks-pop-icon" style="font-size:52px;margin-bottom:12px;"></div>' +
+    '<div class="ks-pop-title" style="font-size:17px;font-weight:800;margin-bottom:10px;"></div>' +
+    '<div class="ks-pop-msg" style="font-size:13px;color:#555;line-height:1.7;margin-bottom:20px;"></div>' +
+    '<button class="ks-pop-ok" style="background:linear-gradient(135deg,var(--saffron),var(--deep-orange));' +
+      'color:#fff;border:none;border-radius:22px;padding:10px 32px;font-size:14px;font-weight:700;cursor:pointer;"></button>';
+
+  box.querySelector('.ks-pop-icon').textContent = icon || 'ℹ️';
+  var titleEl = box.querySelector('.ks-pop-title');
+  titleEl.textContent = title;
+  titleEl.style.color = titleColor || '#2e7d32';
+  box.querySelector('.ks-pop-msg').textContent = message;
+  box.querySelector('.ks-pop-ok').textContent = t('ok');
+
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  function closePopup() { overlay.remove(); }
+  box.querySelector('.ks-pop-ok').addEventListener('click', closePopup);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) closePopup(); });
 }
