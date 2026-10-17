@@ -94,33 +94,59 @@ function startGroupTracking() {
   if (groupUpdateInterval) clearInterval(groupUpdateInterval);
   if (groupMembersInterval) clearInterval(groupMembersInterval);
   groupMapCentered = false;
+  ksOwnRow = null;
+  ksGroupMembers = [];
+  ksSosSeen = {};
   updateGroupLocation(false, true);
   groupUpdateInterval = setInterval(function() {
     updateGroupLocation(false, false);
   }, 60 * 1000);
   loadGroupMembers();
-  groupMembersInterval = setInterval(loadGroupMembers, 30 * 1000);
+  groupMembersInterval = setInterval(function() {
+    if (!document.hidden) loadGroupMembers();
+  }, 15 * 1000);
 }
 
 /* Update own location */
 var ksLastGroupPos = null;
 
+var ksSosUntil = 0;
+var ksOwnRow = null;
+var ksGroupMembers = [];
+var ksSosSeen = {};
+
+function ksNowStamp() {
+  return new Date().toLocaleTimeString('en-IN', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+    timeZone: 'Asia/Kolkata'
+  }).replace(/\b(am|pm)\b/i, function(period) {
+    return period.toUpperCase();
+  });
+}
+
+function ksApplyOwnUpdate(lat, lng, panic) {
+  ksOwnRow = { groupCode: currentGroup, memberName: currentMember, lat: lat, lng: lng, timestamp: ksNowStamp(), panic: panic };
+  var idx = -1;
+  ksGroupMembers.forEach(function(m, i) { if (m.memberName === currentMember) idx = i; });
+  if (idx >= 0) ksGroupMembers[idx] = ksOwnRow; else ksGroupMembers.push(ksOwnRow);
+  renderGroupMembers(ksGroupMembers);
+  updateGroupMap(ksGroupMembers);
+}
+
 function ksPostGroupUpdate(lat, lng, isPanic) {
+  if (isPanic) ksSosUntil = Date.now() + 10 * 60 * 1000;
+  var panicNow = Date.now() < ksSosUntil;
+  ksApplyOwnUpdate(lat, lng, panicNow);
   var data = {
     action: 'updateGroup',
     groupCode: currentGroup,
     memberName: currentMember,
     lat: lat,
     lng: lng,
-    timestamp: new Date().toLocaleTimeString('en-IN', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-      timeZone: 'Asia/Kolkata'
-    }).replace(/\b(am|pm)\b/i, function(period) {
-      return period.toUpperCase();
-    }),
-    panic: isPanic,
+    timestamp: ksNowStamp(),
+    panic: panicNow,
     token: 'kumbh2027secure'
   };
   fetch(GROUPS_URL, {
@@ -159,14 +185,12 @@ function formatGroupTimestamp(value) {
   if (!value) return '—';
 
   var raw = String(value).trim();
-  var legacyTime = raw.match(/^1899-12-30T(\d{2}):(\d{2})(?::\d{2})?(?:\.\d+)?Z$/i);
+  var legacyTime = raw.match(/^1899-12-(?:29|30)T(\d{2}):(\d{2})(?::(\d{2}))?(?:\.\d+)?Z$/i);
   if (legacyTime) {
-    // Google Sheets serializes time-only cells as a UTC ISO date on 1899-12-30.
-    // Apply India's fixed +05:30 offset rather than relying on historical timezone
-    // rules for that placeholder date.
-    var utcMinutes = Number(legacyTime[1]) * 60 + Number(legacyTime[2]);
-    var istMinutes = (utcMinutes + (5 * 60) + 30) % (24 * 60);
-    return formatClockTime(Math.floor(istMinutes / 60), istMinutes % 60);
+    // Sheets serializes time-only cells using India's 1899 offset (+05:21:10), not +05:30
+    var utcSec = Number(legacyTime[1]) * 3600 + Number(legacyTime[2]) * 60 + Number(legacyTime[3] || 0);
+    var istMin = Math.round(((utcSec + 19270) % 86400) / 60) % 1440;
+    return formatClockTime(Math.floor(istMin / 60), istMin % 60);
   }
 
   var meridiemTime = raw.match(/^(\d{1,2}):(\d{2})(?::\d{2})?\s*([ap])\.?m\.?$/i);
@@ -196,8 +220,16 @@ function loadGroupMembers() {
   fetch(GROUPS_URL + '?sheet=Groups&code=' + currentGroup)
     .then(function(res) { return res.json(); })
     .then(function(members) {
+      if (!Array.isArray(members)) return;
+      if (ksOwnRow) {
+        var idx = -1;
+        members.forEach(function(m, i) { if (m.memberName === currentMember) idx = i; });
+        if (idx >= 0) members[idx] = ksOwnRow; else members.push(ksOwnRow);
+      }
+      ksGroupMembers = members;
       renderGroupMembers(members);
       updateGroupMap(members);
+      ksCheckSos(members);
     })
     .catch(function() {});
 }
@@ -342,3 +374,53 @@ function initGroups() {
     if (groupMap) groupMap.invalidateSize();
   }, 300);
 }
+
+/* ===== SOS alert for other members: siren + vibration + red popup ===== */
+var ksAudioCtx = null;
+
+function ksUnlockAudio() {
+  try {
+    if (!ksAudioCtx) ksAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (ksAudioCtx.state === 'suspended') ksAudioCtx.resume();
+  } catch (e) {}
+}
+document.addEventListener('click', ksUnlockAudio);
+document.addEventListener('touchstart', ksUnlockAudio);
+
+function ksPlayAlarm() {
+  try { if (navigator.vibrate) navigator.vibrate([500, 200, 500, 200, 500, 200, 500]); } catch (e) {}
+  try {
+    ksUnlockAudio();
+    if (!ksAudioCtx) return;
+    var ctx = ksAudioCtx, now = ctx.currentTime;
+    var gain = ctx.createGain();
+    gain.gain.value = 0.5;
+    gain.connect(ctx.destination);
+    for (var i = 0; i < 8; i++) {
+      var osc = ctx.createOscillator();
+      osc.type = 'square';
+      osc.frequency.value = (i % 2 === 0) ? 880 : 660;
+      osc.connect(gain);
+      osc.start(now + i * 0.5);
+      osc.stop(now + i * 0.5 + 0.45);
+    }
+  } catch (e) {}
+}
+
+function ksCheckSos(members) {
+  members.forEach(function(m) {
+    if (m.memberName === currentMember) return;
+    var isPanic = m.panic === true || m.panic === 'true' || m.panic === 'TRUE';
+    if (isPanic && !ksSosSeen[m.memberName]) {
+      ksSosSeen[m.memberName] = true;
+      ksPlayAlarm();
+      showInfoPopup('\uD83D\uDEA8', t('group_sos_alert_title'), m.memberName + ' ' + t('group_sos_alert_msg'), '#b71c1c');
+    } else if (!isPanic) {
+      ksSosSeen[m.memberName] = false;
+    }
+  });
+}
+
+document.addEventListener('visibilitychange', function() {
+  if (!document.hidden && typeof currentGroup !== 'undefined' && currentGroup) loadGroupMembers();
+});
