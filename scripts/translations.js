@@ -113,6 +113,8 @@ const T = {
     loc_denied_title: 'Cannot Get Your Location',
     loc_off_title: 'Location is Off',
     loc_timeout_title: 'Taking Too Long',
+    you_are_here: 'You are here',
+    my_location: 'My location',
     map_legend:      'Map Legend',
 
     /* --- Stay --- */
@@ -423,6 +425,8 @@ const T = {
     loc_denied_title: 'लोकेशन नहीं मिल रही',
     loc_off_title: 'लोकेशन बंद है',
     loc_timeout_title: 'बहुत समय लग रहा है',
+    you_are_here: 'आप यहाँ हैं',
+    my_location: 'मेरी लोकेशन',
     map_legend:      'नक्शा संकेत',
 
     stay_title:      'आवास एवं ठहरने की व्यवस्था',
@@ -726,6 +730,8 @@ const T = {
     loc_denied_title: 'लोकेशन मिळत नाही',
     loc_off_title: 'लोकेशन बंद आहे',
     loc_timeout_title: 'खूप वेळ लागत आहे',
+    you_are_here: 'तुम्ही इथे आहात',
+    my_location: 'माझे लोकेशन',
     map_legend:      'नकाशा संकेत',
 
     stay_title:      'निवास व राहण्याची सोय',

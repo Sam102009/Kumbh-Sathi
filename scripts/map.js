@@ -76,6 +76,7 @@ function getDirections(destLat, destLng, destName) {
     pos => {
       const userLat = pos.coords.latitude;
       const userLng = pos.coords.longitude;
+      showUserOnMap(userLat, userLng, pos.coords.accuracy, false);
 
       // Remove previous route if exists
       if (routingControl) {
@@ -133,6 +134,34 @@ function initMap() {
     attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     maxZoom: 19,
   }).addTo(leafletMap);
+
+  // Locate-me button (bottom right)
+  var LocateControl = L.Control.extend({
+    options: { position: 'bottomright' },
+    onAdd: function() {
+      var btn = L.DomUtil.create('button', 'ks-locate-btn');
+      btn.type = 'button';
+      btn.textContent = '\uD83C\uDFAF';
+      btn.title = (typeof t === 'function') ? t('my_location') : 'My location';
+      btn.style.cssText = 'width:44px;height:44px;border-radius:50%;background:#fff;border:2px solid rgba(0,0,0,.2);font-size:22px;line-height:1;box-shadow:0 2px 8px rgba(0,0,0,.3);cursor:pointer;';
+      L.DomEvent.disableClickPropagation(btn);
+      L.DomEvent.on(btn, 'click', function() {
+        if (!navigator.geolocation) {
+          if (typeof showToast === 'function') showToast('Geolocation not supported on this device.');
+          return;
+        }
+        btn.textContent = '\u23F3';
+        ksGetLocation(function(pos) {
+          btn.textContent = '\uD83C\uDFAF';
+          showUserOnMap(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy, true);
+        }, function() {
+          btn.textContent = '\uD83C\uDFAF';
+        });
+      });
+      return btn;
+    }
+  });
+  leafletMap.addControl(new LocateControl());
 
   // DEBUG MODE: open the app with ?debug=1 to see coordinates when tapping the map
   window.KS_DEBUG = /[?&]debug=1/.test(location.search);
@@ -240,4 +269,25 @@ function initMap() {
     }
   });
 }
-   
+
+/* ===== Show the user's own position on the map (blue dot + accuracy circle) ===== */
+let userLocMarker = null;
+let userLocCircle = null;
+
+function showUserOnMap(lat, lng, accuracy, recenter) {
+  if (!leafletMap) return;
+  var ll = [lat, lng];
+  var acc = accuracy || 30;
+  if (!userLocMarker) {
+    userLocCircle = L.circle(ll, { radius: acc, color: '#1a73e8', weight: 1, fillColor: '#1a73e8', fillOpacity: 0.12 }).addTo(leafletMap);
+    userLocMarker = L.circleMarker(ll, { radius: 8, color: '#ffffff', weight: 3, fillColor: '#1a73e8', fillOpacity: 1 }).addTo(leafletMap);
+    userLocMarker.bindPopup((typeof t === 'function') ? t('you_are_here') : 'You are here');
+  } else {
+    userLocMarker.setLatLng(ll);
+    userLocCircle.setLatLng(ll);
+    userLocCircle.setRadius(acc);
+  }
+  if (recenter) {
+    leafletMap.flyTo(ll, Math.max(leafletMap.getZoom(), 15), { duration: 1 });
+  }
+}
