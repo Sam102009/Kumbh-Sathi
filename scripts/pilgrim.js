@@ -346,3 +346,35 @@ function showPilgrimDetails(p) {
     '</div>';
   output.scrollIntoView({ behavior: 'smooth' });
 }
+
+
+// ---- Sign-in gate for the registration form ----
+function updatePilgrimGate() {
+  var wrap = document.getElementById('pilgrim-form-wrap');
+  var gate = document.getElementById('pilgrim-signin-gate');
+  if (!wrap || !gate) return;
+  var ok = (typeof KumbhAuth !== 'undefined') && KumbhAuth.hasFreshCredential();
+  if (ok) {
+    wrap.style.display = 'flex';
+    gate.style.display = 'none';
+    return;
+  }
+  var btnEl = document.getElementById('pilgrim-signin-btn');
+  if (btnEl && !window._pilgrimBtnDone && typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+    try {
+      google.accounts.id.renderButton(btnEl, { theme: 'outline', size: 'large', width: 240 });
+      window._pilgrimBtnDone = true;
+      var fb = document.getElementById('pilgrim-signin-fallback');
+      if (fb) fb.style.display = 'none';
+    } catch (e) {}
+  }
+}
+
+function pilgrimRequireSignIn() {
+  if (typeof KumbhAuth !== 'undefined') {
+    KumbhAuth.withFreshCredential(function() { updatePilgrimGate(); });
+  }
+}
+
+setInterval(updatePilgrimGate, 2000);
+updatePilgrimGate();
