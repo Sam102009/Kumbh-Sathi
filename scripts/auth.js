@@ -3,6 +3,8 @@ var KumbhAuth = {
   clientId: '145095692060-i0ln8i31gh44dqtrdtpfoida506qk2li.apps.googleusercontent.com',
   user: null,
   pendingCallback: null,
+  credential: null,
+  credentialExp: 0,
 
   init: function() {
     var saved = localStorage.getItem('kumbh_user');
@@ -17,6 +19,27 @@ var KumbhAuth = {
 
   getUser: function() {
     return this.user;
+  },
+
+  hasFreshCredential: function() {
+    return !!this.credential && this.credentialExp > (Date.now() / 1000) + 60;
+  },
+
+  withFreshCredential: function(callback) {
+    if (this.hasFreshCredential()) {
+      callback(this.credential);
+      return;
+    }
+    this.pendingCallback = function() { callback(KumbhAuth.credential); };
+    if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+      google.accounts.id.prompt(function(notification) {
+        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+          document.getElementById('auth-panel').style.display = 'block';
+        }
+      });
+    } else {
+      document.getElementById('auth-panel').style.display = 'block';
+    }
   },
 
   signIn: function(callback) {
@@ -34,6 +57,8 @@ var KumbhAuth = {
 
   signOut: function() {
     this.user = null;
+    this.credential = null;
+    this.credentialExp = 0;
     localStorage.removeItem('kumbh_user');
     if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
       google.accounts.id.disableAutoSelect();
@@ -71,6 +96,8 @@ var KumbhAuthUI = {
             email: payload.email,
             picture: payload.picture
           };
+          KumbhAuth.credential = response.credential;
+          KumbhAuth.credentialExp = payload.exp;
           localStorage.setItem('kumbh_user', JSON.stringify(KumbhAuth.user));
           KumbhAuthUI.updateHeader();
           document.getElementById('auth-panel').style.display = 'none';
