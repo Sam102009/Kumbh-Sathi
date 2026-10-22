@@ -42,6 +42,11 @@ function submitPilgrimRegistration() {
     return;
   }
 
+  if (typeof KumbhAuth !== 'undefined' && !KumbhAuth.hasFreshCredential()) {
+    KumbhAuth.withFreshCredential(function() { submitPilgrimRegistration(); });
+    return;
+  }
+
   var btn = document.getElementById('pilgrim-submit-btn');
   btn.disabled = true;
   btn.innerHTML = t('pilgrim_generating');
@@ -61,6 +66,7 @@ function submitPilgrimRegistration() {
       medical: medical,
       photo: photoBase64 || '',
       timestamp: timestamp,
+      credential: (typeof KumbhAuth !== 'undefined') ? KumbhAuth.credential : '',
       token: 'kumbh2027secure'
     };
 
