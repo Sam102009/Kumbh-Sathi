@@ -43,7 +43,7 @@ function submitPilgrimRegistration() {
   }
 
   if (typeof KumbhAuth !== 'undefined' && !KumbhAuth.hasFreshCredential()) {
-    KumbhAuth.withFreshCredential(function() { submitPilgrimRegistration(); });
+    pilgrimOpenSignIn(function() { submitPilgrimRegistration(); });
     return;
   }
 
@@ -359,21 +359,23 @@ function updatePilgrimGate() {
     gate.style.display = 'none';
     return;
   }
-  var btnEl = document.getElementById('pilgrim-signin-btn');
-  if (btnEl && !window._pilgrimBtnDone && typeof google !== 'undefined' && google.accounts && google.accounts.id) {
-    try {
-      google.accounts.id.renderButton(btnEl, { theme: 'outline', size: 'large', width: 240 });
-      window._pilgrimBtnDone = true;
-      var fb = document.getElementById('pilgrim-signin-fallback');
-      if (fb) fb.style.display = 'none';
-    } catch (e) {}
+}
+
+function pilgrimOpenSignIn(after) {
+  if (typeof KumbhAuth === 'undefined' || typeof KumbhAuthUI === 'undefined') return;
+  if (KumbhAuth.getUser() && !KumbhAuth.hasFreshCredential()) {
+    KumbhAuth.signOut();
+    KumbhAuthUI.updateHeader();
   }
+  KumbhAuth.pendingCallback = after || null;
+  setTimeout(function() {
+    var panel = document.getElementById('auth-panel');
+    if (panel && panel.style.display !== 'block') KumbhAuthUI.togglePanel();
+  }, 0);
 }
 
 function pilgrimRequireSignIn() {
-  if (typeof KumbhAuth !== 'undefined') {
-    KumbhAuth.withFreshCredential(function() { updatePilgrimGate(); });
-  }
+  pilgrimOpenSignIn(function() { updatePilgrimGate(); });
 }
 
 setInterval(updatePilgrimGate, 2000);
