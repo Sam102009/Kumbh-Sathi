@@ -296,6 +296,7 @@ const T = {
     pilgrim_signin_title: 'Sign in to register',
     pilgrim_signin_text: 'Please sign in with your Google account first. This stops fake registrations and keeps pilgrim details safe.',
     pilgrim_signin_btn: 'Sign in with Google',
+    auth_panel_signin_text: 'Sign in to verify your identity for Lost and Found and to register pilgrims',
     pilgrim_fill_required:'Please fill all required fields (Name, Age, City, Contact)',
     pilgrim_generating:   '⏳ Generating card...',
     pilgrim_age_label:    'Age: ',
@@ -587,6 +588,7 @@ const T = {
     pilgrim_signin_title: 'रजिस्टर करने के लिए साइन इन करें',
     pilgrim_signin_text: 'कृपया पहले अपने Google खाते से साइन इन करें। इससे नकली पंजीकरण रुकते हैं और यात्रियों की जानकारी सुरक्षित रहती है।',
     pilgrim_signin_btn: 'Google से साइन इन करें',
+    auth_panel_signin_text: 'खोया-पाया में पहचान सत्यापित करने और यात्रियों को पंजीकृत करने के लिए साइन इन करें',
 
     group_or_divider:  '— या —',
     group_created_toast:'ग्रुप बनाया गया! कोड शेयर करें: ',
@@ -899,6 +901,7 @@ const T = {
     pilgrim_signin_title: 'नोंदणीसाठी साइन इन करा',
     pilgrim_signin_text: 'कृपया आधी तुमच्या Google खात्याने साइन इन करा. यामुळे खोट्या नोंदणी थांबतात आणि यात्रेकरूंची माहिती सुरक्षित राहते.',
     pilgrim_signin_btn: 'Google ने साइन इन करा',
+    auth_panel_signin_text: 'हरवले-सापडले मध्ये ओळख पडताळण्यासाठी आणि यात्रेकरूंची नोंदणी करण्यासाठी साइन इन करा',
 
     group_or_divider:  '— किंवा —',
     group_created_toast:'ग्रुप तयार झाला! कोड शेअर करा: ',
