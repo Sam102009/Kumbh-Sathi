@@ -66,7 +66,7 @@ function submitPilgrimRegistration() {
       medical: medical,
       photo: photoBase64 || '',
       timestamp: timestamp,
-      credential: (typeof KumbhAuth !== 'undefined') ? KumbhAuth.credential : '',
+      userEmail: (typeof KumbhAuth !== 'undefined' && KumbhAuth.getUser()) ? KumbhAuth.getUser().email : '',
       token: 'kumbh2027secure'
     };
 
