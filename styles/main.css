@@ -608,6 +608,9 @@ body.dark-mode #main-content {
 body.dark-mode #app {
   background: var(--bg);
 }
+body.dark-mode #page-home {
+  background: var(--bg);
+}
 
 /* Header & Nav */
 body.dark-mode #app-header {
