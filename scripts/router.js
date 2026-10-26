@@ -55,7 +55,7 @@ function navigateTo(route, addToHistory) {
   closeMoreDrawer();
 
   // Push to browser history — enables Android back button
-  if (addToHistory) {
+  if (addToHistory && route !== currentRoute) {
     var url = route === 'home' ? (window.location.pathname + window.location.search) : '#' + route;
     history.pushState({ route: route }, '', url);
   }
