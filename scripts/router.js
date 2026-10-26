@@ -94,6 +94,8 @@ function onRouteChange(route) {
   }
 }
 
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
 /* --- Android / browser back button via popstate --- */
 window.addEventListener('popstate', function(e) {
   var route = (e.state && e.state.route) ? e.state.route : getRoute();
