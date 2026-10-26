@@ -49,6 +49,7 @@ function navigateTo(route, addToHistory) {
   // Scroll main content to top
   const mainContent = document.getElementById('main-content');
   if (mainContent) mainContent.scrollTop = 0;
+  window.scrollTo(0, 0);
 
   // Close more drawer if open
   closeMoreDrawer();
