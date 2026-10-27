@@ -86,6 +86,8 @@
     <div id="auth-panel-signedout">
       <p style="font-size:13px;color:#888;margin:0 0 12px;"><span data-t="auth_panel_signin_text">Sign in to verify your identity for Lost and Found and to register pilgrims</span></p>
       <div id="auth-panel-signin-btn"></div>
+      <button id="auth-native-signin-btn" onclick="KumbhAuth.nativeSignIn()" style="display:none;width:210px;padding:10px 14px;background:linear-gradient(135deg,var(--saffron),var(--deep-orange));color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;"><span data-t="pilgrim_signin_btn">Sign in with Google</span></button>
+      <script>if (window.KumbhNative) { document.getElementById('auth-native-signin-btn').style.display = 'block'; document.getElementById('auth-panel-signin-btn').style.display = 'none'; }</script>
     </div>
     <div id="auth-panel-signedin" style="display:none;">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
