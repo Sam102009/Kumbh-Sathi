@@ -13,6 +13,37 @@ var KumbhAuth = {
     }
   },
 
+  nativeSignIn: function() {
+    if (window.KumbhNative && typeof window.KumbhNative.signIn === 'function') {
+      window.KumbhNative.signIn();
+      return true;
+    }
+    return false;
+  },
+
+  onNativeCredential: function(token) {
+    try {
+      var payload = KumbhAuth._parseJwt(token);
+      if (!payload || !payload.email || !payload.exp || payload.aud !== KumbhAuth.clientId) return false;
+      KumbhAuth.user = { name: payload.name, email: payload.email, picture: payload.picture };
+      KumbhAuth.credential = token;
+      KumbhAuth.credentialExp = payload.exp;
+      localStorage.setItem('kumbh_user', JSON.stringify(KumbhAuth.user));
+      KumbhAuthUI.updateHeader();
+      var panel = document.getElementById('auth-panel');
+      if (panel) panel.style.display = 'none';
+      if (KumbhAuth.pendingCallback) {
+        var cb = KumbhAuth.pendingCallback;
+        KumbhAuth.pendingCallback = null;
+        cb(KumbhAuth.user);
+      }
+      if (typeof KumbhVerifyUI !== 'undefined') KumbhVerifyUI.checkAndUpdateStatus();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  },
+
   isSignedIn: function() {
     return this.user !== null;
   },
