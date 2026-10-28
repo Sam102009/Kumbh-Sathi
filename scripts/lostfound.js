@@ -220,6 +220,30 @@ function initLostFound() {
 
   loadLostFound();
 
+  var lfForm = document.getElementById('lf-form');
+  if (lfForm) {
+    var lfRestrict = function(field, fix) {
+      var el = lfForm.querySelector('[name="' + field + '"]');
+      if (!el) return;
+      el.addEventListener('input', function(ev) {
+        if (ev.isComposing) return;
+        var fixed = fix(el.value);
+        if (fixed !== el.value) el.value = fixed;
+      });
+    };
+    lfRestrict('name', function(v) { return v.replace(/[^\p{L}\p{M}\s.\-]/gu, '').replace(/^\s+/, '').slice(0, 50); });
+    lfRestrict('age', function(v) {
+      var d = v.replace(/\D/g, '').replace(/^0+/, '').slice(0, 3);
+      if (parseInt(d, 10) > 120) d = d.slice(0, 2);
+      return d;
+    });
+    lfRestrict('contact', function(v) {
+      var d = v.replace(/\D/g, '');
+      if (d.length >= 12 && d.indexOf('91') === 0) d = d.slice(2);
+      return d.replace(/^[0-5]+/, '').slice(0, 10);
+    });
+  }
+
   var form = document.getElementById('lf-form');
   if (form) {
     form.addEventListener('submit', function(e) {
