@@ -225,6 +225,22 @@ function initLostFound() {
     form.addEventListener('submit', function(e) {
       e.preventDefault();
       var fd = new FormData(e.target);
+      var lfName = String(fd.get('name') || '').trim();
+      var lfAge = String(fd.get('age') || '').trim();
+      var lfContact = String(fd.get('contact') || '').replace(/[\s-]/g, '').replace(/^\+91/, '');
+      var lfMsg = '';
+      if (!/^[\p{L}\p{M}][\p{L}\p{M}\s.\-]*$/u.test(lfName) || lfName.length > 50) {
+        lfMsg = t('lf_invalid_name');
+      } else if (!/^\d{1,3}$/.test(lfAge) || parseInt(lfAge, 10) < 1 || parseInt(lfAge, 10) > 120) {
+        lfMsg = t('lf_invalid_age');
+      } else if (!/^[6-9]\d{9}$/.test(lfContact)) {
+        lfMsg = t('lf_invalid_contact');
+      }
+      if (lfMsg) {
+        if (typeof showToast === 'function') showToast('\u26a0\ufe0f ' + lfMsg);
+        else alert(lfMsg);
+        return;
+      }
       var report = {
         type:      activeReportType,
         name:      fd.get('name'),
