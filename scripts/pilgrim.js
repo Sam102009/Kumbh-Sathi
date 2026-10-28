@@ -42,7 +42,7 @@ function submitPilgrimRegistration() {
     return;
   }
 
-  if (typeof KumbhAuth !== 'undefined' && !KumbhAuth.hasFreshCredential()) {
+  if (typeof KumbhAuth !== 'undefined' && !KumbhAuth.isSignedIn()) {
     pilgrimOpenSignIn(function() { submitPilgrimRegistration(); });
     return;
   }
@@ -353,7 +353,7 @@ function updatePilgrimGate() {
   var wrap = document.getElementById('pilgrim-form-wrap');
   var gate = document.getElementById('pilgrim-signin-gate');
   if (!wrap || !gate) return;
-  var ok = (typeof KumbhAuth !== 'undefined') && KumbhAuth.hasFreshCredential();
+  var ok = (typeof KumbhAuth !== 'undefined') && KumbhAuth.isSignedIn();
   if (ok) {
     wrap.style.display = 'flex';
     gate.style.display = 'none';
@@ -363,10 +363,6 @@ function updatePilgrimGate() {
 
 function pilgrimOpenSignIn(after) {
   if (typeof KumbhAuth === 'undefined' || typeof KumbhAuthUI === 'undefined') return;
-  if (KumbhAuth.getUser() && !KumbhAuth.hasFreshCredential()) {
-    KumbhAuth.signOut();
-    KumbhAuthUI.updateHeader();
-  }
   KumbhAuth.pendingCallback = after || null;
   setTimeout(function() {
     var panel = document.getElementById('auth-panel');
