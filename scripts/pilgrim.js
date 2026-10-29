@@ -38,13 +38,13 @@ function submitPilgrimRegistration() {
   var photoFile = document.getElementById('p-photo').files[0];
 
   if (!name || !age || !city || !contact1) {
-    alert(t('pilgrim_fill_required'));
+    pilgrimShowError(t('pilgrim_fill_required'));
     return;
   }
   var pPhoneOk = /^[6-9]\d{9}$/;
   var pAgeNum = parseInt(age, 10);
   if (!pPhoneOk.test(contact1) || (contact2 && !pPhoneOk.test(contact2)) || !(pAgeNum >= 1 && pAgeNum <= 120)) {
-    alert(t('p_invalid_input'));
+    pilgrimShowError(t('p_invalid_input'));
     return;
   }
 
@@ -414,3 +414,9 @@ updatePilgrimGate();
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setup);
   else setup();
 })();
+
+
+function pilgrimShowError(msg) {
+  if (typeof showInfoPopup === 'function') showInfoPopup('\u26a0\ufe0f', msg, '', '#e65100');
+  else alert(msg);
+}
