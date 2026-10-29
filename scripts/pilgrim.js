@@ -41,6 +41,12 @@ function submitPilgrimRegistration() {
     alert(t('pilgrim_fill_required'));
     return;
   }
+  var pPhoneOk = /^[6-9]\d{9}$/;
+  var pAgeNum = parseInt(age, 10);
+  if (!pPhoneOk.test(contact1) || (contact2 && !pPhoneOk.test(contact2)) || !(pAgeNum >= 1 && pAgeNum <= 120)) {
+    alert(t('p_invalid_input'));
+    return;
+  }
 
   if (typeof KumbhAuth !== 'undefined' && !KumbhAuth.isSignedIn()) {
     pilgrimOpenSignIn(function() { submitPilgrimRegistration(); });
@@ -376,3 +382,35 @@ function pilgrimRequireSignIn() {
 
 setInterval(updatePilgrimGate, 2000);
 updatePilgrimGate();
+
+
+/* --- Typing limits for the registration form --- */
+(function() {
+  function pilgrimRestrict(id, fix) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', function(ev) {
+      if (ev.isComposing) return;
+      var fixed = fix(el.value);
+      if (fixed !== el.value) el.value = fixed;
+    });
+  }
+  function phoneFix(v) {
+    var d = v.replace(/\D/g, '');
+    if (d.length >= 12 && d.indexOf('91') === 0) d = d.slice(2);
+    return d.replace(/^[0-5]+/, '').slice(0, 10);
+  }
+  function setup() {
+    pilgrimRestrict('p-name', function(v) { return v.replace(/[^\p{L}\p{M}\s.\-]/gu, '').replace(/^\s+/, '').slice(0, 50); });
+    pilgrimRestrict('p-city', function(v) { return v.replace(/[^\p{L}\p{M}\s.,\-]/gu, '').replace(/^\s+/, '').slice(0, 50); });
+    pilgrimRestrict('p-age', function(v) {
+      var d = v.replace(/\D/g, '').replace(/^0+/, '').slice(0, 3);
+      if (parseInt(d, 10) > 120) d = d.slice(0, 2);
+      return d;
+    });
+    pilgrimRestrict('p-contact1', phoneFix);
+    pilgrimRestrict('p-contact2', phoneFix);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setup);
+  else setup();
+})();

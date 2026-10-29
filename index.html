@@ -750,12 +750,12 @@
         <div id="pilgrim-form-wrap" style="display:none;flex-direction:column;gap:14px;">
           <div>
             <label style="font-size:13px;font-weight:700;color:var(--dark-brown);display:block;margin-bottom:6px;">👤 <span data-t="pilgrim_name">पूरा नाम</span> *</label>
-            <input id="p-name" type="text" placeholder="यात्री का पूरा नाम" data-t-placeholder="p_name_placeholder" style="width:100%;padding:14px;border:2px solid #e0d5c5;border-radius:10px;font-size:16px;box-sizing:border-box;">
+            <input id="p-name" type="text" maxlength="50" placeholder="यात्री का पूरा नाम" data-t-placeholder="p_name_placeholder" style="width:100%;padding:14px;border:2px solid #e0d5c5;border-radius:10px;font-size:16px;box-sizing:border-box;">
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
             <div>
               <label style="font-size:13px;font-weight:700;color:var(--dark-brown);display:block;margin-bottom:6px;">🎂 <span data-t="pilgrim_age">आयु</span> *</label>
-              <input id="p-age" type="number" placeholder="आयु" data-t-placeholder="p_age_placeholder" style="width:100%;padding:14px;border:2px solid #e0d5c5;border-radius:10px;font-size:16px;box-sizing:border-box;">
+              <input id="p-age" type="text" inputmode="numeric" maxlength="3" placeholder="आयु" data-t-placeholder="p_age_placeholder" style="width:100%;padding:14px;border:2px solid #e0d5c5;border-radius:10px;font-size:16px;box-sizing:border-box;">
             </div>
             <div>
               <label style="font-size:13px;font-weight:700;color:var(--dark-brown);display:block;margin-bottom:6px;">⚧ <span data-t="pilgrim_gender">लिंग</span> *</label>
@@ -768,15 +768,15 @@
           </div>
           <div>
             <label style="font-size:13px;font-weight:700;color:var(--dark-brown);display:block;margin-bottom:6px;">🏠 <span data-t="pilgrim_city">गृह नगर</span> *</label>
-            <input id="p-city" type="text" placeholder="शहर / गाँव का नाम" data-t-placeholder="p_city_placeholder" style="width:100%;padding:14px;border:2px solid #e0d5c5;border-radius:10px;font-size:16px;box-sizing:border-box;">
+            <input id="p-city" type="text" maxlength="50" placeholder="शहर / गाँव का नाम" data-t-placeholder="p_city_placeholder" style="width:100%;padding:14px;border:2px solid #e0d5c5;border-radius:10px;font-size:16px;box-sizing:border-box;">
           </div>
           <div>
             <label style="font-size:13px;font-weight:700;color:var(--dark-brown);display:block;margin-bottom:6px;">📞 <span data-t="pilgrim_contact">परिवार संपर्क</span> *</label>
-            <input id="p-contact1" type="tel" placeholder="+91 XXXXX XXXXX" style="width:100%;padding:14px;border:2px solid #e0d5c5;border-radius:10px;font-size:16px;box-sizing:border-box;">
+            <input id="p-contact1" type="tel" inputmode="numeric" maxlength="10" placeholder="+91 XXXXX XXXXX" style="width:100%;padding:14px;border:2px solid #e0d5c5;border-radius:10px;font-size:16px;box-sizing:border-box;">
           </div>
           <div>
             <label style="font-size:13px;font-weight:700;color:var(--dark-brown);display:block;margin-bottom:6px;">📞 <span data-t="pilgrim_alt_contact">वैकल्पिक संपर्क</span></label>
-            <input id="p-contact2" type="tel" placeholder="+91 XXXXX XXXXX (वैकल्पिक)" data-t-placeholder="p_contact2_placeholder" style="width:100%;padding:14px;border:2px solid #e0d5c5;border-radius:10px;font-size:16px;box-sizing:border-box;">
+            <input id="p-contact2" type="tel" inputmode="numeric" maxlength="10" placeholder="+91 XXXXX XXXXX (वैकल्पिक)" data-t-placeholder="p_contact2_placeholder" style="width:100%;padding:14px;border:2px solid #e0d5c5;border-radius:10px;font-size:16px;box-sizing:border-box;">
           </div>
           <div>
             <label style="font-size:13px;font-weight:700;color:var(--dark-brown);display:block;margin-bottom:6px;">🏥 <span data-t="pilgrim_medical">चिकित्सा स्थिति</span></label>
