@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kumbhsathi-v38';
+const CACHE_NAME = 'kumbhsathi-v39';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -76,7 +76,7 @@ self.addEventListener('fetch', function(e) {
         return networkRes;
       })
       .catch(function() {
-        return caches.match(e.request).then(function(cached) {
+        return caches.match(e.request, { ignoreSearch: true }).then(function(cached) {
           if (cached) return cached;
           if (e.request.destination === 'document') {
             return caches.match('./index.html');
