@@ -38,13 +38,22 @@ function submitPilgrimRegistration() {
   var photoFile = document.getElementById('p-photo').files[0];
 
   if (!name || !age || !city || !contact1) {
-    pilgrimShowError(t('pilgrim_fill_required'));
+    var pFirst = !name ? 'p-name' : (!age ? 'p-age' : (!city ? 'p-city' : 'p-contact1'));
+    pilgrimShowError(t('p_err_missing_title'), t('p_err_missing_msg'), pFirst);
     return;
   }
   var pPhoneOk = /^[6-9]\d{9}$/;
   var pAgeNum = parseInt(age, 10);
-  if (!pPhoneOk.test(contact1) || (contact2 && !pPhoneOk.test(contact2)) || !(pAgeNum >= 1 && pAgeNum <= 120)) {
-    pilgrimShowError(t('p_invalid_input'));
+  if (!(pAgeNum >= 1 && pAgeNum <= 120)) {
+    pilgrimShowError(t('p_err_age_title'), t('p_err_age_msg'), 'p-age');
+    return;
+  }
+  if (!pPhoneOk.test(contact1)) {
+    pilgrimShowError(t('p_err_c1_title'), t('p_err_c1_msg'), 'p-contact1');
+    return;
+  }
+  if (contact2 && !pPhoneOk.test(contact2)) {
+    pilgrimShowError(t('p_err_c2_title'), t('p_err_c2_msg'), 'p-contact2');
     return;
   }
 
@@ -416,7 +425,15 @@ updatePilgrimGate();
 })();
 
 
-function pilgrimShowError(msg) {
-  if (typeof showInfoPopup === 'function') showInfoPopup('\u26a0\ufe0f', msg, '', '#e65100');
-  else alert(msg);
+function pilgrimShowError(title, msg, fieldId) {
+  if (typeof showInfoPopup === 'function') {
+    showInfoPopup('\u26a0\ufe0f', title, msg, '#e65100');
+    var okBtn = document.querySelector('#ks-info-popup .ks-pop-ok');
+    if (okBtn && fieldId) okBtn.addEventListener('click', function() {
+      var el = document.getElementById(fieldId);
+      if (el) el.focus();
+    });
+  } else {
+    alert(title + '\n' + msg);
+  }
 }
