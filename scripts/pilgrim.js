@@ -165,7 +165,7 @@ function showQRCard(pilgrim) {
       '</div>' +
       '<div style="text-align:center;font-size:10px;color:var(--light-brown);margin-bottom:14px;">' + t('pilgrim_scan_qr') + '</div>' +
       '<div style="display:flex;gap:8px;">' +
-        '<button onclick="window.print()" style="flex:1;padding:12px;background:var(--saffron);color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;">' + t('qr_print') + '</button>' +
+        '<button onclick="pilgrimSaveCard()" style="flex:1;padding:12px;background:var(--saffron);color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;">' + t('qr_save') + '</button>' +
         '<button onclick="registerAnotherPilgrim()" style="flex:1;padding:12px;background:#f5f0e8;color:var(--dark-brown);border:none;border-radius:8px;font-weight:700;cursor:pointer;">' + t('pilgrim_add_another') + '</button>' +
       '</div>' +
     '</div>';
@@ -529,4 +529,123 @@ function pilgrimResetForm() {
   });
   var g = document.getElementById('p-gender');
   if (g) g.selectedIndex = 0;
+}
+
+
+function pilgrimSaveMsg(msg) {
+  if (typeof showToast === 'function') showToast(msg);
+  else alert(msg);
+}
+
+function pilgrimSaveCard() {
+  var p = window._currentPilgrimQR;
+  if (!p) return;
+  var qrEl = document.querySelector('#qr-code-container canvas') || document.querySelector('#qr-code-container img');
+  if (!qrEl) { pilgrimSaveMsg(t('qr_save_fail')); return; }
+
+  function build(photoImg) {
+    var W = 600;
+    var big = document.createElement('canvas');
+    big.width = W; big.height = 1600;
+    var c = big.getContext('2d');
+    var F = 'Poppins, sans-serif';
+    c.fillStyle = '#ffffff'; c.fillRect(0, 0, W, 1600);
+    c.textBaseline = 'top';
+
+    function wrap(text, x, y, maxW, lh) {
+      var words = String(text).split(/\s+/), line = '', lines = [];
+      words.forEach(function(w) {
+        var test = line ? line + ' ' + w : w;
+        if (c.measureText(test).width > maxW && line) { lines.push(line); line = w; }
+        else line = test;
+      });
+      if (line) lines.push(line);
+      lines.forEach(function(l, i) { c.fillText(l, x, y + i * lh); });
+      return lines.length * lh;
+    }
+
+    var y = 30;
+    c.textAlign = 'center';
+    c.fillStyle = '#FF6F00'; c.font = 'bold 40px ' + F;
+    c.fillText('\uD83D\uDE4F KumbhSathi', W / 2, y); y += 58;
+    c.fillStyle = '#6D4C41'; c.font = '20px ' + F;
+    y += wrap(t('qr_card_subtitle'), W / 2, y, W - 80, 28) + 22;
+
+    c.textAlign = 'left';
+    var top = y, tx = 40;
+    if (photoImg) {
+      var s = Math.min(photoImg.width, photoImg.height);
+      c.drawImage(photoImg, (photoImg.width - s) / 2, (photoImg.height - s) / 2, s, s, 40, top, 130, 130);
+      c.strokeStyle = '#FF6F00'; c.lineWidth = 3; c.strokeRect(40, top, 130, 130);
+      tx = 190;
+    }
+    var tw = W - 40 - tx, ty = top;
+    c.fillStyle = '#3E2723'; c.font = 'bold 32px ' + F;
+    ty += wrap(p.name, tx, ty, tw, 42) + 6;
+    c.fillStyle = '#6D4C41'; c.font = '22px ' + F;
+    ty += wrap(t('pilgrim_age_label') + p.age + ' | ' + _pilgrimGenderLabel(p.gender), tx, ty, tw, 30);
+    ty += wrap('\uD83C\uDFE0 ' + p.city, tx, ty, tw, 30);
+    if (p.medical) {
+      c.fillStyle = '#C62828'; c.font = '20px ' + F;
+      ty += wrap('\uD83C\uDFE5 ' + t('qr_medical') + ': ' + p.medical, tx, ty, tw, 28) + 4;
+    }
+    y = Math.max(ty, photoImg ? top + 130 : top) + 24;
+
+    c.imageSmoothingEnabled = false;
+    c.strokeStyle = '#eeeeee'; c.lineWidth = 2; c.strokeRect(W / 2 - 150, y, 300, 300);
+    c.drawImage(qrEl, W / 2 - 140, y + 10, 280, 280);
+    c.imageSmoothingEnabled = true;
+    y += 312;
+    c.textAlign = 'center'; c.fillStyle = '#6D4C41'; c.font = '18px ' + F;
+    c.fillText('ID: ' + p.id, W / 2, y); y += 42;
+
+    var bh = 24 + 32 + 40 + (p.contact2 ? 34 : 0) + 10;
+    c.fillStyle = '#FFF3E0'; c.fillRect(40, y, W - 80, bh);
+    c.textAlign = 'left';
+    c.fillStyle = '#3E2723'; c.font = 'bold 20px ' + F;
+    c.fillText(t('pilgrim_emergency_contact'), 60, y + 16);
+    c.fillStyle = '#FF6F00'; c.font = 'bold 28px ' + F;
+    c.fillText('\uD83D\uDCF1 ' + p.contact1, 60, y + 52);
+    if (p.contact2) {
+      c.fillStyle = '#6D4C41'; c.font = '22px ' + F;
+      c.fillText(t('qr_alt') + p.contact2, 60, y + 92);
+    }
+    y += bh + 20;
+
+    c.textAlign = 'center'; c.fillStyle = '#6D4C41'; c.font = '18px ' + F;
+    y += wrap(t('pilgrim_scan_qr'), W / 2, y, W - 80, 26) + 30;
+
+    y = Math.min(y, 1600);
+    var out = document.createElement('canvas');
+    out.width = W; out.height = y;
+    var o = out.getContext('2d');
+    o.drawImage(big, 0, 0, W, y, 0, 0, W, y);
+    o.strokeStyle = '#FF6F00'; o.lineWidth = 8; o.strokeRect(4, 4, W - 8, y - 8);
+    return out.toDataURL('image/png');
+  }
+
+  function deliver(photoImg) {
+    var dataUrl;
+    try { dataUrl = build(photoImg); }
+    catch (e) { console.error('[KumbhSathi] card image failed', e); pilgrimSaveMsg(t('qr_save_fail')); return; }
+    var fname = 'KumbhSathi_' + String(p.id).replace(/[^A-Za-z0-9_-]/g, '');
+    if (window.KumbhNative && typeof window.KumbhNative.saveImage === 'function') {
+      window.KumbhNative.saveImage(dataUrl, fname);
+    } else if (window.KumbhNative) {
+      pilgrimSaveMsg(t('qr_save_update'));
+    } else {
+      var a = document.createElement('a');
+      a.href = dataUrl; a.download = fname + '.png';
+      document.body.appendChild(a); a.click(); a.remove();
+    }
+  }
+
+  if (p.photo) {
+    var im = new Image();
+    im.onload = function() { deliver(im); };
+    im.onerror = function() { deliver(null); };
+    im.src = p.photo;
+  } else {
+    deliver(null);
+  }
 }
