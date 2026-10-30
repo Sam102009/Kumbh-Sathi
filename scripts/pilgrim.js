@@ -255,6 +255,7 @@ function deletePilgrim(index) {
     if (list[index] && list[index].id === p.id) {
       list.splice(index, 1);
       localStorage.setItem('kumbh_pilgrims', JSON.stringify(list));
+      pilgrimClearIfShown(p.id);
       loadPilgrimList();
       if (typeof showToast === 'function') showToast('\uD83D\uDDD1\uFE0F ' + t('pilgrim_delete_toast'));
     }
@@ -474,4 +475,18 @@ function pilgrimShowError(title, msg, fieldId) {
   } else {
     alert(title + '\n' + msg);
   }
+}
+
+
+function pilgrimClearIfShown(deletedId) {
+  if (!window._currentPilgrimQR || window._currentPilgrimQR.id !== deletedId) return;
+  window._currentPilgrimQR = null;
+  var out = document.getElementById('pilgrim-qr-output');
+  if (out) out.style.display = 'none';
+  ['p-name', 'p-age', 'p-city', 'p-contact1', 'p-contact2', 'p-medical', 'p-photo'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  var g = document.getElementById('p-gender');
+  if (g) g.selectedIndex = 0;
 }
