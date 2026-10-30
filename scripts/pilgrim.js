@@ -247,11 +247,49 @@ function showQRCardByIndex(index) {
 }
 
 function deletePilgrim(index) {
-  if (!confirm(t('pilgrim_delete_confirm'))) return;
   var pilgrims = JSON.parse(localStorage.getItem('kumbh_pilgrims') || '[]');
-  pilgrims.splice(index, 1);
-  localStorage.setItem('kumbh_pilgrims', JSON.stringify(pilgrims));
-  loadPilgrimList();
+  var p = pilgrims[index];
+  if (!p) return;
+  pilgrimAskDelete(p, function() {
+    var list = JSON.parse(localStorage.getItem('kumbh_pilgrims') || '[]');
+    if (list[index] && list[index].id === p.id) {
+      list.splice(index, 1);
+      localStorage.setItem('kumbh_pilgrims', JSON.stringify(list));
+      loadPilgrimList();
+      if (typeof showToast === 'function') showToast('\uD83D\uDDD1\uFE0F ' + t('pilgrim_delete_toast'));
+    }
+  });
+}
+
+function pilgrimAskDelete(p, onYes) {
+  var old = document.getElementById('ks-delete-popup');
+  if (old) old.remove();
+  var overlay = document.createElement('div');
+  overlay.id = 'ks-delete-popup';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:99999;display:flex;align-items:center;justify-content:center;padding:24px;';
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#fff;border-radius:18px;padding:26px 22px;max-width:340px;width:100%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,0.25);';
+  box.innerHTML =
+    '<div class="ks-del-icon" style="font-size:48px;margin-bottom:10px;"></div>' +
+    '<div class="ks-del-title" style="font-size:17px;font-weight:800;color:#c62828;margin-bottom:10px;"></div>' +
+    '<div class="ks-del-name" style="font-size:15px;font-weight:700;color:#3e2723;"></div>' +
+    '<div class="ks-del-id" style="font-size:11px;color:#8d6e63;margin-bottom:20px;"></div>' +
+    '<div style="display:flex;gap:10px;justify-content:center;">' +
+      '<button class="ks-del-cancel" style="flex:1;background:#eceff1;color:#455a64;border:none;border-radius:22px;padding:11px 10px;font-size:14px;font-weight:700;cursor:pointer;"></button>' +
+      '<button class="ks-del-yes" style="flex:1;background:#c62828;color:#fff;border:none;border-radius:22px;padding:11px 10px;font-size:14px;font-weight:700;cursor:pointer;"></button>' +
+    '</div>';
+  box.querySelector('.ks-del-icon').textContent = '\uD83D\uDDD1\uFE0F';
+  box.querySelector('.ks-del-title').textContent = t('pilgrim_delete_confirm');
+  box.querySelector('.ks-del-name').textContent = p.name || '';
+  box.querySelector('.ks-del-id').textContent = 'ID: ' + (p.id || '');
+  box.querySelector('.ks-del-cancel').textContent = t('cancel');
+  box.querySelector('.ks-del-yes').textContent = t('pilgrim_delete');
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+  function close() { overlay.remove(); }
+  box.querySelector('.ks-del-cancel').addEventListener('click', close);
+  box.querySelector('.ks-del-yes').addEventListener('click', function() { close(); onYes(); });
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) close(); });
 }
 
 function initPilgrim() {
