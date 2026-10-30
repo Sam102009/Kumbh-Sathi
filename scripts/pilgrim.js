@@ -93,12 +93,14 @@ function submitPilgrimRegistration() {
     .then(function() {
       savePilgrimLocally({ id: pilgrimId, name: name, age: age, gender: gender, city: city, contact1: contact1, contact2: contact2, medical: medical, photo: photoBase64 || '', timestamp: timestamp });
       showQRCard({ id: pilgrimId, name: name, age: age, gender: gender, city: city, contact1: contact1, contact2: contact2, medical: medical, photo: photoBase64 || '' });
+      pilgrimResetForm();
       btn.disabled = false;
       btn.innerHTML = '🪪 ' + t('generate_qr');
     })
     .catch(function() {
       savePilgrimLocally({ id: pilgrimId, name: name, age: age, gender: gender, city: city, contact1: contact1, contact2: contact2, medical: medical, photo: photoBase64 || '', timestamp: timestamp });
       showQRCard({ id: pilgrimId, name: name, age: age, gender: gender, city: city, contact1: contact1, contact2: contact2, medical: medical, photo: photoBase64 || '' });
+      pilgrimResetForm();
       btn.disabled = false;
       btn.innerHTML = '🪪 ' + t('generate_qr');
     });
@@ -112,7 +114,7 @@ function submitPilgrimRegistration() {
 }
 
 function showQRCard(pilgrim) {
-  var output = document.getElementById('pilgrim-qr-output');
+  var output = pilgrimOpenQRPopup();
   window._currentPilgrimQR = pilgrim;
   var qrData = t('qr_pilgrim_id') + '\n' +
     t('qr_name') + ': ' + pilgrim.name + '\n' +
@@ -180,8 +182,6 @@ function showQRCard(pilgrim) {
       });
     }
   }, 100);
-
-  output.scrollIntoView({ behavior: 'smooth' });
 }
 
 function _pilgrimGenderLabel(value) {
@@ -192,7 +192,7 @@ function _pilgrimGenderLabel(value) {
 
 function refreshPilgrimLanguage() {
   loadPilgrimList();
-  if (window._currentPilgrimQR) showQRCard(window._currentPilgrimQR);
+  if (window._currentPilgrimQR && document.getElementById('ks-qr-popup')) showQRCard(window._currentPilgrimQR);
   if (window._lastScannedPilgrim) showPilgrimScanCard(window._lastScannedPilgrim.data, window._lastScannedPilgrim.container);
 }
 
@@ -205,6 +205,7 @@ function registerAnotherPilgrim() {
   document.getElementById('p-medical').value = '';
   document.getElementById('p-photo').value = '';
   document.getElementById('pilgrim-qr-output').style.display = 'none';
+  pilgrimCloseQRPopup();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -483,6 +484,45 @@ function pilgrimClearIfShown(deletedId) {
   window._currentPilgrimQR = null;
   var out = document.getElementById('pilgrim-qr-output');
   if (out) out.style.display = 'none';
+  ['p-name', 'p-age', 'p-city', 'p-contact1', 'p-contact2', 'p-medical', 'p-photo'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  var g = document.getElementById('p-gender');
+  if (g) g.selectedIndex = 0;
+}
+
+
+function pilgrimOpenQRPopup() {
+  var old = document.getElementById('ks-qr-popup');
+  if (old) old.remove();
+  var overlay = document.createElement('div');
+  overlay.id = 'ks-qr-popup';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:99998;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 16px 24px;';
+  var wrap = document.createElement('div');
+  wrap.style.cssText = 'max-width:380px;margin:0 auto;';
+  var closeBtn = document.createElement('button');
+  closeBtn.textContent = '\u2715';
+  closeBtn.setAttribute('aria-label', 'Close');
+  closeBtn.style.cssText = 'display:block;margin:0 0 8px auto;width:38px;height:38px;border-radius:50%;border:none;background:#fff;color:#3e2723;font-size:18px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.3);';
+  var body = document.createElement('div');
+  body.id = 'ks-qr-popup-body';
+  wrap.appendChild(closeBtn);
+  wrap.appendChild(body);
+  overlay.appendChild(wrap);
+  document.body.appendChild(overlay);
+  closeBtn.addEventListener('click', pilgrimCloseQRPopup);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) pilgrimCloseQRPopup(); });
+  return body;
+}
+
+function pilgrimCloseQRPopup() {
+  var p = document.getElementById('ks-qr-popup');
+  if (p) p.remove();
+  window._currentPilgrimQR = null;
+}
+
+function pilgrimResetForm() {
   ['p-name', 'p-age', 'p-city', 'p-contact1', 'p-contact2', 'p-medical', 'p-photo'].forEach(function(id) {
     var el = document.getElementById(id);
     if (el) el.value = '';
