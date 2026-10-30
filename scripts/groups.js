@@ -275,18 +275,18 @@ function updateGroupMap(members) {
       onAdd: function() {
         var btn = L.DomUtil.create('button', 'ks-locate-btn');
         btn.type = 'button';
-        btn.textContent = '\uD83C\uDFAF';
+        btn.textContent = ksLocateLabel();
         btn.title = t('my_location');
-        btn.style.cssText = 'width:44px;height:44px;border-radius:50%;background:#fff;border:2px solid rgba(0,0,0,.2);font-size:22px;line-height:1;box-shadow:0 2px 8px rgba(0,0,0,.3);cursor:pointer;';
+        btn.style.cssText = 'min-width:44px;height:44px;padding:0 14px;border-radius:22px;background:#fff;border:2px solid rgba(0,0,0,.2);font-size:14px;font-weight:700;color:#3e2723;line-height:1;box-shadow:0 2px 8px rgba(0,0,0,.3);cursor:pointer;white-space:nowrap;';
         L.DomEvent.disableClickPropagation(btn);
         L.DomEvent.on(btn, 'click', function() {
           if (!navigator.geolocation) return;
           btn.textContent = '\u23F3';
           ksGetLocation(function(pos) {
-            btn.textContent = '\uD83C\uDFAF';
+            btn.textContent = ksLocateLabel();
             ksLastGroupPos = { lat: pos.coords.latitude, lng: pos.coords.longitude };
             groupMap.flyTo([pos.coords.latitude, pos.coords.longitude], Math.max(groupMap.getZoom(), 15), { duration: 1 });
-          }, function() { btn.textContent = '\uD83C\uDFAF'; });
+          }, function() { btn.textContent = ksLocateLabel(); });
         });
         return btn;
       }
