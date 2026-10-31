@@ -209,7 +209,7 @@ function initMap() {
         <div style="font-family:'Poppins',sans-serif;min-width:180px;">
           <strong style="font-size:13px;color:#3E2723;display:block;margin-bottom:4px;">${point.name}</strong>
           <p style="font-size:11px;color:#6D4C41;margin:0 0 10px;line-height:1.4;">${point.info}${window.KS_DEBUG ? '<br><b>' + point.lat + ', ' + point.lng + '</b>' : ''}</p>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <div style="display:${KS_DIRECTIONS_ON ? 'flex' : 'none'};gap:6px;flex-wrap:wrap;">
             <button onclick="getDirections(${point.lat},${point.lng},'${point.name.replace(/'/g, '')}')"
                style="display:inline-flex;align-items:center;gap:4px;background:#FF6F00;color:#fff;
                       padding:6px 10px;border-radius:12px;font-size:11px;font-weight:600;
@@ -308,3 +308,11 @@ function ksFillLegend() {
   });
 }
 ksFillLegend();
+
+
+/* Directions switch: set to true again when Get Directions works in the app */
+var KS_DIRECTIONS_ON = false;
+(function() {
+  var a = document.getElementById('ks-map-directions-link');
+  if (a && KS_DIRECTIONS_ON) a.style.display = '';
+})();
