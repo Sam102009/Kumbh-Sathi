@@ -296,3 +296,15 @@ function showUserOnMap(lat, lng, accuracy, recenter) {
 function ksLocateLabel() {
   return '\uD83D\uDCCD ' + ((typeof t === 'function') ? t('my_location') : 'My location');
 }
+
+
+function ksFillLegend() {
+  if (typeof CATEGORY_ICONS === 'undefined') return;
+  document.querySelectorAll('.legend-dot[data-cat]').forEach(function(el) {
+    var e = CATEGORY_ICONS[el.getAttribute('data-cat')];
+    if (!e) return;
+    el.textContent = e;
+    el.style.cssText = 'font-size:18px;line-height:1;width:24px;height:auto;background:none;flex-shrink:0;text-align:center;';
+  });
+}
+ksFillLegend();
