@@ -67,6 +67,7 @@ function navigateTo(route, addToHistory) {
 }
 
 function onRouteChange(route) {
+  ksRefreshForRoute(route);
   if (route === 'home') {
     if (typeof loadHomeShahiSnan === 'function') loadHomeShahiSnan();
   }
@@ -154,4 +155,13 @@ function initRouter() {
   document.querySelectorAll('[data-nav]').forEach(function(el) {
     el.addEventListener('click', function() { navigateTo(el.dataset.nav); });
   });
+}
+
+
+function ksRefreshForRoute(route) {
+  try {
+    if (window.KumbhNative && typeof window.KumbhNative.setRefreshEnabled === 'function') {
+      window.KumbhNative.setRefreshEnabled(!(route === 'map' || route === 'groups'));
+    }
+  } catch (e) {}
 }
