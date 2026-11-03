@@ -164,7 +164,7 @@ function renderSchedule() {
                          color:${ev.type==='shahi'?'#e65100':ev.type==='cultural'?'#6a1b9a':'#1565c0'};">
               ${typeLabel}
             </span>
-            <a href="${calUrl}" class="btn btn-outline btn-sm" style="padding:4px 12px;font-size:11px;">
+            <a href="${calUrl}" onclick="return ksCalClick(this)" data-ev-title="${encodeURIComponent(ev.title_en + ' — Kumbh Nashik 2027')}" data-ev-details="${encodeURIComponent(ev.significance_en || '')}" data-ev-loc="${encodeURIComponent(ev.location || '')}" data-ev-date="${ev.date}" class="btn btn-outline btn-sm" style="padding:4px 12px;font-size:11px;">
               <i class="fa-solid fa-calendar-plus"></i>
               <span data-t="add_to_calendar">${t('add_to_calendar')}</span>
             </a>
@@ -406,7 +406,7 @@ function renderSheetSchedule(rows) {
                          color:${cat==='shahi'?'#e65100':cat==='cultural'?'#6a1b9a':'#1565c0'};">
               ${typeLabel}
             </span>
-            <a href="${makeSheetCalendarUrl(r)}" class="btn btn-outline btn-sm" style="padding:4px 12px;font-size:11px;" target="_blank" rel="noopener">
+            <a href="${makeSheetCalendarUrl(r)}" onclick="return ksCalClick(this)" data-sheet-cal="1" class="btn btn-outline btn-sm" style="padding:4px 12px;font-size:11px;" target="_blank" rel="noopener">
               <i class="fa-solid fa-calendar-plus"></i>
               <span data-t="add_to_calendar">${t('add_to_calendar')}</span>
             </a>
@@ -903,7 +903,11 @@ function shareLocation() {
   }
   ksGetLocation(pos => {
     const url = `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
-    window.open(url, '_blank');
+    if (window.KumbhNative && typeof window.KumbhNative.openMap === 'function') {
+      window.KumbhNative.openMap(pos.coords.latitude, pos.coords.longitude, 'My location');
+    } else {
+      window.open(url, '_blank');
+    }
   });
 }
 
@@ -1400,4 +1404,36 @@ function showInfoPopup(icon, title, message, titleColor) {
   function closePopup() { overlay.remove(); }
   box.querySelector('.ks-pop-ok').addEventListener('click', closePopup);
   overlay.addEventListener('click', function(e) { if (e.target === overlay) closePopup(); });
+}
+
+
+/* Add to Calendar: native calendar inside the Android app, Google Calendar link elsewhere */
+function ksAddCalendar(title, details, loc, dateStr) {
+  try {
+    if (!(window.KumbhNative && typeof window.KumbhNative.addCalendarEvent === 'function')) return false;
+    var p = String(dateStr || '').split('-');
+    if (p.length !== 3) return false;
+    var start = Date.UTC(parseInt(p[0], 10), parseInt(p[1], 10) - 1, parseInt(p[2], 10));
+    if (isNaN(start)) return false;
+    window.KumbhNative.addCalendarEvent(title, details, loc, start, start + 86400000, true);
+    return true;
+  } catch (e) { return false; }
+}
+
+function ksCalClick(a) {
+  try {
+    var ds = a.getAttribute('data-ev-date');
+    var title = a.getAttribute('data-ev-title'), details = a.getAttribute('data-ev-details'), loc = a.getAttribute('data-ev-loc');
+    if (a.getAttribute('data-sheet-cal')) {
+      var u = new URL(a.getAttribute('href'));
+      var d = (u.searchParams.get('dates') || '').split('/')[0];
+      if (d.length !== 8) return true;
+      ds = d.slice(0, 4) + '-' + d.slice(4, 6) + '-' + d.slice(6, 8);
+      title = encodeURIComponent(u.searchParams.get('text') || '');
+      details = encodeURIComponent(u.searchParams.get('details') || '');
+      loc = encodeURIComponent(u.searchParams.get('location') || '');
+    }
+    if (ksAddCalendar(decodeURIComponent(title || ''), decodeURIComponent(details || ''), decodeURIComponent(loc || ''), ds)) return false;
+  } catch (e) {}
+  return true;
 }
