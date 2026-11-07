@@ -202,7 +202,7 @@ function submitLostFoundReport(report, btn) {
     .finally(function() {
       if (btn) {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span data-t="submit_report">रिपोर्ट सबमिट करें</span>';
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span data-t="submit_report">' + t('submit_report') + '</span>';
       }
     });
 }
