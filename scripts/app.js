@@ -330,13 +330,6 @@ function ensureScheduleTranslations(rows, language) {
         scheduleAiTranslationFailures[language].set(entry.key, Date.now() + 60000);
       }
       console.warn('Gemini schedule translation unavailable; using saved translations.', error);
-      if (currentLang === language && typeof showToast === 'function') {
-        const message = {
-          hi: 'AI अनुवाद उपलब्ध नहीं है; सहेजे गए अनुवाद दिखाए जा रहे हैं।',
-          mr: 'AI भाषांतर उपलब्ध नाही; जतन केलेली भाषांतरे दाखवत आहोत.',
-        };
-        showToast(message[language]);
-      }
     }
   })();
 
