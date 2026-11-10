@@ -608,16 +608,7 @@ function _stayCard(s) {
       '<div class="listing-card-body">' +
         '<p style="font-size:12px;color:var(--light-brown);line-height:1.6;margin-bottom:8px;">' + description + '</p>' +
       '</div>' +
-      '<div class="listing-card-footer">' +
-        '<a href="tel:' + phone + '" class="btn btn-primary btn-sm" style="flex:1;">' +
-          '<i class="fa-solid fa-phone"></i> ' + t('book_contact') +
-        '</a>' +
-        (phone
-          ? '<a href="https://wa.me/' + phone + '" target="_blank" rel="noopener" class="btn btn-whatsapp btn-sm">' +
-              '<i class="fa-brands fa-whatsapp"></i>' +
-            '</a>'
-          : '') +
-      '</div>' +
+      '<div class="listing-card-footer">' + ksStayContactHtml(phone) + '</div>' +
     '</div>'
   );
 }
@@ -1436,4 +1427,21 @@ function ksCalClick(a) {
     if (ksAddCalendar(decodeURIComponent(title || ''), decodeURIComponent(details || ''), decodeURIComponent(loc || ''), ds)) return false;
   } catch (e) {}
   return true;
+}
+
+
+/* Stay contact switch: set to true when real hotel contact numbers are ready */
+var KS_STAY_CONTACT_ON = false;
+function ksStayContactHtml(phone) {
+  if (!KS_STAY_CONTACT_ON) {
+    return '<div style="flex:1;text-align:center;font-size:12px;color:var(--light-brown);padding:6px 0;">' + t('stay_contact_soon') + '</div>';
+  }
+  return '<a href="tel:' + phone + '" class="btn btn-primary btn-sm" style="flex:1;">' +
+      '<i class="fa-solid fa-phone"></i> ' + t('book_contact') +
+    '</a>' +
+    (phone
+      ? '<a href="https://wa.me/' + phone + '" target="_blank" rel="noopener" class="btn btn-whatsapp btn-sm">' +
+          '<i class="fa-brands fa-whatsapp"></i>' +
+        '</a>'
+      : '');
 }
