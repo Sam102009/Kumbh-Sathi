@@ -116,15 +116,7 @@ function submitPilgrimRegistration() {
 function showQRCard(pilgrim) {
   var output = pilgrimOpenQRPopup();
   window._currentPilgrimQR = pilgrim;
-  var qrData = t('qr_pilgrim_id') + '\n' +
-    t('qr_name') + ': ' + pilgrim.name + '\n' +
-    t('qr_age') + ': ' + pilgrim.age + ' | ' + _pilgrimGenderLabel(pilgrim.gender) + '\n' +
-    t('qr_city') + ': ' + pilgrim.city + '\n' +
-    (pilgrim.medical ? t('qr_medical') + ': ' + pilgrim.medical + '\n' : '') +
-    t('qr_contact') + ': ' + pilgrim.contact1 + '\n' +
-    (pilgrim.contact2 ? t('qr_alt_contact') + ': ' + pilgrim.contact2 + '\n' : '') +
-    'ID: ' + pilgrim.id;
-  var appUrl = qrData;
+  var appUrl = ksQrText(pilgrim);
 
   var photoHtml = pilgrim.photo
     ? '<img src="' + pilgrim.photo + '" style="width:70px;height:70px;border-radius:8px;object-fit:cover;border:2px solid var(--saffron);">'
@@ -648,4 +640,19 @@ function pilgrimSaveCard() {
   } else {
     deliver(null);
   }
+}
+
+
+function ksQrText(p) {
+  function cut(v, n) { v = String(v == null ? '' : v).replace(/\s+/g, ' ').trim(); return v.length > n ? v.slice(0, n) : v; }
+  var g = String(p.gender || '').toLowerCase();
+  var gl = g === 'male' ? 'Male' : g === 'female' ? 'Female' : g === 'other' ? 'Other' : cut(p.gender, 10);
+  return 'KUMBHSATHI PILGRIM\n' +
+    'Name: ' + cut(p.name, 50) + '\n' +
+    'Age: ' + cut(p.age, 3) + ' | ' + gl + '\n' +
+    'City: ' + cut(p.city, 50) + '\n' +
+    (p.medical ? 'Medical: ' + cut(p.medical, 120) + '\n' : '') +
+    'Contact: ' + cut(p.contact1, 15) + '\n' +
+    (p.contact2 ? 'Alt Contact: ' + cut(p.contact2, 15) + '\n' : '') +
+    'ID: ' + cut(p.id, 40);
 }
