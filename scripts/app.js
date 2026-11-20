@@ -1023,6 +1023,74 @@ function fetchAndRenderNews() {
     });
 }
 
+/* ===== EVENT HIGHLIGHTS (videos on YouTube) ===== */
+function ksEsc(s) {
+  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function ksYtId(url) {
+  var m = String(url || '').match(/(?:youtu\.be\/|v=|shorts\/|embed\/)([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : '';
+}
+window._hlCache = null;
+function renderHighlights(rows) {
+  var c = document.getElementById('highlights-container');
+  if (!c) return;
+  var data = rows || window._hlCache || [];
+  if (!data.length) {
+    c.innerHTML = '<div style="text-align:center;padding:40px;color:var(--light-brown);">🎬 ' + t('hl_empty') + '</div>';
+    return;
+  }
+  c.innerHTML = data.map(function(v) {
+    var up = v.type === 'upcoming';
+    var id = ksYtId(v.link);
+    var thumb = id
+      ? '<img src="https://img.youtube.com/vi/' + id + '/hqdefault.jpg" alt="" loading="lazy" style="width:100%;display:block;aspect-ratio:16/9;object-fit:cover;background:#000;">'
+      : '<div style="aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;font-size:40px;background:#222;">🎬</div>';
+    var badgeColor = up ? '#2e7d32' : '#6d4c41';
+    return '<div style="border:1px solid rgba(128,128,128,0.25);border-radius:14px;overflow:hidden;margin-bottom:14px;">' +
+      '<div style="position:relative;">' + thumb +
+        '<span style="position:absolute;top:8px;left:8px;background:' + badgeColor + ';color:#fff;font-size:12px;padding:3px 10px;border-radius:12px;">' +
+          (up ? t('hl_upcoming') : t('hl_past')) + '</span>' +
+      '</div>' +
+      '<div style="padding:12px 14px;">' +
+        '<div style="font-weight:600;font-size:15px;margin-bottom:4px;">' + ksEsc(v.title) + '</div>' +
+        (v.date ? '<div style="font-size:12px;color:var(--light-brown);margin-bottom:6px;">📅 ' + ksEsc(v.date) + '</div>' : '') +
+        (v.desc ? '<div style="font-size:13px;line-height:1.5;margin-bottom:10px;">' + ksEsc(v.desc) + '</div>' : '') +
+        '<a href="' + ksEsc(v.link) + '" target="_blank" rel="noopener" class="btn btn-primary btn-sm">' +
+          '<i class="fa-brands fa-youtube"></i> ' + t('hl_watch') +
+        '</a>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+function fetchAndRenderHighlights() {
+  var c = document.getElementById('highlights-container');
+  if (!c) return;
+  c.innerHTML = '<div style="text-align:center;padding:40px;color:#FF6F00;">🎬 ' + t('loading') + '</div>';
+  cachedFetch(GAS_URL + '?sheet=Highlights')
+    .then(function(r) { return r.json(); })
+    .then(function(rows) {
+      var list = (Array.isArray(rows) ? rows : []).filter(function(r) {
+        return String(r['Approved'] || '').toUpperCase() === 'TRUE' && /^https:\/\//i.test(String(r['YouTubeLink'] || ''));
+      }).map(function(r) {
+        return {
+          title: r['Title'] || '',
+          date: r['Date'] || '',
+          type: String(r['Type'] || 'past').toLowerCase(),
+          link: String(r['YouTubeLink'] || ''),
+          desc: r['Description'] || ''
+        };
+      });
+      list.sort(function(a, b) { return (a.type === 'upcoming' ? 0 : 1) - (b.type === 'upcoming' ? 0 : 1); });
+      window._hlCache = list;
+      renderHighlights(list);
+    })
+    .catch(function() {
+      c.innerHTML = '<div style="text-align:center;padding:40px;color:var(--light-brown);">' + t('hl_empty') + '</div>';
+    });
+}
+function initHighlights() { fetchAndRenderHighlights(); }
+
 function initNews() {
   document.querySelectorAll('.news-filter-chip').forEach(chip => {
     chip.addEventListener('click', () => {
@@ -1244,6 +1312,7 @@ function initLangSwitcher() {
       renderNews(window._newsCache || NEWS_DATA);
       renderAkharas(window._akharaCache || null);
       renderStay(window._stayCache || null);
+      renderHighlights(window._hlCache || null);
       renderTransport();
       renderHospitals();
       renderFirstAid();
@@ -1297,6 +1366,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initRouter();
   initSchedule();
   initStay();
+  initHighlights();
   initTransport();
   initLostFound();
   initNews();

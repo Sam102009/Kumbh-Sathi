@@ -12,6 +12,7 @@ const ROUTES = {
   'lostfound': { page: 'page-lostfound', nav: null,         more: 'lostfound' },
   'emergency': { page: 'page-emergency', nav: null,         more: 'emergency' },
   'news':      { page: 'page-news',      nav: null,         more: 'news' },
+  'highlights': { page: 'page-highlights', nav: null,       more: null },
   'akharas':   { page: 'page-akharas',   nav: null,         more: 'akharas' },
   'about':     { page: 'page-about',     nav: null,         more: 'about' },
   'sponsor':   { page: 'page-sponsor',   nav: null,         more: 'sponsor' },

@@ -33,9 +33,9 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
   <!-- App Stylesheets -->
-  <link rel="stylesheet" href="styles/main.css?v=55">
-  <link rel="stylesheet" href="styles/components.css?v=55">
-  <link rel="stylesheet" href="styles/animations.css?v=55">
+  <link rel="stylesheet" href="styles/main.css?v=56">
+  <link rel="stylesheet" href="styles/components.css?v=56">
+  <link rel="stylesheet" href="styles/animations.css?v=56">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 @media print {
@@ -185,6 +185,10 @@
         <div class="quick-card tap-bounce nav-link" data-nav="news">
           <div class="card-icon bg-purple"><i class="fa-solid fa-newspaper"></i></div>
           <div class="card-label" data-t="card_news">समाचार</div>
+        </div>
+        <div class="quick-card tap-bounce nav-link" data-nav="highlights">
+          <div class="card-icon bg-gold"><i class="fa-solid fa-video"></i></div>
+          <div class="card-label" data-t="card_highlights">झलकियां</div>
         </div>
         <div class="quick-card tap-bounce nav-link" data-nav="akharas">
           <div class="card-icon bg-brown"><i class="fa-solid fa-om"></i></div>
@@ -513,6 +517,15 @@
     <!-- ================================================
          PAGE: NEWS
          ================================================ -->
+    <section class="page" id="page-highlights">
+      <div class="page-hero">
+        <h1 data-t="highlights_title">कार्यक्रम झलकियां</h1>
+        <p data-t="highlights_subtitle">बीते और आने वाले कार्यक्रमों के वीडियो</p>
+        <i class="fa-solid fa-video hero-icon"></i>
+      </div>
+      <div id="highlights-container" style="padding:12px 16px;"></div>
+    </section>
+
     <section class="page" id="page-news">
       <div class="page-hero">
         <h1 data-t="news_title">समाचार एवं अपडेट</h1>
@@ -924,23 +937,23 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css"/>
 <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="scripts/data.js?v=55"></script>
-<script src="scripts/india.js?v=55"></script>
-<script src="scripts/translations.js?v=55"></script>
-<script src="scripts/cache.js?v=55"></script>
-<script src="scripts/crowd2.js?v=55"></script>
-<script src="scripts/map.js?v=55"></script>
-<script src="scripts/auth.js?v=55"></script>
-<script src="scripts/verify.js?v=55"></script>
-<script src="scripts/notifications.js?v=55"></script>
-<script src="scripts/lostfound.js?v=55"></script>
-<script src="scripts/pilgrim.js?v=55"></script>
-<script src="scripts/news.js?v=55"></script>
-<script src="scripts/router.js?v=55"></script>
-<script src="scripts/groups.js?v=55"></script>
-<script src="scripts/weather.js?v=55"></script>
-<script src="scripts/chatbot.js?v=55"></script>
-<script src="scripts/app.js?v=55"></script>
+<script src="scripts/data.js?v=56"></script>
+<script src="scripts/india.js?v=56"></script>
+<script src="scripts/translations.js?v=56"></script>
+<script src="scripts/cache.js?v=56"></script>
+<script src="scripts/crowd2.js?v=56"></script>
+<script src="scripts/map.js?v=56"></script>
+<script src="scripts/auth.js?v=56"></script>
+<script src="scripts/verify.js?v=56"></script>
+<script src="scripts/notifications.js?v=56"></script>
+<script src="scripts/lostfound.js?v=56"></script>
+<script src="scripts/pilgrim.js?v=56"></script>
+<script src="scripts/news.js?v=56"></script>
+<script src="scripts/router.js?v=56"></script>
+<script src="scripts/groups.js?v=56"></script>
+<script src="scripts/weather.js?v=56"></script>
+<script src="scripts/chatbot.js?v=56"></script>
+<script src="scripts/app.js?v=56"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
