@@ -547,6 +547,33 @@ function renderHomeShahiSnan(events) {
 var activeStayFilter = 'all';
 window._stayCache = null;
 
+/* Stay listings switch: set to true when real hotel listings are ready */
+var KS_STAY_LISTINGS_ON = false;
+function ksRenderStayComingSoon() {
+  var chip = document.querySelector('.stay-filter-chip');
+  var cont = document.getElementById('stay-container');
+  if (!cont) return;
+  if (chip && chip.parentElement && !chip.parentElement.contains(cont)) chip.parentElement.style.display = 'none';
+  var info = document.querySelector('[data-t="stay_sponsored_info"]');
+  if (info && info.parentElement && !info.parentElement.contains(cont)) info.parentElement.style.display = 'none';
+  cont.innerHTML =
+    '<div style="text-align:center;padding:28px 16px;margin-top:12px;border:1px solid rgba(128,128,128,0.25);border-radius:16px;">' +
+      '<div style="font-size:42px;">🏨</div>' +
+      '<h2 style="margin:10px 0 6px;font-size:20px;color:var(--saffron);">' + t('stay_soon_title') + '</h2>' +
+      '<p style="margin:0 0 18px;font-size:14px;line-height:1.5;">' + t('stay_soon_text') + '</p>' +
+      '<h3 style="margin:0 0 4px;font-size:16px;">' + t('stay_owner_title') + '</h3>' +
+      '<p style="margin:0 0 14px;font-size:14px;">' + t('stay_owner_text') + '</p>' +
+      '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">' +
+        '<a href="https://wa.me/918830266546" target="_blank" rel="noopener" class="btn btn-whatsapp btn-sm">' +
+          '<i class="fa-brands fa-whatsapp"></i> ' + t('stay_owner_wa') +
+        '</a>' +
+        '<a href="mailto:kumbhsathi@gmail.com" class="btn btn-primary btn-sm">' +
+          '<i class="fa-solid fa-envelope"></i> ' + t('stay_owner_email') +
+        '</a>' +
+      '</div>' +
+    '</div>';
+}
+
 function _stayPhoneStr(raw) {
   /* GAS may send Phone as number or string — always return a string */
   return String(raw == null ? '' : raw).replace(/[^0-9+]/g, '');
@@ -607,6 +634,7 @@ function _stayCard(s) {
 }
 
 function renderStay(staysArray) {
+  if (!KS_STAY_LISTINGS_ON) { ksRenderStayComingSoon(); return; }
   var container = document.getElementById('stay-container');
   if (!container) return;
 
@@ -639,6 +667,7 @@ function renderStay(staysArray) {
 }
 
 function fetchAndRenderStay() {
+  if (!KS_STAY_LISTINGS_ON) { ksRenderStayComingSoon(); return; }
   var container = document.getElementById('stay-container');
   if (!container) return;
 
