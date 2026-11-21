@@ -548,7 +548,7 @@ var activeStayFilter = 'all';
 window._stayCache = null;
 
 /* Stay listings switch: set to true when real hotel listings are ready */
-var KS_STAY_LISTINGS_ON = false;
+var KS_STAY_LISTINGS_ON = true;
 function ksRenderStayComingSoon() {
   var chip = document.querySelector('.stay-filter-chip');
   var cont = document.getElementById('stay-container');
