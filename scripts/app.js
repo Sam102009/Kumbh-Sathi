@@ -703,49 +703,39 @@ function _stayCategoryFromType(typeStr) {
 }
 
 function _stayCard(s) {
-  var rating = isNaN(s.rating) ? 3.5 : Number(s.rating);
-  var full   = Math.floor(rating);
-  var stars  = '★'.repeat(full) + ((rating - full) >= 0.5 ? '½' : '');
-  var phone  = _stayPhoneStr(s.phone);
-  var lang   = currentLang || 'en';
-  var name   = s['name_' + lang] || s.name || '';
-  var type   = s['type_' + lang] || s.type || '';
-  var address = s['address_' + lang] || s.address || '';
-  var description = lang === 'en'
-    ? (s.description_en || s.description || '')
-    : (s['description_' + lang] || t('translation_unavailable'));
-
+  var lang = currentLang || 'en';
+  var name = s['name_' + lang] || s.name || '';
+  var type = s['type_' + lang] || s.type || '';
+  var price = String(s.price || '');
+  if (price && price.indexOf('₹') === -1) price = '₹' + price;
+  var badges = '';
+  if (s.verified) {
+    badges += '<span class="listing-sponsored-badge" style="background:#2e7d32;color:#fff;">✔ ' + t('stay_verified') + '</span>';
+  }
+  if (s.sponsored) {
+    badges += '<span class="listing-sponsored-badge"><i class="fa-solid fa-star"></i> ' + t('sponsored_tag') + '</span>';
+  }
+  var photo = s.image
+    ? '<img src="' + ksEsc(s.image) + '" alt="' + ksEsc(name) + '" loading="lazy" onerror="this.style.display=\'none\'">'
+    : '<div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:44px;">🏨</div>';
   return (
-    '<div class="listing-card' + (s.sponsored ? ' sponsored' : '') + ' reveal">' +
-      (s.image
-        ? '<div class="stay-card-image">' +
-            '<img src="' + s.image + '" alt="' + name + '" loading="lazy" onerror="this.style.display=\'none\'">' +
-            '<div class="stay-card-overlay"></div>' +
-            (s.sponsored
-              ? '<div class="stay-badges"><span class="listing-sponsored-badge">' +
-                  '<i class="fa-solid fa-star"></i> ' + t('sponsored_tag') +
-                '</span></div>'
-              : '') +
-          '</div>'
-        : '') +
+    '<div class="listing-card' + (s.sponsored ? ' sponsored' : '') + ' reveal" style="cursor:pointer;" onclick="ksStayOpen(\'' + s.id + '\')">' +
+      '<div class="stay-card-image">' + photo +
+        '<div class="stay-card-overlay"></div>' +
+        (badges ? '<div class="stay-badges">' + badges + '</div>' : '') +
+      '</div>' +
       '<div class="listing-card-header">' +
         '<div>' +
-          '<div class="listing-name">' + name + '</div>' +
-          (s.verified ? '<div style="font-size:12px;color:#2e7d32;font-weight:600;">✔ ' + t('stay_verified') + '</div>' : '') +
-          '<div class="listing-meta">' +
-            '<span><i class="fa-solid fa-hotel"></i> ' + type + '</span>' +
-            (address ? '<span><i class="fa-solid fa-map-marker-alt"></i> ' + address + '</span>' : '') +
-          '</div>' +
-          '<div class="stars">' + stars + '</div>' +
+          '<div class="listing-name">' + ksEsc(name) + '</div>' +
+          '<div class="listing-meta"><span><i class="fa-solid fa-hotel"></i> ' + ksEsc(type) + '</span></div>' +
         '</div>' +
-        '<div class="listing-price">' + (s.price || '') +
+        '<div class="listing-price">' + ksEsc(price) +
           '<br><span style="font-size:10px;color:var(--light-brown);font-weight:400;">' + t('per_night') + '</span>' +
         '</div>' +
       '</div>' +
-      '<div class="listing-card-body">' +
-        '<p style="font-size:12px;color:var(--light-brown);line-height:1.6;margin-bottom:8px;">' + description + '</p>' +
+      '<div class="listing-card-footer" style="justify-content:center;font-size:13px;font-weight:600;color:var(--saffron);">' +
+        t('stay_view_details') + ' ›' +
       '</div>' +
-      '<div class="listing-card-footer"><button onclick="ksStayOpen(\'' + s.id + '\')" class="btn btn-primary btn-sm" style="flex:1;">' + t('stay_view_details') + '</button></div>' +
     '</div>'
   );
 }
