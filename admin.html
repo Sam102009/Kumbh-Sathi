@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>KumbhSathi Admin</title>
+<style>
+body{font-family:sans-serif;max-width:520px;margin:0 auto;padding:16px}
+label{display:block;margin-top:12px;font-weight:600;font-size:14px}
+input,select,textarea{width:100%;box-sizing:border-box;padding:10px;font-size:15px;margin-top:4px}
+button{margin-top:18px;padding:12px;width:100%;font-size:16px;background:#FF6F00;color:#fff;border:none;border-radius:8px}
+button:disabled{opacity:0.5}
+.row{display:flex;gap:8px;align-items:center;margin-top:12px}
+.row input{width:auto;margin:0}.row label{margin:0}
+#msg{margin-top:14px;font-size:14px;white-space:pre-wrap}
+</style></head><body>
+<h2>Add Stay listing</h2>
+<label>Admin password<input type="password" id="pw" autocomplete="off"></label>
+<label>Name *<input id="name" maxlength="80"></label>
+<label>Type *<select id="type"><option>Hotel</option><option>Dharamshala</option><option>Budget</option><option>Camping</option></select></label>
+<label>Address<input id="address" maxlength="150"></label>
+<label>Price per night (numbers only) *<input id="price" inputmode="numeric" maxlength="6"></label>
+<label>Phone (10 digits, only if the owner agreed)<input id="phone" inputmode="numeric" maxlength="10"></label>
+<label>Description<textarea id="desc" rows="3" maxlength="500"></textarea></label>
+<label>Facilities (separate with commas)<input id="fac" placeholder="Wi-Fi, Parking, Hot water"></label>
+<label>Latitude<input id="lat" inputmode="decimal"></label>
+<label>Longitude<input id="lng" inputmode="decimal"></label>
+<div class="row"><input type="checkbox" id="ver"><label for="ver">Verified (I phoned and confirmed)</label></div>
+<div class="row"><input type="checkbox" id="spon"><label for="spon">Sponsored</label></div>
+<label>Photos * (up to 8, first photo is the card photo)<input type="file" id="photos" accept="image/*" multiple></label>
+<button id="go">Upload and save</button>
+<div id="msg"></div>
+<script>
+var GAS = "https://script.google.com/macros/s/AKfycbxIpxbFmkxOIJi-dNMPmleSq17DrMkBIUCICb6r8Cp_7H8cLU96N-wM-JuKTX0XV-ct/exec";
+function $(id){return document.getElementById(id);}
+function say(t){$("msg").textContent=t;}
+function shrink(file){
+  return new Promise(function(res,rej){
+    var r=new FileReader();
+    r.onload=function(){
+      var im=new Image();
+      im.onload=function(){
+        var s=Math.min(1,1000/Math.max(im.width,im.height));
+        var c=document.createElement("canvas");
+        c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);
+        c.getContext("2d").drawImage(im,0,0,c.width,c.height);
+        res(c.toDataURL("image/jpeg",0.8));
+      };
+      im.onerror=function(){rej(new Error("Not an image: "+file.name));};
+      im.src=r.result;
+    };
+    r.onerror=function(){rej(new Error("Cannot read "+file.name));};
+    r.readAsDataURL(file);
+  });
+}
+function post(o){
+  return fetch(GAS,{method:"POST",body:JSON.stringify(o)}).then(function(r){return r.json();});
+}
+$("go").onclick=async function(){
+  var pw=$("pw").value, files=$("photos").files;
+  var name=$("name").value.trim(), price=$("price").value.trim(), phone=$("phone").value.trim();
+  if(!pw){say("Enter the admin password.");return;}
+  if(!name){say("Enter the name.");return;}
+  if(!/^[0-9]{2,6}$/.test(price)){say("Price must be numbers only.");return;}
+  if(phone&&!/^[6-9][0-9]{9}$/.test(phone)){say("Phone must be 10 digits starting with 6-9.");return;}
+  if(!files.length){say("Choose at least 1 photo.");return;}
+  if(files.length>8){say("Choose at most 8 photos.");return;}
+  $("go").disabled=true;
+  try{
+    var urls=[];
+    for(var i=0;i<files.length;i++){
+      say("Uploading photo "+(i+1)+" of "+files.length+"...");
+      var data=await shrink(files[i]);
+      var r=await post({action:"adminUploadPhoto",password:pw,photo:data});
+      if(!r||r.error){throw new Error((r&&r.error)||"Upload failed");}
+      urls.push(r.url);
+    }
+    say("Saving listing...");
+    var fields={
+      Name:name,Type:$("type").value,Address:$("address").value.trim(),Price:price,Phone:phone,
+      Description:$("desc").value.trim(),Facilities:$("fac").value.trim(),
+      Lat:$("lat").value.trim(),Lng:$("lng").value.trim(),
+      Verified:$("ver").checked?"TRUE":"FALSE",Sponsored:$("spon").checked?"TRUE":"FALSE"
+    };
+    var r2=await post({action:"adminAddStay",password:pw,fields:fields,photos:urls});
+    if(!r2||r2.error){throw new Error((r2&&r2.error)||"Save failed");}
+    say("Saved! "+name+" is added with "+urls.length+" photo(s). It can take a few minutes to show in the app.");
+    ["name","address","price","phone","desc","fac","lat","lng","photos"].forEach(function(k){$(k).value="";});
+    $("ver").checked=false;$("spon").checked=false;
+  }catch(e){
+    say("Problem: "+e.message+"\nCheck the Stay tab before trying again, so you don't add it twice.");
+  }
+  $("go").disabled=false;
+};
+</script></body></html>
