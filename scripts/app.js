@@ -574,6 +574,122 @@ function ksRenderStayComingSoon() {
     '</div>';
 }
 
+var activeStayPrice = 'all';
+function ksStayApproved(r) {
+  var v = r['Approved'];
+  return v === true || String(v == null ? '' : v).trim().toUpperCase() === 'TRUE';
+}
+function ksStayPhotoUrl(u) {
+  u = String(u || '').trim();
+  var m = u.match(/drive\.google\.com\/file\/d\/([A-Za-z0-9_-]+)/);
+  if (m) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1000';
+  return /^https:\/\//i.test(u) ? u : '';
+}
+function ksStayPhotos(r) {
+  var list = String(r['Photos'] || '').split(',').map(ksStayPhotoUrl).filter(Boolean);
+  if (!list.length) { var one = ksStayPhotoUrl(r['Image']); if (one) list = [one]; }
+  return list;
+}
+function ksStayPriceNum(p) {
+  var n = parseInt(String(p || '').replace(/[^0-9]/g, ''), 10);
+  return isNaN(n) ? null : n;
+}
+function ksStayPriceInit() {
+  document.querySelectorAll('.stay-price-chip').forEach(function(chip) {
+    chip.addEventListener('click', function() {
+      document.querySelectorAll('.stay-price-chip').forEach(function(c) { c.classList.remove('active'); });
+      chip.classList.add('active');
+      activeStayPrice = chip.dataset.price;
+      renderStay(window._stayCache || null);
+    });
+  });
+}
+function ksStayFind(id) {
+  return (window._stayCache || []).filter(function(x) { return x.id === id; })[0];
+}
+function ksStayClose() {
+  var o = document.getElementById('ks-stay-pop');
+  if (o) o.remove();
+  document.body.style.overflow = '';
+}
+function ksStayCount(el) {
+  var c = document.getElementById('ks-stay-count');
+  if (!c || !el.clientWidth) return;
+  c.textContent = (Math.round(el.scrollLeft / el.clientWidth) + 1) + '/' + el.children.length;
+}
+function ksStayDirections(id) {
+  var s = ksStayFind(id);
+  if (!s || isNaN(s.lat) || isNaN(s.lng)) return;
+  if (window.KumbhNative && KumbhNative.openMap) {
+    KumbhNative.openMap(s.lat, s.lng, s.name);
+  } else {
+    window.open('https://www.google.com/maps/search/?api=1&query=' + s.lat + ',' + s.lng, '_blank');
+  }
+}
+function ksStayOpen(id) {
+  var s = ksStayFind(id);
+  if (!s) return;
+  ksStayClose();
+  var lang = currentLang || 'en';
+  var name = s['name_' + lang] || s.name;
+  var type = s['type_' + lang] || s.type;
+  var address = s['address_' + lang] || s.address;
+  var desc = s['description_' + lang] || s.description_en || '';
+  var digits = String(s.phone == null ? '' : s.phone).replace(/[^0-9]/g, '');
+  if (digits.length === 10) digits = '91' + digits;
+  var hasPhone = digits.length >= 11;
+  var gallery = s.photos.length
+    ? '<div style="position:relative;">' +
+        '<div onscroll="ksStayCount(this)" style="display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;">' +
+          s.photos.map(function(p) {
+            return '<img src="' + ksEsc(p) + '" alt="" loading="lazy" style="flex:0 0 100%;scroll-snap-align:start;height:230px;object-fit:cover;background:#ccc;">';
+          }).join('') +
+        '</div>' +
+        (s.photos.length > 1 ? '<span id="ks-stay-count" style="position:absolute;bottom:8px;right:10px;background:rgba(0,0,0,0.6);color:#fff;font-size:12px;padding:2px 10px;border-radius:12px;">1/' + s.photos.length + '</span>' : '') +
+      '</div>'
+    : '<div style="height:140px;display:flex;align-items:center;justify-content:center;font-size:48px;background:rgba(128,128,128,0.15);">🏨</div>';
+  var facilities = s.facilities.length
+    ? '<div style="margin:12px 0 4px;font-weight:600;font-size:14px;">' + t('stay_facilities') + '</div>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:6px;">' +
+        s.facilities.map(function(f) {
+          return '<span style="font-size:12px;padding:4px 10px;border-radius:12px;border:1px solid rgba(128,128,128,0.35);">' + ksEsc(f) + '</span>';
+        }).join('') +
+      '</div>'
+    : '';
+  var buttons = '';
+  if (!isNaN(s.lat) && !isNaN(s.lng)) {
+    buttons += '<button onclick="ksStayDirections(\'' + s.id + '\')" class="btn btn-primary btn-sm"><i class="fa-solid fa-location-arrow"></i> ' + t('stay_directions') + '</button>';
+  }
+  if (hasPhone) {
+    buttons += '<a href="tel:+' + digits + '" class="btn btn-primary btn-sm"><i class="fa-solid fa-phone"></i> ' + t('stay_call') + '</a>' +
+      '<a href="https://wa.me/' + digits + '" target="_blank" rel="noopener" class="btn btn-whatsapp btn-sm"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>';
+  }
+  var o = document.createElement('div');
+  o.id = 'ks-stay-pop';
+  o.setAttribute('style', 'position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.6);display:flex;align-items:flex-end;justify-content:center;');
+  o.onclick = function(ev) { if (ev.target === o) ksStayClose(); };
+  o.innerHTML =
+    '<div style="position:relative;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;background:var(--card-bg);border-radius:18px 18px 0 0;">' +
+      '<button onclick="ksStayClose()" aria-label="' + t('stay_close') + '" style="position:absolute;top:8px;left:8px;z-index:2;width:34px;height:34px;border:none;border-radius:50%;background:rgba(0,0,0,0.6);color:#fff;font-size:18px;cursor:pointer;">✕</button>' +
+      gallery +
+      '<div style="padding:14px 16px 20px;">' +
+        '<div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;">' +
+          '<div style="font-size:19px;font-weight:700;">' + ksEsc(name) + '</div>' +
+          '<div style="text-align:right;font-weight:700;color:var(--saffron);white-space:nowrap;">' + ksEsc(s.price) +
+            '<div style="font-size:10px;font-weight:400;">' + t('per_night') + '</div></div>' +
+        '</div>' +
+        '<div style="font-size:13px;margin-top:4px;">' + ksEsc(type) + (s.verified ? ' &nbsp;<span style="color:#2e7d32;font-weight:600;">✔ ' + t('stay_verified') + '</span>' : '') + '</div>' +
+        (address ? '<div style="font-size:13px;margin-top:6px;"><i class="fa-solid fa-map-marker-alt"></i> ' + ksEsc(address) + '</div>' : '') +
+        (desc ? '<p style="font-size:13px;line-height:1.6;margin:12px 0 0;">' + ksEsc(desc) + '</p>' : '') +
+        facilities +
+        '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;">' + buttons + '</div>' +
+        '<p style="font-size:11px;margin:14px 0 0;opacity:0.75;">' + t('stay_contact_note') + '</p>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(o);
+  document.body.style.overflow = 'hidden';
+}
+
 function _stayPhoneStr(raw) {
   /* GAS may send Phone as number or string — always return a string */
   return String(raw == null ? '' : raw).replace(/[^0-9+]/g, '');
@@ -615,6 +731,7 @@ function _stayCard(s) {
       '<div class="listing-card-header">' +
         '<div>' +
           '<div class="listing-name">' + name + '</div>' +
+          (s.verified ? '<div style="font-size:12px;color:#2e7d32;font-weight:600;">✔ ' + t('stay_verified') + '</div>' : '') +
           '<div class="listing-meta">' +
             '<span><i class="fa-solid fa-hotel"></i> ' + type + '</span>' +
             (address ? '<span><i class="fa-solid fa-map-marker-alt"></i> ' + address + '</span>' : '') +
@@ -628,7 +745,7 @@ function _stayCard(s) {
       '<div class="listing-card-body">' +
         '<p style="font-size:12px;color:var(--light-brown);line-height:1.6;margin-bottom:8px;">' + description + '</p>' +
       '</div>' +
-      '<div class="listing-card-footer">' + ksStayContactHtml(phone) + '</div>' +
+      '<div class="listing-card-footer"><button onclick="ksStayOpen(\'' + s.id + '\')" class="btn btn-primary btn-sm" style="flex:1;">' + t('stay_view_details') + '</button></div>' +
     '</div>'
   );
 }
@@ -644,6 +761,15 @@ function renderStay(staysArray) {
     ? source.slice()
     : source.filter(function(s) { return s.category === activeStayFilter; });
 
+  if (activeStayPrice !== 'all') {
+    filtered = filtered.filter(function(s) {
+      var n = ksStayPriceNum(s.price);
+      if (n === null) return false;
+      if (activeStayPrice === 'low') return n < 1000;
+      if (activeStayPrice === 'mid') return n >= 1000 && n <= 3000;
+      return n > 3000;
+    });
+  }
   filtered.sort(function(a, b) { return (b.sponsored ? 1 : 0) - (a.sponsored ? 1 : 0); });
 
   if (!filtered.length) {
@@ -694,7 +820,7 @@ function fetchAndRenderStay() {
         return;
       }
 
-      var stays = rows.map(function(r, i) {
+      var stays = rows.filter(ksStayApproved).map(function(r, i) {
         return {
           id:          'stay-' + i,
           name:        String(r['Name']        || ''),
@@ -714,8 +840,13 @@ function fetchAndRenderStay() {
           description_en: String(r['Description_EN'] || r['Description'] || ''),
           description_hi: String(r['Description_HI'] || r['Description_Hindi'] || ''),
           description_mr: String(r['Description_MR'] || r['Description_Marathi'] || ''),
-          image:       String(r['Image']       || ''),
+          image:       (ksStayPhotos(r)[0] || ''),
           sponsored:   (r['Sponsored'] === true || r['Sponsored'] === 'TRUE' || r['Sponsored'] === 'true'),
+          photos:      ksStayPhotos(r),
+          facilities:  String(r['Facilities'] || '').split(',').map(function(x) { return x.trim(); }).filter(Boolean),
+          verified:    (r['Verified'] === true || String(r['Verified']).toUpperCase() === 'TRUE'),
+          lat:         parseFloat(r['Lat']),
+          lng:         parseFloat(r['Lng']),
         };
       });
 
@@ -748,6 +879,7 @@ function initStay() {
       renderStay(window._stayCache || null);
     });
   });
+  ksStayPriceInit();
   fetchAndRenderStay();
 }
 
